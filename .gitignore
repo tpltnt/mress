@@ -3,6 +3,8 @@
 *.a
 *.so
 
+# other files
+notes
 # Folders
 _obj
 _test
