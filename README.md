@@ -3,6 +3,13 @@ mress
 
 An IRC bot to facilitate communication in groups.
 
+license: AGPLv3 (or later)
+```
+if you use this code
+you and your children’s children
+must make your source free
+```
+
 resources
 ---------
 * [RFC 2810: Internet Relay Chat: Architecture](https://tools.ietf.org/html/rfc2810)
