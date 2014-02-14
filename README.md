@@ -1,7 +1,7 @@
 mress
 =====
 
-An IRC bot to do facilitate communication in groups.
+An IRC bot to facilitate communication in groups.
 
 resources
 ---------
