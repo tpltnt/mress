@@ -12,6 +12,7 @@ must make your source free
 
 resources
 ---------
+* [go-ircevent](https://github.com/thoj/go-ircevent): an event based IRC client library
 * [RFC 2810: Internet Relay Chat: Architecture](https://tools.ietf.org/html/rfc2810)
 * [RFC 2811: Internet Relay Chat: Channel Management](https://tools.ietf.org/html/rfc2811)
 * [RFC 2812: Internet Relay Chat: Client Protocol](https://tools.ietf.org/html/rfc2812)

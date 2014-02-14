@@ -2,7 +2,7 @@ package main
 
 import(
 	"fmt"
-	"irc"
+	"github.com/thoj/go-ircevent" // imported as "irc"
 )
 
 func main() {
