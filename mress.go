@@ -68,7 +68,5 @@ func main() {
 	} else {
 		ircobj.UseTLS = false
 	}
-	if 0 < len(*passwd) {
-		ircobj.Password = *passwd
-	}
+	ircobj.Password = *passwd
 }
