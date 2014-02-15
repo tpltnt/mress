@@ -11,13 +11,17 @@ import (
 )
 
 // Create a Logger which logs to the given destination
+// Valid destinations are files (+path), stdout and stderr
 func createLogger(destination *string) *log.Logger {
 	var logfile io.Writer
 	var err error
 	if len(*destination) > 0 {
-		if "stdout" == *destination {
+		switch *destination {
+		case "stdout":
 			logfile = os.Stdout
-		} else {
+		case "stderr":
+			logfile = os.Stderr
+		default:
 			logfile, err = os.OpenFile(*destination, os.O_WRONLY, 0244)
 		}
 	} else {
@@ -32,7 +36,7 @@ func createLogger(destination *string) *log.Logger {
 
 func main() {
 	configfile := flag.String("config", "", "configuration file (lower priority if other flags are defined)")
-	logdest := flag.String("log", "", "destination (filename, stdout) of the log")
+	logdest := flag.String("log", "", "destination (filename, stdout, stderr) of the log")
 	nick := flag.String("nick", "mress", "nickname")
 	passwd := flag.String("passwd", "", "server/ident password")
 	ircServer := flag.String("server", "irc.freenode.net", "IRC server hostname")
