@@ -4,11 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"github.com/thoj/go-ircevent" // imported as "irc"
+	"io"
 	"log"
 	"os"
-	"io"
 )
-
 
 // Create a Logger which logs to the given destination
 func createLogger(destination *string) *log.Logger {
@@ -30,13 +29,13 @@ func createLogger(destination *string) *log.Logger {
 	return logger
 }
 
-
 func main() {
 	fmt.Println("starting up ...")
 	configfile := flag.String("config", "", "configuration file (lower priority if other flags are defined)")
 	logdest := flag.String("log", "", "destination (filename, stdout) of the log")
 	nick := flag.String("nick", "mress", "nickname")
 	passwd := flag.String("passwd", "", "server/ident password")
+	useTLS := flag.Bool("use-tls", true, "use TLS encrypted connection")
 	debug := flag.Bool("debug", false, "enable debugging (+flags)")
 	flag.Parse()
 
@@ -63,8 +62,13 @@ func main() {
 	} else {
 		logger.Println("creating IRC connection worked")
 	}
-	// configure IRC connection 
+	// configure IRC connection
+	if *useTLS {
+		ircobj.UseTLS = true
+	} else {
+		ircobj.UseTLS = false
+	}
 	if 0 < len(*passwd) {
-		ircobj.Password = passwd
+		ircobj.Password = *passwd
 	}
 }
