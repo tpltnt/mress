@@ -35,6 +35,7 @@ func main() {
 	fmt.Println("starting up ...")
 	configfile := flag.String("config", "", "configuration file")
 	logdest := flag.String("log", "", "destination (filename, stdout) of the log")
+	nick := flag.String("nick", "mress", "nickname")
 	debug := flag.Bool("debug", false, "enable debugging (+flags)")
 	flag.Parse()
 
@@ -52,7 +53,7 @@ func main() {
 		logger.Println("[info] debug mode enabled")
 	}
 
-	ircobj := irc.IRC("<nick>", "<user>")
+	ircobj := irc.IRC(*nick, "mress")
 	if nil == ircobj {
 		logger.Println("creating IRC connection failed")
 	} else {
