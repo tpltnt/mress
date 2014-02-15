@@ -21,3 +21,12 @@ func Test_create_Logger_2(t *testing.T) {
 		t.Error("creating logger to '" + dest + "' returned 'nil'")
 	}
 }
+
+// test logfile destination
+func Test_create_Logger_3(t *testing.T) {
+	dest := "test.log"
+	logger := createLogger(&dest)
+	if logger == nil {
+		t.Error("creating logger to '" + dest + "' returned 'nil'")
+	}
+}
