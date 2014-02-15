@@ -46,6 +46,7 @@ func Test_create_Logger_3(t *testing.T) {
 	if 46 != count {
 		t.Error("read wrong number of bytes")
 	}
+
 	logfile.Close()
 	err = os.Remove(dest)
 	if nil != err {
