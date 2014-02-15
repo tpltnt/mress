@@ -9,20 +9,16 @@ import (
 	"io"
 )
 
-func main() {
-	fmt.Println("starting up ...")
-	configfile := flag.String("config", "", "configuration file")
-	logdest := flag.String("log", "", "destination (filename, stdout) of the log")
-	debug := flag.Bool("debug", false, "enable debugging (+flags)")
-	flag.Parse()
 
+// Create a Logger which logs to the given destination
+func createLogger(destination *string) *log.Logger {
 	var logfile io.Writer
 	var err error
-	if len(*logdest) > 0 {
-		if "stdout" == *logdest {
+	if len(*destination) > 0 {
+		if "stdout" == *destination {
 			logfile = os.Stdout
 		} else {
-			logfile, err = os.OpenFile(*logdest, os.O_WRONLY, 0244)
+			logfile, err = os.OpenFile(*destination, os.O_WRONLY, 0244)
 		}
 	} else {
 		logfile, err = os.OpenFile("/dev/null", os.O_RDWR, 666)
@@ -30,7 +26,19 @@ func main() {
 	if nil != err {
 		fmt.Fprint(os.Stderr, "opening logging destination failed")
 	}
-	logger := log.New(logfile, "[mress]", 0)
+	logger := log.New(logfile, "[mress] ", 0)
+	return logger
+}
+
+
+func main() {
+	fmt.Println("starting up ...")
+	configfile := flag.String("config", "", "configuration file")
+	logdest := flag.String("log", "", "destination (filename, stdout) of the log")
+	debug := flag.Bool("debug", false, "enable debugging (+flags)")
+	flag.Parse()
+
+	logger := createLogger(logdest)
 	if nil == logger {
 		fmt.Fprint(os.Stderr, "creating logger failed")
 		os.Exit(1)
@@ -44,11 +52,10 @@ func main() {
 		logger.Println("[info] debug mode enabled")
 	}
 
-	logger.Print("creating IRC connection ")
 	ircobj := irc.IRC("<nick>", "<user>")
 	if nil == ircobj {
-		logger.Print("failed\n")
+		logger.Println("creating IRC connection failed")
 	} else {
-		logger.Print("worked\n")
+		logger.Println("creating IRC connection worked")
 	}
 }
