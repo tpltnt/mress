@@ -36,8 +36,9 @@ func main() {
 	logdest := flag.String("log", "", "destination (filename, stdout) of the log")
 	nick := flag.String("nick", "mress", "nickname")
 	passwd := flag.String("passwd", "", "server/ident password")
-	server := flag.String("server", "irc.freenode.net", "IRC server hostname")
-	port := flag.Int("port", 6697, "IRC server port")
+	ircServer := flag.String("server", "irc.freenode.net", "IRC server hostname")
+	ircPort := flag.Int("port", 6697, "IRC server port")
+	ircChannel := flag.String("channel", "", "IRC channel to join")
 	useTLS := flag.Bool("use-tls", true, "use TLS encrypted connection")
 	debug := flag.Bool("debug", false, "enable debugging (+flags)")
 	flag.Parse()
@@ -78,6 +79,7 @@ func main() {
 		logger.Println("password is used")
 	}
 	// connect to server
-	socketstring := *server + ":" + strconv.Itoa(*port)
+	socketstring := *ircServer + ":" + strconv.Itoa(*ircPort)
 	logger.Println("connecting to " + socketstring)
+	logger.Println("joining " + *ircChannel)
 }
