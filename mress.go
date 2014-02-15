@@ -45,8 +45,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	if nil == configfile {
+	if 0 == len(*configfile) {
 		fmt.Println("[info] no config file given, using defaults")
+	} else {
+		fmt.Fprintln(os.Stderr, "configuration file parsing not implemented yet")
+		os.Exit(1)
 	}
 
 	if *debug {
