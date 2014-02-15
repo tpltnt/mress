@@ -31,7 +31,6 @@ func createLogger(destination *string) *log.Logger {
 }
 
 func main() {
-	fmt.Println("starting up ...")
 	configfile := flag.String("config", "", "configuration file (lower priority if other flags are defined)")
 	logdest := flag.String("log", "", "destination (filename, stdout) of the log")
 	nick := flag.String("nick", "mress", "nickname")
