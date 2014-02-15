@@ -36,6 +36,7 @@ func main() {
 	configfile := flag.String("config", "", "configuration file (lower priority if other flags are defined)")
 	logdest := flag.String("log", "", "destination (filename, stdout) of the log")
 	nick := flag.String("nick", "mress", "nickname")
+	passwd := flag.String("passwd", "", "server/ident password")
 	debug := flag.Bool("debug", false, "enable debugging (+flags)")
 	flag.Parse()
 
@@ -61,5 +62,9 @@ func main() {
 		logger.Println("creating IRC connection failed")
 	} else {
 		logger.Println("creating IRC connection worked")
+	}
+	// configure IRC connection 
+	if 0 < len(*passwd) {
+		ircobj.Password = passwd
 	}
 }
