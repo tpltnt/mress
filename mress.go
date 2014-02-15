@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 )
 
 // Create a Logger which logs to the given destination
@@ -35,6 +36,8 @@ func main() {
 	logdest := flag.String("log", "", "destination (filename, stdout) of the log")
 	nick := flag.String("nick", "mress", "nickname")
 	passwd := flag.String("passwd", "", "server/ident password")
+	server := flag.String("server", "irc.freenode.net", "IRC server hostname")
+	port := flag.Int("port", 6697, "IRC server port")
 	useTLS := flag.Bool("use-tls", true, "use TLS encrypted connection")
 	debug := flag.Bool("debug", false, "enable debugging (+flags)")
 	flag.Parse()
@@ -46,7 +49,7 @@ func main() {
 	}
 
 	if 0 == len(*configfile) {
-		fmt.Println("[info] no config file given, using defaults")
+		fmt.Println("no config file given, using defaults")
 	} else {
 		fmt.Fprintln(os.Stderr, "configuration file parsing not implemented yet")
 		os.Exit(1)
@@ -65,8 +68,16 @@ func main() {
 	// configure IRC connection
 	if *useTLS {
 		ircobj.UseTLS = true
+		logger.Println("using TLS encrypted connection")
 	} else {
 		ircobj.UseTLS = false
+		logger.Println("using cleartext connection")
 	}
 	ircobj.Password = *passwd
+	if 0 < len(*passwd) {
+		logger.Println("password is used")
+	}
+	// connect to server
+	socketstring := *server + ":" + strconv.Itoa(*port)
+	logger.Println("connecting to " + socketstring)
 }
