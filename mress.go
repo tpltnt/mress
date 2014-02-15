@@ -28,7 +28,8 @@ func createLogger(destination *string) *log.Logger {
 		logfile, err = os.OpenFile("/dev/null", os.O_RDWR, 666)
 	}
 	if nil != err {
-		fmt.Fprint(os.Stderr, "opening logging destination failed")
+		fmt.Fprint(os.Stderr, "opening logging destination failed\n")
+		fmt.Fprint(os.Stderr, err.Error()+"\n")
 	}
 	logger := log.New(logfile, "[mress] ", 0)
 	return logger
