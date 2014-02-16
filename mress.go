@@ -77,30 +77,50 @@ func main() {
 		os.Exit(1)
 	}
 
-	if *debug {
-		logger.Println("[info] debug mode enabled")
+	if len(*ircChannel) == 0 {
+		logger.Println("no channel given to join")
+		os.Exit(1)
 	}
 
-	ircobj := irc.IRC(*nick, "mress")
-	if nil == ircobj {
+	irccon := irc.IRC(*nick, "mress")
+	if nil == irccon {
 		logger.Println("creating IRC connection failed")
 	} else {
 		logger.Println("creating IRC connection worked")
 	}
 	// configure IRC connection
 	if *useTLS {
-		ircobj.UseTLS = true
+		irccon.UseTLS = true
 		logger.Println("using TLS encrypted connection")
 	} else {
-		ircobj.UseTLS = false
+		irccon.UseTLS = false
 		logger.Println("using cleartext connection")
 	}
-	ircobj.Password = *passwd
+	irccon.Password = *passwd
 	if 0 < len(*passwd) {
 		logger.Println("password is used")
 	}
+	if *debug {
+		irccon.Debug = true
+	}
+
 	// connect to server
 	socketstring := *ircServer + ":" + strconv.Itoa(*ircPort)
 	logger.Println("connecting to " + socketstring)
-	logger.Println("joining " + *ircChannel)
+	err := irccon.Connect(socketstring)
+	if err != nil {
+		logger.Println("connecting to server failed")
+		logger.Println(err.Error())
+		os.Exit(1)
+	}
+	logger.Println("connecting to server succeeded")
+
+	// add callbacks
+	irccon.AddCallback("001", func(e *irc.Event) {
+		logger.Println("joining " + *ircChannel)
+		irccon.Join(*ircChannel)
+	})
+
+	logger.Println("starting event loop")
+	irccon.Loop()
 }
