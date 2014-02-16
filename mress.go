@@ -113,6 +113,7 @@ func main() {
 		logger.Println(err.Error())
 		os.Exit(1)
 	}
+	logger.Println("connecting to server succeeded")
 
 	// add callbacks
 	irccon.AddCallback("001", func(e *irc.Event) {
