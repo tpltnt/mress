@@ -53,3 +53,35 @@ func Test_create_Logger_3(t *testing.T) {
 		t.Error(err.Error())
 	}
 }
+
+// valid transaction
+func Test_saveMessage_0(t *testing.T) {
+	err := saveMessage("testtarget", "testmessage")
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+// empty target
+func Test_saveMessage_1(t *testing.T) {
+	err := saveMessage("", "testmessage")
+	if err == nil {
+		t.Error("empty target not detected")
+	}
+}
+
+// target with space
+func Test_saveMessage_2(t *testing.T) {
+	err := saveMessage("test target", "testmessage")
+	if err == nil {
+		t.Error("target with space not detected")
+	}
+}
+
+// emtpy message
+func Test_saveMessage_3(t *testing.T) {
+	err := saveMessage("testtarget", "")
+	if err == nil {
+		t.Error("empty message not detected")
+	}
+}

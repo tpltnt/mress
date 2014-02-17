@@ -59,8 +59,12 @@ func createLogger(destination *string) *log.Logger {
 // Store a message for a target (user). If saving fails, this fact
 // is going to be logged (but not the message content)
 func saveMessage(target, message string) error {
+	// sanity checks
 	if len(target) == 0 {
 		return fmt.Errorf("target of zero-length")
+	}
+	if 0 != strings.Count(target, " ") {
+		return fmt.Errorf("target not allowed to contain whitespace")
 	}
 	if len(message) == 0 {
 		return fmt.Errorf("message of zero lenght")
