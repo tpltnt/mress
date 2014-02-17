@@ -69,6 +69,7 @@ func saveMessage(target, message string) error {
 	if len(message) == 0 {
 		return fmt.Errorf("message of zero lenght")
 	}
+
 	// prepare db
 	db, err := sql.Open("sqlite3", "./messages.db")
 	if err != nil {
@@ -91,6 +92,7 @@ func saveMessage(target, message string) error {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
+
 	// execute transaction
 	_, err = stmt.Exec(target, message)
 	if err != nil {
