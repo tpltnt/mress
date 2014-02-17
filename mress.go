@@ -8,6 +8,8 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
+	"time"
 )
 
 // Create a Logger which logs to the given destination
@@ -56,9 +58,25 @@ func createLogger(destination *string) *log.Logger {
 // as recipient activity is detected. An activity means writing
 // to the channel/mress or joining a channel monitored by this
 // mress instance.
-func privateMessenger(e *irc.Event) {
-	fmt.Println(e.Raw)
-	fmt.Println(e.Message())
+func privateMessenger(e *irc.Event, irc *irc.Connection, user, channel string) {
+	time.Sleep(1 * time.Second)
+	// ignore OTR
+	if 0 == strings.Index(e.Message(), "?OTR") {
+		return
+	}
+	if user == e.Arguments[0] {
+		irc.Privmsg(e.Nick, "I'm not actually a banana, i am parrot!\n")
+		time.Sleep(1 * time.Second)
+		irc.Privmsg(e.Nick, "\""+e.Message()+"\"")
+		time.Sleep(2 * time.Second)
+		irc.Privmsg(e.Nick, "see ?\n")
+	}
+	if channel == e.Arguments[0] {
+		if 0 != strings.Index(e.Message(), "mress:") {
+			return
+		}
+		irc.Privmsg(channel, "I'm a banana!\n")
+	}
 }
 
 // Print the message associated with the event to stdout.
@@ -135,7 +153,9 @@ func main() {
 		irccon.Join(*ircChannel)
 	})
 
-	irccon.AddCallback("PRIVMSG", privateMessenger)
+	irccon.AddCallback("PRIVMSG", func(e *irc.Event) {
+		privateMessenger(e, irccon, *nick, *ircChannel)
+	})
 
 	logger.Println("starting event loop")
 	irccon.Loop()
