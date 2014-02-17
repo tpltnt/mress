@@ -58,7 +58,7 @@ func createLogger(destination *string) *log.Logger {
 
 // Store a message for a target (user). If saving fails, this fact
 // is going to be logged (but not the message content)
-func saveMessage(source, target, message string) error {
+func saveOfflineMessage(source, target, message string) error {
 	// sanity checks
 	if len(source) == 0 {
 		return fmt.Errorf("source of zero-length")
@@ -112,7 +112,7 @@ func saveMessage(source, target, message string) error {
 }
 
 // Retrieve previously stored message for user.
-func retrieveMessage(user string) error {
+func retrieveOfflineMessage(user string) error {
 	// sanity checks
 	if len(user) == 0 {
 		return fmt.Errorf("user of zero-length")
@@ -152,8 +152,10 @@ func retrieveMessage(user string) error {
 	return nil
 }
 
-// tell <nick>: message - Leave a message for other offline users. It gets
-// delivered as  soon as the recipient joins the  channel monitored by  this mress instance.
+// Implements the offline messenger command to deliver messages to other upon JOIN.
+// To be in used as a callback for PRIVMSG.
+// mress command: tell <nick>: <message>
+// See also offlineMessengerDrone()
 func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user, channel string) {
 	// ignore OTR
 	if 0 == strings.Index(e.Message(), "?OTR") {
