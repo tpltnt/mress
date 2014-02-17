@@ -154,7 +154,7 @@ func retrieveMessage(user string) error {
 
 // tell <nick>: message - Leave a message for other offline users. It gets
 // delivered as  soon as the recipient joins the  channel monitored by  this mress instance.
-func offlineMessenger(e *irc.Event, irc *irc.Connection, user, channel string) {
+func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user, channel string) {
 	// ignore OTR
 	if 0 == strings.Index(e.Message(), "?OTR") {
 		return
@@ -274,7 +274,7 @@ func main() {
 	})
 
 	irccon.AddCallback("PRIVMSG", func(e *irc.Event) {
-		privateMessenger(e, irccon, *nick, *ircChannel)
+		offlineMessengerCommand(e, irccon, *nick, *ircChannel)
 	})
 
 	logger.Println("starting event loop")
