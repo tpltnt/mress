@@ -70,15 +70,10 @@ func saveMessage(target, message string) error {
 		return fmt.Errorf("failed to set cache size: " + err.Error())
 	}*/
 	sql := `CREATE TABLE IF NOT EXISTS messages (target TEXT, name TEXT);`
-	_, err := db.Exec(sql)
+	_, err = db.Exec(sql)
 	if err != nil {
 		fmt.Errorf("failed to create database table: " + err.Error())
 	}
-	/*
-		stmt, err := db.Prepare(query)
-		if err != nil {
-			return fmt.Errorf("failed to prepare the query: " + err.Error())
-		}**/
 	return nil
 }
 
