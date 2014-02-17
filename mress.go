@@ -59,16 +59,42 @@ func createLogger(destination *string) *log.Logger {
 // Store a message for a target (user). If saving fails, this fact
 // is going to be logged (but not the message content)
 func saveMessage(target, message string) error {
+	if len(target) == 0 {
+		return fmt.Errorf("target of zero-length")
+	}
+	if len(message) == 0 {
+		return fmt.Errorf("message of zero lenght")
+	}
 	// prepare db
-	db, err := sql.Open("sqlite3", "./foo.db")
+	db, err := sql.Open("sqlite3", "./messages.db")
 	if err != nil {
 		return fmt.Errorf("failed to open database file: " + err.Error())
 	}
 	defer db.Close()
-	sql := `CREATE TABLE IF NOT EXISTS messages (target TEXT, name TEXT);`
+	sql := `CREATE TABLE IF NOT EXISTS messages (target TEXT, content TEXT);`
 	_, err = db.Exec(sql)
 	if err != nil {
-		fmt.Errorf("failed to create database table: " + err.Error())
+		return fmt.Errorf("failed to create database table: " + err.Error())
+	}
+
+	// prepare transaction
+	tx, err := db.Begin()
+	if err != nil {
+		return fmt.Errorf("beginning transaction failed: " + err.Error())
+	}
+	stmt, err := tx.Prepare("INSERT INTO messages (target, content) VALUES (?, ?)")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+	// execute transaction
+	_, err = stmt.Exec(target, message)
+	if err != nil {
+		return fmt.Errorf("executing INSERT failed: " + err.Error())
+	}
+	err = tx.Commit()
+	if err != nil {
+		return fmt.Errorf("commiting to database failed: " + err.Error())
 	}
 	return nil
 }
