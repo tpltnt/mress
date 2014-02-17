@@ -52,6 +52,20 @@ func createLogger(destination *string) *log.Logger {
 	return logger
 }
 
+// Leave a message for other users. It gets delivered as soon
+// as recipient activity is detected. An activity means writing
+// to the channel/mress or joining a channel monitored by this
+// mress instance.
+func privateMessenger(e *irc.Event) {
+	fmt.Println(e.Raw)
+	fmt.Println(e.Message())
+}
+
+// Print the message associated with the event to stdout.
+func msgStdout(e *irc.Event) {
+	fmt.Println(e.Message())
+}
+
 func main() {
 	configfile := flag.String("config", "", "configuration file (lower priority if other flags are defined)")
 	logdest := flag.String("log", "", "destination (filename, stdout, stderr) of the log")
@@ -120,6 +134,8 @@ func main() {
 		logger.Println("joining " + *ircChannel)
 		irccon.Join(*ircChannel)
 	})
+
+	irccon.AddCallback("PRIVMSG", privateMessenger)
 
 	logger.Println("starting event loop")
 	irccon.Loop()
