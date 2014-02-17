@@ -65,10 +65,6 @@ func saveMessage(target, message string) error {
 		return fmt.Errorf("failed to open database file: " + err.Error())
 	}
 	defer db.Close()
-	/*_, err = db.Exec("PRAGMA cache_size=" + conf.IPDB.CacheSize)
-	if err != nil {
-		return fmt.Errorf("failed to set cache size: " + err.Error())
-	}*/
 	sql := `CREATE TABLE IF NOT EXISTS messages (target TEXT, name TEXT);`
 	_, err = db.Exec(sql)
 	if err != nil {
