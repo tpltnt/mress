@@ -106,4 +106,5 @@ func Test_saveOfflineMessage_5(t *testing.T) {
 	}
 }
 
+// deliverOfflineMessage(user string, con *irc.Connection) error
 // offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, logger *log.Logger)
