@@ -58,8 +58,14 @@ func createLogger(destination *string) *log.Logger {
 
 // Store a message for a target (user). If saving fails, this fact
 // is going to be logged (but not the message content)
-func saveMessage(target, message string) error {
+func saveMessage(source, target, message string) error {
 	// sanity checks
+	if len(source) == 0 {
+		return fmt.Errorf("source of zero-length")
+	}
+	if 0 != strings.Count(source, " ") {
+		return fmt.Errorf("source not allowed to contain whitespace")
+	}
 	if len(target) == 0 {
 		return fmt.Errorf("target of zero-length")
 	}
@@ -76,7 +82,7 @@ func saveMessage(target, message string) error {
 		return fmt.Errorf("failed to open database file: " + err.Error())
 	}
 	defer db.Close()
-	sql := `CREATE TABLE IF NOT EXISTS messages (target TEXT, content TEXT);`
+	sql := `CREATE TABLE IF NOT EXISTS messages (target TEXT, source TEXT, content TEXT);`
 	_, err = db.Exec(sql)
 	if err != nil {
 		return fmt.Errorf("failed to create database table: " + err.Error())
@@ -87,14 +93,14 @@ func saveMessage(target, message string) error {
 	if err != nil {
 		return fmt.Errorf("beginning transaction failed: " + err.Error())
 	}
-	stmt, err := tx.Prepare("INSERT INTO messages (target, content) VALUES (?, ?)")
+	stmt, err := tx.Prepare("INSERT INTO messages (target, source, content) VALUES (?, ?, ?)")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
 
 	// execute transaction
-	_, err = stmt.Exec(target, message)
+	_, err = stmt.Exec(target, source, message)
 	if err != nil {
 		return fmt.Errorf("executing INSERT failed: " + err.Error())
 	}

@@ -56,7 +56,7 @@ func Test_create_Logger_3(t *testing.T) {
 
 // valid transaction
 func Test_saveMessage_0(t *testing.T) {
-	err := saveMessage("testtarget", "testmessage")
+	err := saveMessage("testsource", "testtarget", "testmessage")
 	if err != nil {
 		t.Error(err.Error())
 	}
@@ -68,7 +68,7 @@ func Test_saveMessage_0(t *testing.T) {
 
 // empty target
 func Test_saveMessage_1(t *testing.T) {
-	err := saveMessage("", "testmessage")
+	err := saveMessage("testsource", "", "testmessage")
 	if err == nil {
 		t.Error("empty target not detected")
 	}
@@ -76,7 +76,7 @@ func Test_saveMessage_1(t *testing.T) {
 
 // target with space
 func Test_saveMessage_2(t *testing.T) {
-	err := saveMessage("test target", "testmessage")
+	err := saveMessage("testsource", "test target", "testmessage")
 	if err == nil {
 		t.Error("target with space not detected")
 	}
@@ -84,8 +84,24 @@ func Test_saveMessage_2(t *testing.T) {
 
 // emtpy message
 func Test_saveMessage_3(t *testing.T) {
-	err := saveMessage("testtarget", "")
+	err := saveMessage("testsource", "testtarget", "")
 	if err == nil {
 		t.Error("empty message not detected")
+	}
+}
+
+// empty source
+func Test_saveMessage_4(t *testing.T) {
+	err := saveMessage("", "testtarget", "testmessage")
+	if err == nil {
+		t.Error("empty source not detected")
+	}
+}
+
+// source with space
+func Test_saveMessage_5(t *testing.T) {
+	err := saveMessage("test source", "testtarget", "testmessage")
+	if err == nil {
+		t.Error("source with space not detected")
 	}
 }
