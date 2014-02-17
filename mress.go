@@ -111,11 +111,64 @@ func saveMessage(source, target, message string) error {
 	return nil
 }
 
+// Retrieve previously stored message for user.
+func retrieveMessage(user string) error {
+	// sanity checks
+	if len(user) == 0 {
+		return fmt.Errorf("user of zero-length")
+	}
+	if 0 != strings.Count(user, " ") {
+		return fmt.Errorf("user not allowed to contain whitespace")
+	}
+
+	// prepare db
+	db, err := sql.Open("sqlite3", "./messages.db")
+	if err != nil {
+		return fmt.Errorf("failed to open database file: " + err.Error())
+	}
+	defer db.Close()
+	stmt, err = db.Prepare("SELECT source, content FROM messages WHERE target = ?")
+	if err != nil {
+		return fmt.Errorf("failed to prepare query for stored message: " + err.Error())
+	}
+	defer stmt.Close()
+
+	// query db
+	rows, err := db.Query(user)
+	if err != nil {
+		return fmt.Errorf("query failed: " + err.Error())
+	}
+	defer rows.Close()
+
+	// process retrieved information
+	for rows.Next() {
+		var source string
+		var message string
+		rows.Scan(&source, &message)
+		//TODO: handle information
+	}
+	rows.Close()
+
+	return nil
+}
+
 // Leave a message for other users. It gets delivered as soon
 // as recipient activity is detected. An activity means writing
 // to the channel/mress or joining a channel monitored by this
 // mress instance.
 func privateMessenger(e *irc.Event, irc *irc.Connection, user, channel string) {
+	// ignore OTR
+	if 0 == strings.Index(e.Message(), "?OTR") {
+		return
+	}
+	// reject non-private messages
+	if user != e.Arguments[0] {
+		return
+	}
+}
+
+// The banana test
+func bananaTest(e *irc.Event, irc *irc.Connection, user, channel string) {
 	time.Sleep(1 * time.Second)
 	// ignore OTR
 	if 0 == strings.Index(e.Message(), "?OTR") {
