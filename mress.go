@@ -1,8 +1,10 @@
 package main
 
 import (
+	"database/sql"
 	"flag"
 	"fmt"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/thoj/go-ircevent" // imported as "irc"
 	"io"
 	"log"
@@ -52,6 +54,32 @@ func createLogger(destination *string) *log.Logger {
 		logger = log.New(logdest, "[mress] ", log.LstdFlags)
 	}
 	return logger
+}
+
+// Store a message for a target (user). If saving fails, this fact
+// is going to be logged (but not the message content)
+func saveMessage(target, message string) error {
+	// prepare db
+	db, err := sql.Open("sqlite3", "./foo.db")
+	if err != nil {
+		return fmt.Errorf("failed to open database file: " + err.Error())
+	}
+	defer db.Close()
+	/*_, err = db.Exec("PRAGMA cache_size=" + conf.IPDB.CacheSize)
+	if err != nil {
+		return fmt.Errorf("failed to set cache size: " + err.Error())
+	}*/
+	sql := `CREATE TABLE IF NOT EXISTS messages (target TEXT, name TEXT);`
+	_, err := db.Exec(sql)
+	if err != nil {
+		fmt.Errorf("failed to create database table: " + err.Error())
+	}
+	/*
+		stmt, err := db.Prepare(query)
+		if err != nil {
+			return fmt.Errorf("failed to prepare the query: " + err.Error())
+		}**/
+	return nil
 }
 
 // Leave a message for other users. It gets delivered as soon
