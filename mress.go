@@ -156,7 +156,7 @@ func retrieveOfflineMessage(user string) error {
 // To be in used as a callback for PRIVMSG.
 // mress command: tell <nick>: <message>
 // See also offlineMessengerDrone()
-func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user, channel string) {
+func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user, channel string, logger *log.Logger) {
 	// ignore OTR
 	if 0 == strings.Index(e.Message(), "?OTR") {
 		return
@@ -176,7 +176,12 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user, channel st
 	// extract message recipient
 	target := strings.Fields(e.Message())[1]
 	target = strings.Trim(target, ":")
-
+	msgstart := strings.Index(e.Message(), ":")
+	err := saveOfflineMessage(e.Nick, target, e.Message()[msgstart:])
+	if err != nil {
+		logger.Println("offline message command failed")
+		logger.Println(err.Error())
+	}
 }
 
 // The banana test
@@ -276,7 +281,7 @@ func main() {
 	})
 
 	irccon.AddCallback("PRIVMSG", func(e *irc.Event) {
-		offlineMessengerCommand(e, irccon, *nick, *ircChannel)
+		offlineMessengerCommand(e, irccon, *nick, *ircChannel, logger)
 	})
 
 	logger.Println("starting event loop")
