@@ -105,3 +105,5 @@ func Test_saveOfflineMessage_5(t *testing.T) {
 		t.Error("source with space not detected")
 	}
 }
+
+// offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, logger *log.Logger)

@@ -187,7 +187,12 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, log
 // Deliver a message from a database. To be used as a callback for JOIN.
 // This implements the delivery part of the offline messenger command.
 // See also offlineMessengerCommand()
-func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, user, channel string, logger *log.Logger) {
+func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, channel string, logger *log.Logger) {
+	// ignore OTR -> potentially dead code?
+	if 0 == strings.Index(e.Message(), "?OTR") {
+		return
+	}
+
 }
 
 // The banana test
