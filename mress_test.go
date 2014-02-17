@@ -60,6 +60,10 @@ func Test_saveMessage_0(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
+	err = os.Remove("./messages.db")
+	if nil != err {
+		t.Error(err.Error())
+	}
 }
 
 // empty target
