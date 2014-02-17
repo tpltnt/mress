@@ -55,8 +55,8 @@ func Test_create_Logger_3(t *testing.T) {
 }
 
 // valid transaction
-func Test_saveMessage_0(t *testing.T) {
-	err := saveMessage("testsource", "testtarget", "testmessage")
+func Test_saveOfflineMessage_0(t *testing.T) {
+	err := saveOfflineMessage("testsource", "testtarget", "testmessage")
 	if err != nil {
 		t.Error(err.Error())
 	}
@@ -67,40 +67,40 @@ func Test_saveMessage_0(t *testing.T) {
 }
 
 // empty target
-func Test_saveMessage_1(t *testing.T) {
-	err := saveMessage("testsource", "", "testmessage")
+func Test_saveOfflineMessage_1(t *testing.T) {
+	err := saveOfflineMessage("testsource", "", "testmessage")
 	if err == nil {
 		t.Error("empty target not detected")
 	}
 }
 
 // target with space
-func Test_saveMessage_2(t *testing.T) {
-	err := saveMessage("testsource", "test target", "testmessage")
+func Test_saveOfflineMessage_2(t *testing.T) {
+	err := saveOfflineMessage("testsource", "test target", "testmessage")
 	if err == nil {
 		t.Error("target with space not detected")
 	}
 }
 
 // emtpy message
-func Test_saveMessage_3(t *testing.T) {
-	err := saveMessage("testsource", "testtarget", "")
+func Test_saveOfflineMessage_3(t *testing.T) {
+	err := saveOfflineMessage("testsource", "testtarget", "")
 	if err == nil {
 		t.Error("empty message not detected")
 	}
 }
 
 // empty source
-func Test_saveMessage_4(t *testing.T) {
-	err := saveMessage("", "testtarget", "testmessage")
+func Test_saveOfflineMessage_4(t *testing.T) {
+	err := saveOfflineMessage("", "testtarget", "testmessage")
 	if err == nil {
 		t.Error("empty source not detected")
 	}
 }
 
 // source with space
-func Test_saveMessage_5(t *testing.T) {
-	err := saveMessage("test source", "testtarget", "testmessage")
+func Test_saveOfflineMessage_5(t *testing.T) {
+	err := saveOfflineMessage("test source", "testtarget", "testmessage")
 	if err == nil {
 		t.Error("source with space not detected")
 	}

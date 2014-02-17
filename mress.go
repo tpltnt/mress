@@ -127,7 +127,7 @@ func retrieveOfflineMessage(user string) error {
 		return fmt.Errorf("failed to open database file: " + err.Error())
 	}
 	defer db.Close()
-	stmt, err = db.Prepare("SELECT source, content FROM messages WHERE target = ?")
+	stmt, err := db.Prepare("SELECT source, content FROM messages WHERE target = ?")
 	if err != nil {
 		return fmt.Errorf("failed to prepare query for stored message: " + err.Error())
 	}
