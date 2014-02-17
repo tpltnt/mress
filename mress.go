@@ -111,8 +111,8 @@ func saveOfflineMessage(source, target, message string) error {
 	return nil
 }
 
-// Retrieve previously stored message for user.
-func retrieveOfflineMessage(user string) error {
+// Retrieve and deliver previously stored message for user.
+func deliverOfflineMessage(user string, con *irc.Connection) error {
 	// sanity checks
 	if len(user) == 0 {
 		return fmt.Errorf("user of zero-length")
@@ -192,7 +192,16 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, channel string, lo
 	if 0 == strings.Index(e.Message(), "?OTR") {
 		return
 	}
+	// filter for correct channel
+	if channel != e.Arguments[0] {
+		return
+	}
 
+	err := deliverOfflineMessage(e.Nick, irc)
+	if err != nil {
+		logger.Println("message retrieval failed")
+		logger.Println(err.Error())
+	}
 }
 
 // The banana test
