@@ -207,6 +207,7 @@ func bananaTest(e *irc.Event, irc *irc.Connection, user, channel string) {
 }
 
 // Print the message associated with the event to stdout.
+// Useful for debugging
 func msgStdout(e *irc.Event) {
 	fmt.Println(e.Message())
 }
