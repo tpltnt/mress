@@ -152,19 +152,29 @@ func retrieveMessage(user string) error {
 	return nil
 }
 
-// Leave a message for other users. It gets delivered as soon
-// as recipient activity is detected. An activity means writing
-// to the channel/mress or joining a channel monitored by this
-// mress instance.
-func privateMessenger(e *irc.Event, irc *irc.Connection, user, channel string) {
+// tell <nick>: message - Leave a message for other offline users. It gets
+// delivered as  soon as the recipient joins the  channel monitored by  this mress instance.
+func offlineMessenger(e *irc.Event, irc *irc.Connection, user, channel string) {
 	// ignore OTR
 	if 0 == strings.Index(e.Message(), "?OTR") {
 		return
 	}
-	// reject non-private messages
+	// reject non-direct messages
 	if user != e.Arguments[0] {
 		return
 	}
+	// detect command -> reject non-command
+	if 0 != strings.Index(e.Message(), "tell ") {
+		return
+	}
+	if 5 > strings.Index(e.Message(), ":") {
+		return
+	}
+
+	// extract message recipient
+	target := strings.Fields(e.Message())[1]
+	target = strings.Trim(target, ":")
+
 }
 
 // The banana test
