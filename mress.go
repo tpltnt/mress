@@ -240,14 +240,20 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, user, channel stri
 		// e.Nick is empty for 353
 		// strip "@" from op name
 		nickline := strings.Replace(e.Message(), "@", "", -1)
-		logger.Println(nickline)
-		logger.Println("HANDLING SELF JOIN NOT IMPLEMENTED")
+		nicklist := strings.Fields(nickline)
+		for i := 0; i < len(nicklist); i++ {
+			err := deliverOfflineMessage(nicklist[i], irc)
+			if err != nil {
+				logger.Println("delivering stale messages had problems")
+				logger.Println(err.Error())
+			}
+		}
 		return
 	}
 	// handle others joining
 	err := deliverOfflineMessage(e.Nick, irc)
 	if err != nil {
-		logger.Println("message had problems")
+		logger.Println("message delivery had problems")
 		logger.Println(err.Error())
 	}
 }
