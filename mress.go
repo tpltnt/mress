@@ -212,6 +212,7 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, user, channel stri
 	if logger == nil {
 		return
 	}
+
 	// ignore OTR -> potentially dead code?
 	if 0 == strings.Index(e.Message(), "?OTR") {
 		return
@@ -335,7 +336,7 @@ func main() {
 		offlineMessengerCommand(e, irccon, *nick, logger)
 	})
 	irccon.AddCallback("JOIN", func(e *irc.Event) {
-		offlineMessengerDrone(e, irccon, *ircChannel, logger)
+		offlineMessengerDrone(e, irccon, *nick, *ircChannel, logger)
 	})
 
 	logger.Println("starting event loop")
