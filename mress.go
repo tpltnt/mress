@@ -141,13 +141,20 @@ func deliverOfflineMessage(user string, con *irc.Connection) error {
 	defer rows.Close()
 
 	// process retrieved information
+	source := ""
+	message := ""
 	for rows.Next() {
-		var source string
-		var message string
 		rows.Scan(&source, &message)
-		con.Privmsg(user, "from "+source+": "+message+"\n")
+		con.Privmsg(user, "message from "+source+": "+message+"\n")
 	}
-	rows.Close()
+
+	// delete this message from db if needed
+	if (len(source) != 0) && (len(message) != 0) {
+		_, err = db.Exec("DELETE FROM messages WHERE target = ? AND source = ?", user, source)
+		if err != nil {
+			return fmt.Errorf("executing DELETE failed: " + err.Error())
+		}
+	}
 
 	return nil
 }
