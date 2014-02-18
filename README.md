@@ -3,12 +3,13 @@ mress
 
 An IRC bot to facilitate communication in groups.
 
-license: AGPLv3 (or later)
+license: AGPLv3 (or later) + [HESSLA](http://www.hacktivismo.com/about/hessla.php)
 ```
 if you use this code
 you and your children’s children
 must make your source free
 ```
++ no use or modification of the software to violate human rights or spy on its user
 
 commands
 --------
