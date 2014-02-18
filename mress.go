@@ -224,24 +224,30 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, user, channel stri
 		return
 	}
 
+	// check for being a callback for an event intended
+	// JOIN and 353 (names list)
+	if !((e.Code == "JOIN") || (e.Code == "353")) {
+		return
+	}
 	// ignore OTR -> potentially dead code?
 	if 0 == strings.Index(e.Message(), "?OTR") {
 		return
 	}
-	// filter for correct channel
-	if channel != e.Arguments[0] {
-		return
-	}
 
 	// TODO: handle self-join: if mress enters channel, deliver messages
-	if user == e.Nick {
+	// 353 hf_testbot2 @ #ircscribble :hf_testbot2 tzugh @herr_flupke\r\n
+	if e.Code == "353" {
+		// e.Nick is empty for 353
+		// strip "@" from op name
+		nickline := strings.Replace(e.Message(), "@", "", -1)
+		logger.Println(nickline)
 		logger.Println("HANDLING SELF JOIN NOT IMPLEMENTED")
 		return
 	}
 	// handle others joining
 	err := deliverOfflineMessage(e.Nick, irc)
 	if err != nil {
-		logger.Println("message delivery failed")
+		logger.Println("message had problems")
 		logger.Println(err.Error())
 	}
 }
@@ -347,6 +353,9 @@ func main() {
 		offlineMessengerCommand(e, irccon, *nick, logger)
 	})
 	irccon.AddCallback("JOIN", func(e *irc.Event) {
+		offlineMessengerDrone(e, irccon, *nick, *ircChannel, logger)
+	})
+	irccon.AddCallback("353", func(e *irc.Event) {
 		offlineMessengerDrone(e, irccon, *nick, *ircChannel, logger)
 	})
 
