@@ -127,14 +127,14 @@ func deliverOfflineMessage(user string, con *irc.Connection) error {
 		return fmt.Errorf("failed to open database file: " + err.Error())
 	}
 	defer db.Close()
-	stmt, err := db.Prepare("SELECT source, content FROM messages WHERE target = ?")
-	if err != nil {
-		return fmt.Errorf("failed to prepare query for stored message: " + err.Error())
-	}
-	defer stmt.Close()
+	/*	stmt, err := db.Prepare("SELECT source, content FROM messages WHERE target = ?")
+		if err != nil {
+			return fmt.Errorf("failed to prepare query for stored message: " + err.Error())
+		}
+		defer stmt.Close()*/
 
 	// query db
-	rows, err := db.Query(user)
+	rows, err := db.Query("SELECT source, content FROM messages WHERE target = ?", user)
 	if err != nil {
 		return fmt.Errorf("query failed: " + err.Error())
 	}
@@ -173,15 +173,16 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, log
 		return
 	}
 
-	// extract message recipient
+	// store the message
 	target := strings.Fields(e.Message())[1]
 	target = strings.Trim(target, ":")
-	msgstart := strings.Index(e.Message(), ":")
+	msgstart := strings.Index(e.Message(), ":") + 1
 	err := saveOfflineMessage(e.Nick, target, e.Message()[msgstart:])
 	if err != nil {
 		logger.Println("offline message command failed")
 		logger.Println(err.Error())
 	}
+	logger.Println("offline message saved")
 }
 
 // Deliver a message from a database. To be used as a callback for JOIN.
@@ -303,6 +304,9 @@ func main() {
 
 	irccon.AddCallback("PRIVMSG", func(e *irc.Event) {
 		offlineMessengerCommand(e, irccon, *nick, logger)
+	})
+	irccon.AddCallback("JOIN", func(e *irc.Event) {
+		offlineMessengerDrone(e, irccon, *ircChannel, logger)
 	})
 
 	logger.Println("starting event loop")
