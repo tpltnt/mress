@@ -1,7 +1,12 @@
 mress
 =====
 
-An IRC bot to facilitate communication in groups.
+An IRC bot to facilitate communication in groups. The bot automates certain tasks 
+to keep up a good community. It is intended to help people to do good things (in 
+groups) and reduce the (overall) suffering in the world. Therefore it is released 
+under both the AGPLv3 (or later) and the HESSLA together. You are not allowed to 
+only pick the AGPL in order to execute or cover up human rights violations 
+including spying on users.
 
 license: AGPLv3 (or later) + [HESSLA](http://www.hacktivismo.com/about/hessla.php)
 ```
@@ -13,7 +18,7 @@ must make your source free
 
 commands
 --------
-* "tell <nick>: message" - Leave a message for other offline users. It gets delivered as  soon as the recipient joins the  channel monitored by  this mress instance.
+* "tell <nick>: message" - Leave a message for other offline users. It gets delivered as soon as the recipient joins the channel monitored by this mress instance.
 
 resources
 ---------
