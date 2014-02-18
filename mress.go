@@ -145,7 +145,7 @@ func deliverOfflineMessage(user string, con *irc.Connection) error {
 		var source string
 		var message string
 		rows.Scan(&source, &message)
-		//TODO: handle information
+		con.Privmsg(user, "from "+source+": "+message+"\n")
 	}
 	rows.Close()
 
@@ -199,7 +199,7 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, channel string, lo
 
 	err := deliverOfflineMessage(e.Nick, irc)
 	if err != nil {
-		logger.Println("message retrieval failed")
+		logger.Println("message delivery failed")
 		logger.Println(err.Error())
 	}
 }
