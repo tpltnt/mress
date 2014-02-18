@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/thoj/go-ircevent"
 	"os"
 	"testing"
 )
@@ -103,6 +104,15 @@ func Test_saveOfflineMessage_5(t *testing.T) {
 	err := saveOfflineMessage("test source", "testtarget", "testmessage")
 	if err == nil {
 		t.Error("source with space not detected")
+	}
+}
+
+func Test_deliverOfflineMessage_0(t *testing.T) {
+	var con *irc.Connection
+	err := deliverOfflineMessage("testuser", con)
+	if err != nil {
+		t.Log("valid call failed")
+		t.Error(err.Error())
 	}
 }
 
