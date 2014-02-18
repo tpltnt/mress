@@ -155,5 +155,52 @@ func Test_deliverOfflineMessage_3(t *testing.T) {
 	}
 }
 
-// deliverOfflineMessage(user string, con *irc.Connection) error
-// offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, logger *log.Logger)
+// callbacks shouldn't explode
+func Test_offlineMessengerCommand_0(t *testing.T) {
+	args := []string{"bla bla foo bar baz"}
+	event := &irc.Event{Arguments: args}
+	con := &irc.Connection{}
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	offlineMessengerCommand(event, con, "testuser", logger)
+}
+
+func Test_offlineMessengerCommand_1(t *testing.T) {
+	con := &irc.Connection{}
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	offlineMessengerCommand(nil, con, "testuser", logger)
+}
+
+func Test_offlineMessengerCommand_2(t *testing.T) {
+	args := []string{"bla bla foo bar baz"}
+	event := &irc.Event{Arguments: args}
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	offlineMessengerCommand(event, nil, "testuser", logger)
+}
+
+func Test_offlineMessengerCommand_3(t *testing.T) {
+	args := []string{"bla bla foo bar baz"}
+	event := &irc.Event{Arguments: args}
+	con := &irc.Connection{}
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	offlineMessengerCommand(event, con, "test user", logger)
+}
+
+func Test_offlineMessengerCommand_4(t *testing.T) {
+	args := []string{"bla bla foo bar baz"}
+	event := &irc.Event{Arguments: args}
+	con := &irc.Connection{}
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	offlineMessengerCommand(event, con, "", logger)
+}
+
+func Test_offlineMessengerCommand_5(t *testing.T) {
+	args := []string{"bla bla foo bar baz"}
+	event := &irc.Event{Arguments: args}
+	con := &irc.Connection{}
+	offlineMessengerCommand(event, con, "testuser", nil)
+}

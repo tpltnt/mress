@@ -167,6 +167,19 @@ func deliverOfflineMessage(user string, con *irc.Connection) error {
 // mress command: tell <nick>: <message>
 // See also offlineMessengerDrone()
 func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, logger *log.Logger) {
+	// sanity checks
+	if e == nil {
+		return
+	}
+	if irc == nil {
+		return
+	}
+	if len(user) == 0 {
+		return
+	}
+	if logger == nil {
+		return
+	}
 	// ignore OTR
 	if 0 == strings.Index(e.Message(), "?OTR") {
 		return
