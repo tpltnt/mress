@@ -140,5 +140,13 @@ func Test_deliverOfflineMessage_1(t *testing.T) {
 	}
 }
 
+func Test_deliverOfflineMessage_2(t *testing.T) {
+	var con *irc.Connection
+	err := deliverOfflineMessage("", con)
+	if err == nil {
+		t.Log("empty username shouldn't be accepted")
+	}
+}
+
 // deliverOfflineMessage(user string, con *irc.Connection) error
 // offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, logger *log.Logger)
