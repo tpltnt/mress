@@ -122,7 +122,7 @@ func Test_deliverOfflineMessage_0(t *testing.T) {
 		t.Error("failed to create database table: " + err.Error())
 	}
 
-	var con *irc.Connection
+	con := &irc.Connection{}
 	err = deliverOfflineMessage("testuser", con)
 	if err != nil {
 		t.Log("valid call failed")
@@ -133,7 +133,7 @@ func Test_deliverOfflineMessage_0(t *testing.T) {
 }
 
 func Test_deliverOfflineMessage_1(t *testing.T) {
-	var con *irc.Connection
+	con := &irc.Connection{}
 	err := deliverOfflineMessage("test user", con)
 	if err == nil {
 		t.Log("username with spaces shouldn't be accepted")
@@ -141,11 +141,32 @@ func Test_deliverOfflineMessage_1(t *testing.T) {
 }
 
 func Test_deliverOfflineMessage_2(t *testing.T) {
-	var con *irc.Connection
+	con := &irc.Connection{}
 	err := deliverOfflineMessage("", con)
 	if err == nil {
 		t.Log("empty username shouldn't be accepted")
 	}
+}
+
+func Test_deliverOfflineMessage_3(t *testing.T) {
+	// prepare db
+	db, err := sql.Open("sqlite3", "./messages.db")
+	if err != nil {
+		t.Error("failed to open database file: " + err.Error())
+	}
+	defer db.Close()
+	sql := `CREATE TABLE IF NOT EXISTS messages (target TEXT, source TEXT, content TEXT);`
+	_, err = db.Exec(sql)
+	if err != nil {
+		t.Error("failed to create database table: " + err.Error())
+	}
+
+	err = deliverOfflineMessage("testuser", nil)
+	if err == nil {
+		t.Log("nil connection pointer shouldn't be accepted")
+	}
+
+	os.Remove("./messages.db")
 }
 
 // deliverOfflineMessage(user string, con *irc.Connection) error

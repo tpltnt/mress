@@ -120,6 +120,9 @@ func deliverOfflineMessage(user string, con *irc.Connection) error {
 	if 0 != strings.Count(user, " ") {
 		return fmt.Errorf("user not allowed to contain whitespace")
 	}
+	if con == nil {
+		return fmt.Errorf("connection pointer is nil")
+	}
 
 	// prepare db
 	db, err := sql.Open("sqlite3", "./messages.db")
