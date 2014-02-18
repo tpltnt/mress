@@ -196,6 +196,22 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, log
 // This implements the delivery part of the offline messenger command.
 // See also offlineMessengerCommand()
 func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, user, channel string, logger *log.Logger) {
+	// sanity checks
+	if e == nil {
+		return
+	}
+	if irc == nil {
+		return
+	}
+	if len(user) == 0 {
+		return
+	}
+	if len(channel) == 0 {
+		return
+	}
+	if logger == nil {
+		return
+	}
 	// ignore OTR -> potentially dead code?
 	if 0 == strings.Index(e.Message(), "?OTR") {
 		return
