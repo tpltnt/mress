@@ -134,7 +134,7 @@ func Test_deliverOfflineMessage_0(t *testing.T) {
 
 func Test_deliverOfflineMessage_1(t *testing.T) {
 	var con *irc.Connection
-	err = deliverOfflineMessage("test user", con)
+	err := deliverOfflineMessage("test user", con)
 	if err == nil {
 		t.Log("username with spaces shouldn't be accepted")
 	}
