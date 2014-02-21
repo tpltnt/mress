@@ -25,7 +25,8 @@ get mress up and running
 ------------------------
 * install a [Go toolchain](http://golang.org/doc/install)
 * install go-ircevent: $go get github.com/thoj/go-ircevent
-* install go-sqlite3: $go get mattn/go-sqlite3
+* install go-sqlite3: $go get github.com/mattn/go-sqlite3
+* install config: $go get github.com/pilu/config
 * run (optional) tests: $go test
 * create executable: $go build mress.go
 * check usage: $./mress --help
@@ -39,4 +40,5 @@ resources
 * [RFC 2812: Internet Relay Chat: Client Protocol](https://tools.ietf.org/html/rfc2812)
 * [RFC 2813: Internet Relay Chat: Server Protocol](https://tools.ietf.org/html/rfc2813)
 * [go-sqlite3](https://github.com/mattn/go-sqlite3): a Go-binding for [sqlite](https://sqlite.org/)
+* [config](https://github.com/pilu/config): a [ini-style](https://en.wikipedia.org/wiki/INI_file) configfile parser
 * [M'Ress](https://en.wikipedia.org/wiki/M%27Ress)
