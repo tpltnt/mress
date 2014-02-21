@@ -189,7 +189,7 @@ func readConfigInt(filename, section, key string, logger *log.Logger) (int, erro
 func main() {
 	configfile := flag.String("config", "config.ini", "configuration file (lower priority if other flags are defined)")
 	logdest := flag.String("log", "", "destination (filename, stdout, stderr) of the log")
-	nick := flag.String("nick", "mress", "nickname")
+	ircNick := flag.String("nick", "mress", "nickname")
 	passwd := flag.String("passwd", "", "server/ident password")
 	ircServer := flag.String("server", "irc.freenode.net", "IRC server hostname")
 	ircPort := flag.Int("port", 6697, "IRC server port")
@@ -224,7 +224,7 @@ func main() {
 	// password
 
 	// create IRC connection
-	irccon := irc.IRC(*nick, "mress")
+	irccon := irc.IRC(*ircNick, "mress")
 	if nil == irccon {
 		logger.Println("creating IRC connection failed")
 	} else {
@@ -266,13 +266,13 @@ func main() {
 	})
 
 	irccon.AddCallback("PRIVMSG", func(e *irc.Event) {
-		offlineMessengerCommand(e, irccon, *nick, logger)
+		offlineMessengerCommand(e, irccon, *ircNick, logger)
 	})
 	irccon.AddCallback("JOIN", func(e *irc.Event) {
-		offlineMessengerDrone(e, irccon, *nick, channel, logger)
+		offlineMessengerDrone(e, irccon, *ircNick, channel, logger)
 	})
 	irccon.AddCallback("353", func(e *irc.Event) {
-		offlineMessengerDrone(e, irccon, *nick, channel, logger)
+		offlineMessengerDrone(e, irccon, *ircNick, channel, logger)
 	})
 
 	logger.Println("starting event loop")
