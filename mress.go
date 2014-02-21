@@ -190,7 +190,7 @@ func main() {
 	configfile := flag.String("config", "config.ini", "configuration file (lower priority if other flags are defined)")
 	logdest := flag.String("log", "", "destination (filename, stdout, stderr) of the log")
 	ircNick := flag.String("nick", "mress", "nickname")
-	passwd := flag.String("passwd", "", "server/ident password")
+	ircPasswd := flag.String("passwd", "", "server/ident password")
 	ircServer := flag.String("server", "irc.freenode.net", "IRC server hostname")
 	ircPort := flag.Int("port", 6697, "IRC server port")
 	ircChannel := flag.String("channel", "", "IRC channel to join")
@@ -238,8 +238,8 @@ func main() {
 		irccon.UseTLS = false
 		logger.Println("using cleartext connection")
 	}
-	irccon.Password = *passwd
-	if 0 < len(*passwd) {
+	irccon.Password = *ircPasswd
+	if 0 < len(*ircPasswd) {
 		logger.Println("password is used")
 	}
 	if *debug {
