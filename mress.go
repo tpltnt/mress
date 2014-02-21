@@ -287,8 +287,39 @@ func msgStdout(e *irc.Event) {
 	fmt.Println(e.Message())
 }
 
+// Build logger and choose commandline values over config file.
+// Return created logger through channel (to facilitate concurrent setups).
+func getLogger(destination, configfile string, logger chan *log.Logger) {
+	dest := ""
+	if len(destination) == 0 {
+		// read config
+		conf, err := goini.LoadConfig(configfile)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "failed to load config for logger\n")
+			logger <- nil
+			return
+		}
+		maint := conf.GetSection("maintainance")
+		if maint == nil {
+			fmt.Fprintf(os.Stderr, "failed to load [maintainance] section\n")
+			logger <- nil
+			return
+		}
+		dest, err = maint.GetString("log-destination")
+		if err == nil {
+			fmt.Fprintf(os.Stderr, "failed to get the 'log-destination' value")
+			logger <- nil
+			return
+		}
+	} else {
+		dest = destination
+	}
+	logger <- createLogger(&dest)
+	return
+}
+
 func main() {
-	configfile := flag.String("config", "", "configuration file (lower priority if other flags are defined)")
+	configfile := flag.String("config", "config.ini", "configuration file (lower priority if other flags are defined)")
 	logdest := flag.String("log", "", "destination (filename, stdout, stderr) of the log")
 	nick := flag.String("nick", "mress", "nickname")
 	passwd := flag.String("passwd", "", "server/ident password")
@@ -299,7 +330,9 @@ func main() {
 	debug := flag.Bool("debug", false, "enable debugging (+flags)")
 	flag.Parse()
 
-	logger := createLogger(logdest)
+	logchan := make(chan *log.Logger)
+	go getLogger(*logdest, *configfile, logchan)
+	logger := <-logchan
 	if nil == logger {
 		fmt.Fprint(os.Stderr, "creating logger failed")
 		os.Exit(1)
@@ -317,6 +350,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	// create IRC connection
 	irccon := irc.IRC(*nick, "mress")
 	if nil == irccon {
 		logger.Println("creating IRC connection failed")
