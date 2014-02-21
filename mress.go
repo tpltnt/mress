@@ -258,21 +258,21 @@ func main() {
 	logger.Println("connecting to server succeeded")
 
 	// collect all config values
-	ircChannel <- chanchan
+	channel := <-chanchan
 	// add callbacks
 	irccon.AddCallback("001", func(e *irc.Event) {
-		logger.Println("joining " + *ircChannel)
-		irccon.Join(*ircChannel)
+		logger.Println("joining " + channel)
+		irccon.Join(channel)
 	})
 
 	irccon.AddCallback("PRIVMSG", func(e *irc.Event) {
 		offlineMessengerCommand(e, irccon, *nick, logger)
 	})
 	irccon.AddCallback("JOIN", func(e *irc.Event) {
-		offlineMessengerDrone(e, irccon, *nick, *ircChannel, logger)
+		offlineMessengerDrone(e, irccon, *nick, channel, logger)
 	})
 	irccon.AddCallback("353", func(e *irc.Event) {
-		offlineMessengerDrone(e, irccon, *nick, *ircChannel, logger)
+		offlineMessengerDrone(e, irccon, *nick, channel, logger)
 	})
 
 	logger.Println("starting event loop")
