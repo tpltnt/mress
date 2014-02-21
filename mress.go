@@ -84,35 +84,60 @@ func msgStdout(e *irc.Event) {
 	fmt.Println(e.Message())
 }
 
-// Build logger and choose commandline values over config file.
+// Build logger and choose commandline value over config file.
 // Return created logger through channel (to facilitate concurrent setups).
 func getLogger(destination, configfile string, logger chan *log.Logger) {
 	dest := ""
 	if len(destination) == 0 {
 		// read config
-		conf, err := goini.LoadConfig(configfile)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "failed to load config for logger\n")
-			logger <- nil
-			return
-		}
-		maint := conf.GetSection("maintainance")
-		if maint == nil {
-			fmt.Fprintf(os.Stderr, "failed to load [maintainance] section\n")
-			logger <- nil
-			return
-		}
-		dest, err = maint.GetString("log-destination")
-		if err == nil {
-			fmt.Fprintf(os.Stderr, "failed to get the 'log-destination' value\n")
-			logger <- nil
-			return
-		}
+		dest, _ = readConfigString(configfile, "maintainance", "log-destination", nil)
 	} else {
 		dest = destination
 	}
 	logger <- createLogger(&dest)
 	return
+}
+
+// Get IRC channel and choose commandline value over config file.
+// Return IRC channel through channel (to facilitate concurrent setups).
+func getChannel(flag, configfile string, channel chan string, logger *log.Logger) {
+	if logger == nil {
+		channel <- ""
+		return
+	}
+	if len(flag) == 0 {
+		irc, err := readConfigString(configfile, "IRC", "channel", logger)
+		if err != nil {
+			return
+		}
+		channel <- irc
+	} else {
+		channel <- flag
+	}
+	return
+}
+
+// Read string from config file
+func readConfigString(filename, section, key string, logger *log.Logger) (string, error) {
+	if logger == nil {
+		return "", fmt.Errorf("logger nil pointer\n")
+	}
+	conf, err := goini.LoadConfig(filename)
+	if err != nil {
+		return "", fmt.Errorf("failed to load configuration\n")
+	}
+	if len(section) == 0 {
+		return "", fmt.Errorf("empty section string\n")
+	}
+	sec := conf.GetSection(section)
+	if sec == nil {
+		return "", fmt.Errorf("failed to load " + section + " section\n")
+	}
+	value, err := sec.GetString(key)
+	if err == nil {
+		return "", fmt.Errorf("failed to get the " + key + " value")
+	}
+	return value, nil
 }
 
 func main() {
