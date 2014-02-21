@@ -108,6 +108,7 @@ func getChannel(flag, configfile string, channel chan string, logger *log.Logger
 	if len(flag) == 0 {
 		irc, err := readConfigString(configfile, "IRC", "channel", logger)
 		if err != nil {
+			logger.Println(err.Error())
 			return
 		}
 		channel <- irc
@@ -115,6 +116,23 @@ func getChannel(flag, configfile string, channel chan string, logger *log.Logger
 		channel <- flag
 	}
 	return
+}
+
+// Get IRC nickname and choose commandline value over config file.
+// Return IRC nickname through channel (to facilitate concurrent setups).
+func getNick(inick, configfile string, channel chan string, logger *log.Logger) {
+	if logger == nil {
+		return
+	}
+	cnick, _ := readConfigString(configfile, "IRC", "nickname", logger)
+	//choose config over default value
+	if "mress" == inick {
+		//default and config value -> config
+		channel <- cnick
+	} else {
+		//non-default flag -> flag (over config)
+		channel <- inick
+	}
 }
 
 // Read string from config file
@@ -216,6 +234,7 @@ func main() {
 	// read config values concurrently with go-routines
 	// roughly according to need
 	nickchan := make(chan string)
+	go getNick(*ircNick, *configfile, nickchan, logger)
 
 	servchan := make(chan string)
 	// server
@@ -230,7 +249,8 @@ func main() {
 	// collect all config values needed
 
 	// create IRC connection
-	irccon := irc.IRC(*ircNick, "mress")
+	nick := <-nickchan
+	irccon := irc.IRC(nick, "mress")
 	if nil == irccon {
 		logger.Println("creating IRC connection failed")
 	} else {
@@ -272,13 +292,13 @@ func main() {
 	})
 
 	irccon.AddCallback("PRIVMSG", func(e *irc.Event) {
-		offlineMessengerCommand(e, irccon, *ircNick, logger)
+		offlineMessengerCommand(e, irccon, nick, logger)
 	})
 	irccon.AddCallback("JOIN", func(e *irc.Event) {
-		offlineMessengerDrone(e, irccon, *ircNick, channel, logger)
+		offlineMessengerDrone(e, irccon, nick, channel, logger)
 	})
 	irccon.AddCallback("353", func(e *irc.Event) {
-		offlineMessengerDrone(e, irccon, *ircNick, channel, logger)
+		offlineMessengerDrone(e, irccon, nick, channel, logger)
 	})
 
 	logger.Println("starting event loop")
