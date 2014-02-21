@@ -104,7 +104,7 @@ func getLogger(destination, configfile string, logger chan *log.Logger) {
 		}
 		dest, err = maint.GetString("log-destination")
 		if err == nil {
-			fmt.Fprintf(os.Stderr, "failed to get the 'log-destination' value")
+			fmt.Fprintf(os.Stderr, "failed to get the 'log-destination' value\n")
 			logger <- nil
 			return
 		}
