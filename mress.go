@@ -214,6 +214,10 @@ func main() {
 	}
 
 	// read config values concurrently with go-routines
+	// roughly according to need
+	nickchan := make(chan string)
+
+	servchan := make(chan string)
 	// server
 	// port
 	// tls
@@ -223,12 +227,18 @@ func main() {
 	// nick
 	// password
 
+	// collect all config values needed
+
 	// create IRC connection
 	irccon := irc.IRC(*ircNick, "mress")
 	if nil == irccon {
 		logger.Println("creating IRC connection failed")
 	} else {
 		logger.Println("creating IRC connection worked")
+	}
+	irccon.Password = *ircPasswd
+	if 0 < len(*ircPasswd) {
+		logger.Println("password is used")
 	}
 	// configure IRC connection
 	if *useTLS {
@@ -237,10 +247,6 @@ func main() {
 	} else {
 		irccon.UseTLS = false
 		logger.Println("using cleartext connection")
-	}
-	irccon.Password = *ircPasswd
-	if 0 < len(*ircPasswd) {
-		logger.Println("password is used")
 	}
 	if *debug {
 		irccon.Debug = true
@@ -257,7 +263,7 @@ func main() {
 	}
 	logger.Println("connecting to server succeeded")
 
-	// collect all config values
+	// collect last config value needed
 	channel := <-chanchan
 	// add callbacks
 	irccon.AddCallback("001", func(e *irc.Event) {
