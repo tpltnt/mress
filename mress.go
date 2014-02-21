@@ -167,10 +167,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	if len(*ircChannel) == 0 {
-		logger.Println("no channel given to join")
-		os.Exit(1)
-	}
+	chanchan := make(chan string)
+	go getChannel(*ircChannel, *configfile, chanchan, logger)
 
 	// create IRC connection
 	irccon := irc.IRC(*nick, "mress")
@@ -206,6 +204,8 @@ func main() {
 	}
 	logger.Println("connecting to server succeeded")
 
+	// collect all config values
+	ircChannel <- chanchan
 	// add callbacks
 	irccon.AddCallback("001", func(e *irc.Event) {
 		logger.Println("joining " + *ircChannel)
