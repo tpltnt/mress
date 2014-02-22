@@ -31,7 +31,16 @@ get mress up and running
 * create executable: $go build mress.go
 * check usage: $./mress --help
 * run mress with flags or config of your choice
-  * To disable TLS and/or use debugging should always be conscious decisions and are therefore not part of the config.
+
+notes on operation
+------------------
+To disable TLS and/or use debugging should always be conscious 
+decisions and are therefore not part of the config.
+If the offline message delivery experiences problems during 
+start-up, do not panic. This is considered normal behavior if the
+message queue/database is empty or missing. It does not indicate 
+any problems (at first). This will be fixed at some point in the 
+future.
 
 
 resources
