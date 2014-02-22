@@ -92,15 +92,15 @@ func main() {
 		irccon.Join(channel)
 	})
 
-	msgDb := <-offlinedbchan
+	offlMsgDb := <-offlinedbchan
 	irccon.AddCallback("001", func(e *irc.Event) {
-		err := initOfflineMessageDatabase(msgDb)
+		err := initOfflineMessageDatabase(offlMsgDb)
 		if err != nil {
 			logger.Println(err.Error())
 		}
 	})
 	irccon.AddCallback("PRIVMSG", func(e *irc.Event) {
-		offlineMessengerCommand(e, irccon, nick, logger)
+		offlineMessengerCommand(e, irccon, nick, offlMsgDb, logger)
 	})
 	irccon.AddCallback("JOIN", func(e *irc.Event) {
 		offlineMessengerDrone(e, irccon, nick, channel, logger)
