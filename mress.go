@@ -90,6 +90,12 @@ func main() {
 		irccon.Join(channel)
 	})
 
+	irccon.AddCallback("001", func(e *irc.Event) {
+		err := initOfflineMessageDatabase()
+		if err != nil {
+			logger.Println(err.Error())
+		}
+	})
 	irccon.AddCallback("PRIVMSG", func(e *irc.Event) {
 		offlineMessengerCommand(e, irccon, nick, logger)
 	})

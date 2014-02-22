@@ -9,6 +9,22 @@ import (
 	"strings"
 )
 
+// Inital setup of database. Handle things as needed to reduce
+// false alarms.
+func initOfflineMessageDatabase() error {
+	db, err := sql.Open("sqlite3", "./messages.db")
+	if err != nil {
+		return fmt.Errorf("failed to open database file: " + err.Error())
+	}
+	defer db.Close()
+	sql := `CREATE TABLE IF NOT EXISTS messages (target TEXT, source TEXT, content TEXT);`
+	_, err = db.Exec(sql)
+	if err != nil {
+		return fmt.Errorf("failed to create database table: " + err.Error())
+	}
+	return nil
+}
+
 // Store a message for a target (user). If saving fails, this fact
 // is going to be logged (but not the message content)
 func saveOfflineMessage(source, target, message string) error {
