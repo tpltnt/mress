@@ -253,8 +253,21 @@ func Test_getLogger_2(t *testing.T) {
 	}
 }
 
-func Test_getChannel(t *testing.T) {
-	testflag := "#foo"
+func Test_getChannel_0(t *testing.T) {
+	testflag := "#bar"
+	config := "test.ini"
+	testchan := make(chan string)
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	go getChannel(testflag, config, testchan, logger)
+	cchannel := <-testchan
+	if cchannel != "#bar" {
+		t.Error("read wrong channel")
+	}
+}
+
+func Test_getChannel_1(t *testing.T) {
+	testflag := ""
 	config := "test.ini"
 	testchan := make(chan string)
 	logdest := "/dev/null"
@@ -263,5 +276,31 @@ func Test_getChannel(t *testing.T) {
 	cchannel := <-testchan
 	if cchannel != "#foo" {
 		t.Error("read wrong channel")
+	}
+}
+
+func Test_getChannel_2(t *testing.T) {
+	testflag := "#bar"
+	config := "test.ini"
+	testchan := make(chan string)
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	go getChannel(testflag, config, testchan, logger)
+	cchannel := <-testchan
+	if cchannel != "#bar" {
+		t.Error("did not select flag over config value")
+	}
+}
+
+func Test_getChannel_3(t *testing.T) {
+	testflag := ""
+	config := "empty_config.ini"
+	testchan := make(chan string)
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	go getChannel(testflag, config, testchan, logger)
+	cchannel := <-testchan
+	if cchannel != "" {
+		t.Error("did not handle empty/missing channel strings")
 	}
 }

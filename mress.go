@@ -88,6 +88,7 @@ func getChannel(flag, configfile string, channel chan string, logger *log.Logger
 		irc, err := readConfigString(configfile, "IRC", "channel", logger)
 		if err != nil {
 			logger.Println(err.Error())
+			channel <- ""
 			return
 		}
 		channel <- irc
