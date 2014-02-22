@@ -30,7 +30,9 @@ get mress up and running
 * run (optional) tests: $go test
 * create executable: $go build mress.go
 * check usage: $./mress --help
-* run mress with flags of your choice
+* run mress with flags or config of your choice
+** To disable TLS and/or use debugging should always be conscious decisions and are therefore not part of the config.
+
 
 resources
 ---------

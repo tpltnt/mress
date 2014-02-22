@@ -172,29 +172,6 @@ func readConfigString(filename, section, key string, logger *log.Logger) (string
 	return value, nil
 }
 
-// Read bool from config file
-func readConfigBool(filename, section, key string, logger *log.Logger) (bool, error) {
-	if logger == nil {
-		return false, fmt.Errorf("logger nil pointer\n")
-	}
-	conf, err := goini.LoadConfig(filename)
-	if err != nil {
-		return false, fmt.Errorf("failed to load configuration\n")
-	}
-	if len(section) == 0 {
-		return false, fmt.Errorf("empty section string\n")
-	}
-	sec := conf.GetSection(section)
-	if sec == nil {
-		return false, fmt.Errorf("failed to load " + section + " section\n")
-	}
-	value, err := sec.GetBool(key)
-	if err == nil {
-		return false, fmt.Errorf("failed to get the " + key + " value")
-	}
-	return value, nil
-}
-
 // Read integer from config file
 func readConfigInt(filename, section, key string, logger *log.Logger) (int, error) {
 	if logger == nil {
@@ -246,22 +223,24 @@ func main() {
 	}
 
 	// determine config values concurrently with go-routines
-	// roughly according to need, choose non-default flags over
-	// config file values
+	// "fork" roughly according to need, choose non-default
+	// flags over config file values, collect config values
+	// later as needed
 	nickchan := make(chan string)
 	go getNick(*ircNick, *configfile, nickchan, logger)
 	servchan := make(chan string)
 	go getServer(*ircServer, *configfile, servchan, logger)
 	portchan := make(chan int)
 	go getPort(*ircPort, *configfile, portchan, logger)
-	// tls
-	// debug
 	chanchan := make(chan string)
 	go getChannel(*ircChannel, *configfile, chanchan, logger)
-	// nick
+	/*	passwdchan := make(chan string)
+		go getPassed(*ircPasswd, *configfile, passwdchan, logger)
+	*/
+	// to disable TLS and/or use debugging should always
+	// be conscious decisions and are therefore not part
+	// of the config.
 	// password
-
-	// collect all config values needed
 
 	// create IRC connection
 	nick := <-nickchan

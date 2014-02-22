@@ -1,6 +1,4 @@
 [maintainance]
-;enable more verbose logging
-debug = true
 ;where to log, choose "" or "/dev/null" to turn off logging
 log-destination = mress.log
 
@@ -9,8 +7,6 @@ log-destination = mress.log
 server = chat.freenode.net
 ;which port to connect to
 port = 6697
-;enabble TLS
-use-tls = true
 ;nickname used on IRC
 nickname = mress
 ;password used for IdentServ
