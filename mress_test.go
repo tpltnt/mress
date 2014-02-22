@@ -260,8 +260,8 @@ func Test_getChannel_0(t *testing.T) {
 	logdest := "/dev/null"
 	logger := createLogger(&logdest)
 	go getChannel(testflag, config, testchan, logger)
-	cchannel := <-testchan
-	if cchannel != "#bar" {
+	cstring := <-testchan
+	if cstring != "#bar" {
 		t.Error("read wrong channel")
 	}
 }
@@ -273,8 +273,8 @@ func Test_getChannel_1(t *testing.T) {
 	logdest := "/dev/null"
 	logger := createLogger(&logdest)
 	go getChannel(testflag, config, testchan, logger)
-	cchannel := <-testchan
-	if cchannel != "#foo" {
+	cstring := <-testchan
+	if cstring != "#foo" {
 		t.Error("read wrong channel")
 	}
 }
@@ -286,8 +286,8 @@ func Test_getChannel_2(t *testing.T) {
 	logdest := "/dev/null"
 	logger := createLogger(&logdest)
 	go getChannel(testflag, config, testchan, logger)
-	cchannel := <-testchan
-	if cchannel != "#bar" {
+	cstring := <-testchan
+	if cstring != "#bar" {
 		t.Error("did not select flag over config value")
 	}
 }
@@ -299,8 +299,8 @@ func Test_getChannel_3(t *testing.T) {
 	logdest := "/dev/null"
 	logger := createLogger(&logdest)
 	go getChannel(testflag, config, testchan, logger)
-	cchannel := <-testchan
-	if cchannel != "" {
+	cstring := <-testchan
+	if cstring != "" {
 		t.Error("did not handle empty/missing channel strings")
 	}
 }
@@ -312,8 +312,8 @@ func Test_getNick_0(t *testing.T) {
 	logdest := "/dev/null"
 	logger := createLogger(&logdest)
 	go getNick(testflag, config, testchan, logger)
-	cnick := <-testchan
-	if cnick != testflag {
+	cstring := <-testchan
+	if cstring != testflag {
 		t.Error("read wrong nick")
 	}
 }
@@ -325,9 +325,9 @@ func Test_getNick_1(t *testing.T) {
 	logdest := "/dev/null"
 	logger := createLogger(&logdest)
 	go getNick(testflag, config, testchan, logger)
-	cnick := <-testchan
-	if cnick != "mress" {
-		t.Error("read wrong nick (" + cnick + ") from config")
+	cstring := <-testchan
+	if cstring != "mress" {
+		t.Error("read wrong nick (" + cstring + ") from config")
 	}
 }
 
@@ -338,8 +338,8 @@ func Test_getNick_2(t *testing.T) {
 	logdest := "/dev/null"
 	logger := createLogger(&logdest)
 	go getNick(testflag, config, testchan, logger)
-	cnick := <-testchan
-	if cnick != "testbot" {
+	cstring := <-testchan
+	if cstring != "testbot" {
 		t.Error("did not select flag over config value")
 	}
 }
@@ -351,61 +351,60 @@ func Test_getNick_3(t *testing.T) {
 	logdest := "/dev/null"
 	logger := createLogger(&logdest)
 	go getNick(testflag, config, testchan, logger)
-	cnick := <-testchan
-	if cnick != "" {
+	cstring := <-testchan
+	if cstring != "" {
 		t.Error("did not handle empty/missing nick strings")
 	}
 }
 
-//getPassword(ipasswd, configfile string, channel chan string, logger *log.Logger)
-func Test_getNick_0(t *testing.T) {
-	testflag := "1234foobar"
+func Test_getPassword_0(t *testing.T) {
+	testflag := "424242"
 	config := "test.ini"
 	testchan := make(chan string)
 	logdest := "/dev/null"
 	logger := createLogger(&logdest)
-	go getNick(testflag, config, testchan, logger)
-	cnick := <-testchan
-	if cnick != testflag {
-		t.Error("read wrong nick")
+	go getPassword(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != testflag {
+		t.Error("read wrong password")
 	}
 }
 
-func Test_getNick_1(t *testing.T) {
+func Test_getPassword_1(t *testing.T) {
 	testflag := ""
 	config := "test.ini"
 	testchan := make(chan string)
 	logdest := "/dev/null"
 	logger := createLogger(&logdest)
-	go getNick(testflag, config, testchan, logger)
-	cnick := <-testchan
-	if cnick != "mress" {
-		t.Error("read wrong nick (" + cnick + ") from config")
+	go getPassword(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "1234foobar" {
+		t.Error("read wrong password (" + cstring + ") from config")
 	}
 }
 
-func Test_getNick_2(t *testing.T) {
-	testflag := "testbot"
+func Test_getPassword_2(t *testing.T) {
+	testflag := "424242"
 	config := "test.ini"
 	testchan := make(chan string)
 	logdest := "/dev/null"
 	logger := createLogger(&logdest)
 	go getNick(testflag, config, testchan, logger)
-	cnick := <-testchan
-	if cnick != "testbot" {
+	cstring := <-testchan
+	if cstring != "424242" {
 		t.Error("did not select flag over config value")
 	}
 }
 
-func Test_getNick_3(t *testing.T) {
+func Test_getPassword_3(t *testing.T) {
 	testflag := ""
 	config := "empty_test.ini"
 	testchan := make(chan string)
 	logdest := "/dev/null"
 	logger := createLogger(&logdest)
 	go getNick(testflag, config, testchan, logger)
-	cnick := <-testchan
-	if cnick != "" {
+	cstring := <-testchan
+	if cstring != "" {
 		t.Error("did not handle empty/missing nick strings")
 	}
 }
