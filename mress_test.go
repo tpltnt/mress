@@ -236,7 +236,6 @@ func Test_getLogger_1(t *testing.T) {
 	conf := "config.ini"
 	logchan := make(chan *log.Logger)
 	go getLogger(dest, conf, logchan)
-	//getLogger(destination, configfile string, logger chan *log.Logger)
 	logger := <-logchan
 	if logger != nil {
 		t.Error("detecting empty destination string failed")
@@ -248,7 +247,6 @@ func Test_getLogger_2(t *testing.T) {
 	conf := ""
 	logchan := make(chan *log.Logger)
 	go getLogger(dest, conf, logchan)
-	//getLogger(destination, configfile string, logger chan *log.Logger)
 	logger := <-logchan
 	if logger != nil {
 		t.Error("detecting empty file path failed")
