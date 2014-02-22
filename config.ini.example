@@ -1,0 +1,15 @@
+[maintainance]
+;where to log, choose "" or "/dev/null" to turn off logging
+log-destination = mress.log
+
+[IRC]
+;which server to connect to
+server = chat.freenode.net
+;which port to connect to
+port = 6697
+;nickname used on IRC
+nickname = mress
+;password used for IdentServ
+password = 
+;which channel to join
+channel = 
