@@ -12,4 +12,4 @@ nickname = mress
 ;password used for IdentServ
 password = 
 ;which channel to join
-channel = 
+channel = #foo

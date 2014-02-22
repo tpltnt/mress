@@ -252,3 +252,16 @@ func Test_getLogger_2(t *testing.T) {
 		t.Error("handling empty file path failed")
 	}
 }
+
+func Test_getChannel(t *testing.T) {
+	testflag := "#foo"
+	config := "test.ini"
+	testchan := make(chan string)
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	go getChannel(testflag, config, testchan, logger)
+	cchannel := <-testchan
+	if cchannel != "#foo" {
+		t.Error("read wrong channel")
+	}
+}
