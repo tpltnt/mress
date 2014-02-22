@@ -4,6 +4,7 @@ import (
 	//"github.com/thoj/go-ircevent"
 	"log"
 	"os"
+	"strconv"
 	"testing"
 )
 
@@ -461,4 +462,54 @@ func Test_getServer_3(t *testing.T) {
 	}
 }
 
-// getPort(iport int, configfile string, channel chan int, logger *log.Logger)
+func Test_getPort_0(t *testing.T) {
+	testflag := 23
+	config := "test.ini"
+	testchan := make(chan int)
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	go getPort(testflag, config, testchan, logger)
+	cint := <-testchan
+	if cint != testflag {
+		t.Error("read wrong port")
+	}
+}
+
+func Test_getPort_1(t *testing.T) {
+	testflag := 0
+	config := "test.ini"
+	testchan := make(chan int)
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	go getPort(testflag, config, testchan, logger)
+	cint := <-testchan
+	if cint != 6697 {
+		t.Error("read wrong port (" + strconv.Itoa(cint) + ") from config")
+	}
+}
+
+func Test_getPort_2(t *testing.T) {
+	testflag := 23
+	config := "test.ini"
+	testchan := make(chan int)
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	go getPort(testflag, config, testchan, logger)
+	cint := <-testchan
+	if cint != 23 {
+		t.Error("did not select flag over config value")
+	}
+}
+
+func Test_getPort_3(t *testing.T) {
+	testflag := 0
+	config := "empty_test.ini"
+	testchan := make(chan int)
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	go getPort(testflag, config, testchan, logger)
+	cint := <-testchan
+	if cint != 0 {
+		t.Error("did not handle missing port numbers")
+	}
+}

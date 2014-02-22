@@ -167,8 +167,8 @@ func getPort(iport int, configfile string, channel chan int, logger *log.Logger)
 		channel <- 0
 		return
 	}
-	//choose config over default value
-	if iport == 6697 {
+	//choose config over "empty" value
+	if iport == 0 {
 		//default and config value -> config
 		channel <- cport
 	} else {
