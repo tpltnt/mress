@@ -187,7 +187,7 @@ func readConfigString(filename, section, key string, logger *log.Logger) (string
 		return "", fmt.Errorf("failed to load " + section + " section\n")
 	}
 	value, err := sec.GetString(key)
-	if err == nil {
+	if err != nil {
 		return "", fmt.Errorf("failed to get the " + key + " value")
 	}
 	return value, nil
