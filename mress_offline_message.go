@@ -11,8 +11,11 @@ import (
 
 // Inital setup of database. Handle things as needed to reduce
 // false alarms.
-func initOfflineMessageDatabase() error {
-	db, err := sql.Open("sqlite3", "./messages.db")
+func initOfflineMessageDatabase(filename string) error {
+	if len(filename) == 0 {
+		return fmt.Errorf("empty filename given")
+	}
+	db, err := sql.Open("sqlite3", filename)
 	if err != nil {
 		return fmt.Errorf("failed to open database file: " + err.Error())
 	}

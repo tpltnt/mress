@@ -8,6 +8,25 @@ import (
 	"testing"
 )
 
+// test db initialization
+func Test_initOfflineMessageDatabase_0(t *testing.T) {
+	err := initOfflineMessageDatabase("testoffline.db")
+	if err != nil {
+		t.Error(err.Error())
+	}
+	err = os.Remove("testoffline.db")
+	if nil != err {
+		t.Error(err.Error())
+	}
+}
+
+func Test_initOfflineMessageDatabase_1(t *testing.T) {
+	err := initOfflineMessageDatabase("")
+	if err == nil {
+		t.Error("empty filename did not yield error")
+	}
+}
+
 // valid transaction
 func Test_saveOfflineMessage_0(t *testing.T) {
 	err := saveOfflineMessage("testsource", "testtarget", "testmessage")

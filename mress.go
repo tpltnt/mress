@@ -19,6 +19,7 @@ func main() {
 	ircChannel := flag.String("channel", "", "IRC channel to join")
 	useTLS := flag.Bool("use-tls", true, "use TLS encrypted connection")
 	debug := flag.Bool("debug", false, "enable debugging (+flags)")
+	msgDb := flag.String("offline-msg-db", "messages.db", "filename of sqlite3 database for offline messages")
 	flag.Parse()
 
 	logchan := make(chan *log.Logger)
@@ -91,7 +92,7 @@ func main() {
 	})
 
 	irccon.AddCallback("001", func(e *irc.Event) {
-		err := initOfflineMessageDatabase()
+		err := initOfflineMessageDatabase(*msgDb)
 		if err != nil {
 			logger.Println(err.Error())
 		}
