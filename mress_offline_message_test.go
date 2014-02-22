@@ -29,11 +29,12 @@ func Test_initOfflineMessageDatabase_1(t *testing.T) {
 
 // valid transaction
 func Test_saveOfflineMessage_0(t *testing.T) {
-	err := saveOfflineMessage("testsource", "testtarget", "testmessage")
+	dbfile := "testmsg.db"
+	err := saveOfflineMessage(dbfile, "testsource", "testtarget", "testmessage")
 	if err != nil {
 		t.Error(err.Error())
 	}
-	err = os.Remove("./messages.db")
+	err = os.Remove(dbfile)
 	if nil != err {
 		t.Error(err.Error())
 	}
@@ -41,41 +42,75 @@ func Test_saveOfflineMessage_0(t *testing.T) {
 
 // empty target
 func Test_saveOfflineMessage_1(t *testing.T) {
-	err := saveOfflineMessage("testsource", "", "testmessage")
+	dbfile := "testmsg.db"
+	err := saveOfflineMessage(dbfile, "testsource", "", "testmessage")
 	if err == nil {
 		t.Error("empty target not detected")
+	}
+	err = os.Remove(dbfile)
+	if nil != err {
+		t.Error(err.Error())
 	}
 }
 
 // target with space
 func Test_saveOfflineMessage_2(t *testing.T) {
-	err := saveOfflineMessage("testsource", "test target", "testmessage")
+	dbfile := "testmsg.db"
+	err := saveOfflineMessage(dbfile, "testsource", "test target", "testmessage")
 	if err == nil {
 		t.Error("target with space not detected")
+	}
+	err = os.Remove(dbfile)
+	if nil != err {
+		t.Error(err.Error())
 	}
 }
 
 // emtpy message
 func Test_saveOfflineMessage_3(t *testing.T) {
-	err := saveOfflineMessage("testsource", "testtarget", "")
+	dbfile := "testmsg.db"
+	err := saveOfflineMessage(dbfile, "testsource", "testtarget", "")
 	if err == nil {
 		t.Error("empty message not detected")
+	}
+	err = os.Remove(dbfile)
+	if nil != err {
+		t.Error(err.Error())
 	}
 }
 
 // empty source
 func Test_saveOfflineMessage_4(t *testing.T) {
-	err := saveOfflineMessage("", "testtarget", "testmessage")
+	dbfile := "testmsg.db"
+	err := saveOfflineMessage(dbfile, "", "testtarget", "testmessage")
 	if err == nil {
 		t.Error("empty source not detected")
+	}
+	err = os.Remove(dbfile)
+	if nil != err {
+		t.Error(err.Error())
 	}
 }
 
 // source with space
 func Test_saveOfflineMessage_5(t *testing.T) {
-	err := saveOfflineMessage("test source", "testtarget", "testmessage")
+	dbfile := "testmsg.db"
+	err := saveOfflineMessage(dbfile, "test source", "testtarget", "testmessage")
 	if err == nil {
 		t.Error("source with space not detected")
+	}
+	err = os.Remove(dbfile)
+	if nil != err {
+		t.Error(err.Error())
+	}
+}
+
+// empty db filename
+func Test_saveOfflineMessage_6(t *testing.T) {
+	dbfile := ""
+	err := saveOfflineMessage(dbfile, "test source", "testtarget", "testmessage")
+	if err == nil {
+		t.Error("empty database filename not detected")
 	}
 }
 
