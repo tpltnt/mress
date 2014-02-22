@@ -56,6 +56,13 @@ func Test_create_Logger_3(t *testing.T) {
 	}
 }
 
+func Test_create_Logger_4(t *testing.T) {
+	logger := createLogger(nil)
+	if logger != nil {
+		t.Error("creating with 'nil' destination didn't fail")
+	}
+}
+
 func Test_getLogger_0(t *testing.T) {
 	dest := "/dev/null"
 	conf := "config.ini"
