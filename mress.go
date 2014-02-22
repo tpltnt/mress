@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/jurka/goini"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/thoj/go-ircevent" // imported as "irc"
 	"io"
 	"log"
