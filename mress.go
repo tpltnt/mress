@@ -135,6 +135,23 @@ func getNick(inick, configfile string, channel chan string, logger *log.Logger) 
 	}
 }
 
+// Get IRC server/hostname and choose commandline value over config file.
+// Return IRC server through channel (to facilitate concurrent setups).
+func getServer(iserver, configfile string, channel chan string, logger *log.Logger) {
+	if logger == nil {
+		return
+	}
+	cserver, _ := readConfigString(configfile, "IRC", "server", logger)
+	//choose config over default value
+	if len(iserver) == 0 {
+		//default and config value -> config
+		channel <- cserver
+	} else {
+		//non-default flag -> flag (over config)
+		channel <- iserver
+	}
+}
+
 // Read string from config file
 func readConfigString(filename, section, key string, logger *log.Logger) (string, error) {
 	if logger == nil {
@@ -209,7 +226,7 @@ func main() {
 	logdest := flag.String("log", "", "destination (filename, stdout, stderr) of the log")
 	ircNick := flag.String("nick", "mress", "nickname")
 	ircPasswd := flag.String("passwd", "", "server/ident password")
-	ircServer := flag.String("server", "irc.freenode.net", "IRC server hostname")
+	ircServer := flag.String("server", "", "IRC server hostname")
 	ircPort := flag.Int("port", 6697, "IRC server port")
 	ircChannel := flag.String("channel", "", "IRC channel to join")
 	useTLS := flag.Bool("use-tls", true, "use TLS encrypted connection")
@@ -231,12 +248,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	// read config values concurrently with go-routines
-	// roughly according to need
+	// determine config values concurrently with go-routines
+	// roughly according to need, choose non-default flags over
+	// config file values
 	nickchan := make(chan string)
 	go getNick(*ircNick, *configfile, nickchan, logger)
 
 	servchan := make(chan string)
+	go getServer(*ircServer, *configfile, servchan, logger)
 	// server
 	// port
 	// tls
@@ -273,7 +292,7 @@ func main() {
 	}
 
 	// connect to server
-	socketstring := *ircServer + ":" + strconv.Itoa(*ircPort)
+	socketstring := <-servchan + ":" + strconv.Itoa(*ircPort)
 	logger.Println("connecting to " + socketstring)
 	err := irccon.Connect(socketstring)
 	if err != nil {
