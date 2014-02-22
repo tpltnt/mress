@@ -19,7 +19,7 @@ func main() {
 	ircChannel := flag.String("channel", "", "IRC channel to join")
 	useTLS := flag.Bool("use-tls", true, "use TLS encrypted connection")
 	debug := flag.Bool("debug", false, "enable debugging (+flags)")
-	msgDb := flag.String("offline-msg-db", "messages.db", "filename of sqlite3 database for offline messages")
+	offlineMsgDb := flag.String("offline-msg-db", "messages.db", "filename of sqlite3 database for offline messages")
 	flag.Parse()
 
 	logchan := make(chan *log.Logger)
@@ -47,7 +47,8 @@ func main() {
 	// to disable TLS and/or use debugging should always
 	// be conscious decisions and are therefore not part
 	// of the config.
-
+	offlinedbchan := make(chan string)
+	go getOfflineDBfilename(*offlineMsgDb, *configfile, offlinedbchan, logger)
 	// create IRC connection
 	nick := <-nickchan
 	irccon := irc.IRC(nick, "mress")
@@ -91,8 +92,9 @@ func main() {
 		irccon.Join(channel)
 	})
 
+	msgDb := <-offlinedbchan
 	irccon.AddCallback("001", func(e *irc.Event) {
-		err := initOfflineMessageDatabase(*msgDb)
+		err := initOfflineMessageDatabase(msgDb)
 		if err != nil {
 			logger.Println(err.Error())
 		}

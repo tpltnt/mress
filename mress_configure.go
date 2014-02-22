@@ -174,6 +174,22 @@ func getPort(iport int, configfile string, channel chan int, logger *log.Logger)
 	}
 }
 
+// read name of database file for offline messages
+func getOfflineDBfilename(dbfile, configfile string, channel chan string, logger *log.Logger) {
+	cdb, err := readConfigString(configfile, "offline messaging", "dbfile", logger)
+	if err != nil {
+		logger.Println(err.Error())
+		channel <- ""
+		return
+	}
+	//choose config over "empty" value
+	if len(dbfile) == 0 {
+		channel <- cdb
+	} else {
+		channel <- dbfile
+	}
+}
+
 // Read string from config file
 func readConfigString(filename, section, key string, logger *log.Logger) (string, error) {
 	if logger == nil {
