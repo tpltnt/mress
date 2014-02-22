@@ -187,12 +187,15 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user, dbfile str
 // Deliver a message from a database. To be used as a callback for JOIN.
 // This implements the delivery part of the offline messenger command.
 // See also offlineMessengerCommand()
-func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, user, channel string, logger *log.Logger) {
+func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbfile, user, channel string, logger *log.Logger) {
 	// sanity checks
 	if e == nil {
 		return
 	}
 	if irc == nil {
+		return
+	}
+	if len(dbfile) == 0 {
 		return
 	}
 	if len(user) == 0 {
@@ -223,7 +226,7 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, user, channel stri
 		nickline := strings.Replace(e.Message(), "@", "", -1)
 		nicklist := strings.Fields(nickline)
 		for i := 0; i < len(nicklist); i++ {
-			err := deliverOfflineMessage(nicklist[i], irc)
+			err := deliverOfflineMessage(dbfile, nicklist[i], irc)
 			if err != nil {
 				logger.Println("delivering stale messages had problems")
 				logger.Println(err.Error())
@@ -232,7 +235,7 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, user, channel stri
 		return
 	}
 	// handle others joining
-	err := deliverOfflineMessage(e.Nick, irc)
+	err := deliverOfflineMessage(dbfile, e.Nick, irc)
 	if err != nil {
 		logger.Println("message delivery had problems")
 		logger.Println(err.Error())
