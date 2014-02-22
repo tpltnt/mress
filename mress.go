@@ -210,7 +210,7 @@ func readConfigInt(filename, section, key string, logger *log.Logger) (int, erro
 		return 0, fmt.Errorf("failed to load " + section + " section\n")
 	}
 	value, err := sec.GetInt(key)
-	if err == nil {
+	if err != nil {
 		return 0, fmt.Errorf("failed to get the " + key + " value")
 	}
 	return value, nil

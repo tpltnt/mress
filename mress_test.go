@@ -2,7 +2,7 @@ package main
 
 import (
 	//"github.com/thoj/go-ircevent"
-	"log"
+	//"log"
 	"os"
 	"testing"
 )
@@ -63,6 +63,22 @@ func Test_create_Logger_4(t *testing.T) {
 	}
 }
 
+func Test_readConfigInt_0(t *testing.T) {
+	config := "config.ini"
+	section := "IRC"
+	key := "port"
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	port, err := readConfigInt(config, section, key, logger)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	if port != 6697 {
+		t.Error("wrong integer read")
+	}
+}
+
+/*
 func Test_getLogger_0(t *testing.T) {
 	dest := "/dev/null"
 	conf := "config.ini"
@@ -74,3 +90,4 @@ func Test_getLogger_0(t *testing.T) {
 		t.Error("creating logger failed")
 	}
 }
+*/
