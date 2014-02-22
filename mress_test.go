@@ -64,7 +64,7 @@ func Test_create_Logger_4(t *testing.T) {
 }
 
 func Test_readConfigInt_0(t *testing.T) {
-	config := "config.ini"
+	config := "test.ini"
 	section := "IRC"
 	key := "port"
 	logdest := "/dev/null"
@@ -97,7 +97,7 @@ func Test_readConfigInt_1(t *testing.T) {
 }
 
 func Test_readConfigInt_2(t *testing.T) {
-	config := "config.ini"
+	config := "test.ini"
 	section := ""
 	key := "port"
 	logdest := "/dev/null"
@@ -112,7 +112,7 @@ func Test_readConfigInt_2(t *testing.T) {
 }
 
 func Test_readConfigInt_3(t *testing.T) {
-	config := "config.ini"
+	config := "test.ini"
 	section := "IRC"
 	key := ""
 	logdest := "/dev/null"
@@ -127,7 +127,7 @@ func Test_readConfigInt_3(t *testing.T) {
 }
 
 func Test_readConfigInt_4(t *testing.T) {
-	config := "empty_config.ini"
+	config := "empty_test.ini"
 	section := "IRC"
 	key := "port"
 	logdest := "/dev/null"
@@ -142,7 +142,7 @@ func Test_readConfigInt_4(t *testing.T) {
 }
 
 func Test_readConfigString_0(t *testing.T) {
-	config := "config.ini"
+	config := "test.ini"
 	section := "IRC"
 	key := "server"
 	logdest := "/dev/null"
@@ -175,7 +175,7 @@ func Test_readConfigString_1(t *testing.T) {
 }
 
 func Test_readConfigString_2(t *testing.T) {
-	config := "config.ini"
+	config := "test.ini"
 	section := ""
 	key := "server"
 	logdest := "/dev/null"
@@ -190,7 +190,7 @@ func Test_readConfigString_2(t *testing.T) {
 }
 
 func Test_readConfigString_3(t *testing.T) {
-	config := "config.ini"
+	config := "test.ini"
 	section := "IRC"
 	key := ""
 	logdest := "/dev/null"
@@ -205,7 +205,7 @@ func Test_readConfigString_3(t *testing.T) {
 }
 
 func Test_readConfigString_4(t *testing.T) {
-	config := "empty_config.ini"
+	config := "empty_test.ini"
 	section := "IRC"
 	key := "server"
 	logdest := "/dev/null"
@@ -221,7 +221,7 @@ func Test_readConfigString_4(t *testing.T) {
 
 func Test_getLogger_0(t *testing.T) {
 	dest := "/dev/null"
-	conf := "config.ini"
+	conf := "test.ini"
 	logchan := make(chan *log.Logger)
 	go getLogger(dest, conf, logchan)
 	//getLogger(destination, configfile string, logger chan *log.Logger)
@@ -233,7 +233,7 @@ func Test_getLogger_0(t *testing.T) {
 
 func Test_getLogger_1(t *testing.T) {
 	dest := ""
-	conf := "config.ini"
+	conf := "test.ini"
 	logchan := make(chan *log.Logger)
 	go getLogger(dest, conf, logchan)
 	logger := <-logchan
@@ -294,7 +294,7 @@ func Test_getChannel_2(t *testing.T) {
 
 func Test_getChannel_3(t *testing.T) {
 	testflag := ""
-	config := "empty_config.ini"
+	config := "empty_test.ini"
 	testchan := make(chan string)
 	logdest := "/dev/null"
 	logger := createLogger(&logdest)
@@ -346,7 +346,7 @@ func Test_getNick_2(t *testing.T) {
 
 func Test_getNick_3(t *testing.T) {
 	testflag := ""
-	config := "empty_config.ini"
+	config := "empty_test.ini"
 	testchan := make(chan string)
 	logdest := "/dev/null"
 	logger := createLogger(&logdest)
@@ -399,7 +399,7 @@ func Test_getNick_2(t *testing.T) {
 
 func Test_getNick_3(t *testing.T) {
 	testflag := ""
-	config := "empty_config.ini"
+	config := "empty_test.ini"
 	testchan := make(chan string)
 	logdest := "/dev/null"
 	logger := createLogger(&logdest)
