@@ -14,6 +14,10 @@ import (
 // Create a Logger which logs to the given destination
 // Valid destinations are files (+path), stdout and stderr
 func createLogger(destination *string) *log.Logger {
+	if destination == nil {
+		fmt.Errorf("given destination pointer is nil\n")
+		return nil
+	}
 	var logdest io.Writer = nil
 	var logfile *os.File = nil
 	var logger *log.Logger = nil
@@ -75,6 +79,7 @@ func getLogger(destination, configfile string, logger chan *log.Logger) {
 
 // Get IRC channel and choose commandline value over config file.
 // Return IRC channel through channel (to facilitate concurrent setups).
+// A returning empty channel indicates errors.
 func getChannel(flag, configfile string, channel chan string, logger *log.Logger) {
 	if logger == nil {
 		channel <- ""
@@ -84,6 +89,7 @@ func getChannel(flag, configfile string, channel chan string, logger *log.Logger
 		irc, err := readConfigString(configfile, "IRC", "channel", logger)
 		if err != nil {
 			logger.Println(err.Error())
+			channel <- ""
 			return
 		}
 		channel <- irc
@@ -95,11 +101,17 @@ func getChannel(flag, configfile string, channel chan string, logger *log.Logger
 
 // Get IRC nickname and choose commandline value over config file.
 // Return IRC nickname through channel (to facilitate concurrent setups).
+// A returning empty nick indicates errors.
 func getNick(inick, configfile string, channel chan string, logger *log.Logger) {
 	if logger == nil {
 		return
 	}
 	cnick, _ := readConfigString(configfile, "IRC", "nickname", logger)
+	// if emtpy flag -> choose config
+	if len(inick) == 0 {
+		channel <- cnick
+		return
+	}
 	//choose config over default value
 	if "mress" == inick {
 		//default and config value -> config
@@ -108,6 +120,7 @@ func getNick(inick, configfile string, channel chan string, logger *log.Logger) 
 		//non-default flag -> flag (over config)
 		channel <- inick
 	}
+	return
 }
 
 // Get IRC server/hostname and choose commandline value over config file.
@@ -146,6 +159,7 @@ func getServer(iserver, configfile string, channel chan string, logger *log.Logg
 
 // Get port to connect to and choose commandline value over config file.
 // Return IRC server through channel (to facilitate concurrent setups).
+// A port number of 0 indicates errors.
 func getPort(iport int, configfile string, channel chan int, logger *log.Logger) {
 	if logger == nil {
 		return
@@ -156,8 +170,8 @@ func getPort(iport int, configfile string, channel chan int, logger *log.Logger)
 		channel <- 0
 		return
 	}
-	//choose config over default value
-	if iport == 6697 {
+	//choose config over "empty" value
+	if iport == 0 {
 		//default and config value -> config
 		channel <- cport
 	} else {
@@ -183,7 +197,7 @@ func readConfigString(filename, section, key string, logger *log.Logger) (string
 		return "", fmt.Errorf("failed to load " + section + " section\n")
 	}
 	value, err := sec.GetString(key)
-	if err == nil {
+	if err != nil {
 		return "", fmt.Errorf("failed to get the " + key + " value")
 	}
 	return value, nil
@@ -206,7 +220,7 @@ func readConfigInt(filename, section, key string, logger *log.Logger) (int, erro
 		return 0, fmt.Errorf("failed to load " + section + " section\n")
 	}
 	value, err := sec.GetInt(key)
-	if err == nil {
+	if err != nil {
 		return 0, fmt.Errorf("failed to get the " + key + " value")
 	}
 	return value, nil
@@ -229,13 +243,6 @@ func main() {
 	logger := <-logchan
 	if nil == logger {
 		fmt.Fprint(os.Stderr, "creating logger failed")
-		os.Exit(1)
-	}
-
-	if 0 == len(*configfile) {
-		fmt.Println("no config file given, using defaults")
-	} else {
-		fmt.Fprintln(os.Stderr, "configuration file parsing not implemented yet")
 		os.Exit(1)
 	}
 
@@ -288,7 +295,7 @@ func main() {
 	if err != nil {
 		logger.Println("connecting to server failed")
 		logger.Println(err.Error())
-		os.Exit(1)
+		os.Exit(2)
 	}
 	logger.Println("connecting to server succeeded")
 
@@ -300,16 +307,16 @@ func main() {
 		irccon.Join(channel)
 	})
 
-	irccon.AddCallback("PRIVMSG", func(e *irc.Event) {
-		offlineMessengerCommand(e, irccon, nick, logger)
-	})
-	irccon.AddCallback("JOIN", func(e *irc.Event) {
-		offlineMessengerDrone(e, irccon, nick, channel, logger)
-	})
-	irccon.AddCallback("353", func(e *irc.Event) {
-		offlineMessengerDrone(e, irccon, nick, channel, logger)
-	})
-
+	/*	irccon.AddCallback("PRIVMSG", func(e *irc.Event) {
+			offlineMessengerCommand(e, irccon, nick, logger)
+		})
+		irccon.AddCallback("JOIN", func(e *irc.Event) {
+			offlineMessengerDrone(e, irccon, nick, channel, logger)
+		})
+		irccon.AddCallback("353", func(e *irc.Event) {
+			offlineMessengerDrone(e, irccon, nick, channel, logger)
+		})
+	*/
 	logger.Println("starting event loop")
 	irccon.Loop()
 }
