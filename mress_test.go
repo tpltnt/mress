@@ -69,5 +69,8 @@ func Test_getLogger_0(t *testing.T) {
 	logchan := make(chan *log.Logger)
 	getLogger(dest, conf, logchan)
 	//getLogger(destination, configfile string, logger chan *log.Logger)
-	<-logchan
+	logger := <-logchan
+	if logger == nil {
+		t.Error("creating logger failed")
+	}
 }
