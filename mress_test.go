@@ -69,6 +69,9 @@ func Test_readConfigInt_0(t *testing.T) {
 	key := "port"
 	logdest := "/dev/null"
 	logger := createLogger(&logdest)
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
 	port, err := readConfigInt(config, section, key, logger)
 	if err != nil {
 		t.Fatal(err.Error())
