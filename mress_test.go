@@ -409,5 +409,56 @@ func Test_getPassword_3(t *testing.T) {
 	}
 }
 
-// getServer(iserver, configfile string, channel chan string, logger *log.Logger)
+func Test_getServer_0(t *testing.T) {
+	testflag := "example.org"
+	config := "test.ini"
+	testchan := make(chan string)
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	go getServer(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != testflag {
+		t.Error("read wrong server")
+	}
+}
+
+func Test_getServer_1(t *testing.T) {
+	testflag := ""
+	config := "test.ini"
+	testchan := make(chan string)
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	go getServer(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "chat.freenode.net" {
+		t.Error("read wrong server (" + cstring + ") from config")
+	}
+}
+
+func Test_getServer_2(t *testing.T) {
+	testflag := "example.org"
+	config := "test.ini"
+	testchan := make(chan string)
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	go getServer(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "example.org" {
+		t.Error("did not select flag over config value")
+	}
+}
+
+func Test_getServer_3(t *testing.T) {
+	testflag := ""
+	config := "empty_test.ini"
+	testchan := make(chan string)
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	go getServer(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "" {
+		t.Error("did not handle empty/missing server strings")
+	}
+}
+
 // getPort(iport int, configfile string, channel chan int, logger *log.Logger)
