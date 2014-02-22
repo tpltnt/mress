@@ -141,6 +141,84 @@ func Test_readConfigInt_4(t *testing.T) {
 	}
 }
 
+func Test_readConfigString_0(t *testing.T) {
+	config := "config.ini"
+	section := "IRC"
+	key := "server"
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	server, err := readConfigString(config, section, key, logger)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	if server != "chat.freenode.net" {
+		t.Error("wrong server read")
+	}
+}
+
+func Test_readConfigString_1(t *testing.T) {
+	config := ""
+	section := "IRC"
+	key := "server"
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	_, err := readConfigString(config, section, key, logger)
+	if err == nil {
+		t.Error("failed to detect empty configuration file path")
+	}
+}
+
+func Test_readConfigString_2(t *testing.T) {
+	config := "config.ini"
+	section := ""
+	key := "server"
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	_, err := readConfigString(config, section, key, logger)
+	if err == nil {
+		t.Fatal("failed to detect empty section string")
+	}
+}
+
+func Test_readConfigString_3(t *testing.T) {
+	config := "config.ini"
+	section := "IRC"
+	key := ""
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	_, err := readConfigString(config, section, key, logger)
+	if err == nil {
+		t.Error("failed to detect empty key string")
+	}
+}
+
+func Test_readConfigString_4(t *testing.T) {
+	config := "empty_config.ini"
+	section := "IRC"
+	key := "server"
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	_, err := readConfigString(config, section, key, logger)
+	if err == nil {
+		t.Error("failed to detect missing entries in config")
+	}
+}
+
 /*
 func Test_getLogger_0(t *testing.T) {
 	dest := "/dev/null"
