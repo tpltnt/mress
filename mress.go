@@ -112,6 +112,23 @@ func getNick(inick, configfile string, channel chan string, logger *log.Logger) 
 
 // Get IRC server/hostname and choose commandline value over config file.
 // Return IRC server through channel (to facilitate concurrent setups).
+func getPassword(ipasswd, configfile string, channel chan string, logger *log.Logger) {
+	if logger == nil {
+		return
+	}
+	cpasswd, _ := readConfigString(configfile, "IRC", "password", logger)
+	//choose config over default value
+	if len(ipasswd) == 0 {
+		//default and config value -> config
+		channel <- cpasswd
+	} else {
+		//non-default flag -> flag (over config)
+		channel <- ipasswd
+	}
+}
+
+// Get IRC server/hostname and choose commandline value over config file.
+// Return IRC server through channel (to facilitate concurrent setups).
 func getServer(iserver, configfile string, channel chan string, logger *log.Logger) {
 	if logger == nil {
 		return
@@ -228,19 +245,17 @@ func main() {
 	// later as needed
 	nickchan := make(chan string)
 	go getNick(*ircNick, *configfile, nickchan, logger)
+	passwdchan := make(chan string)
+	go getPassword(*ircPasswd, *configfile, passwdchan, logger)
 	servchan := make(chan string)
 	go getServer(*ircServer, *configfile, servchan, logger)
 	portchan := make(chan int)
 	go getPort(*ircPort, *configfile, portchan, logger)
 	chanchan := make(chan string)
 	go getChannel(*ircChannel, *configfile, chanchan, logger)
-	/*	passwdchan := make(chan string)
-		go getPassed(*ircPasswd, *configfile, passwdchan, logger)
-	*/
 	// to disable TLS and/or use debugging should always
 	// be conscious decisions and are therefore not part
 	// of the config.
-	// password
 
 	// create IRC connection
 	nick := <-nickchan
@@ -250,8 +265,8 @@ func main() {
 	} else {
 		logger.Println("creating IRC connection worked")
 	}
-	irccon.Password = *ircPasswd
-	if 0 < len(*ircPasswd) {
+	irccon.Password = <-passwdchan
+	if 0 < len(irccon.Password) {
 		logger.Println("password is used")
 	}
 	// configure IRC connection
