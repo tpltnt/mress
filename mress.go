@@ -105,6 +105,11 @@ func getNick(inick, configfile string, channel chan string, logger *log.Logger) 
 		return
 	}
 	cnick, _ := readConfigString(configfile, "IRC", "nickname", logger)
+	// if emtpy flag -> choose config
+	if len(inick) == 0 {
+		channel <- cnick
+		return
+	}
 	//choose config over default value
 	if "mress" == inick {
 		//default and config value -> config
@@ -113,6 +118,7 @@ func getNick(inick, configfile string, channel chan string, logger *log.Logger) 
 		//non-default flag -> flag (over config)
 		channel <- inick
 	}
+	return
 }
 
 // Get IRC server/hostname and choose commandline value over config file.
