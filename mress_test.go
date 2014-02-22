@@ -2,6 +2,7 @@ package main
 
 import (
 	//"github.com/thoj/go-ircevent"
+	"log"
 	"os"
 	"testing"
 )
@@ -53,4 +54,13 @@ func Test_create_Logger_3(t *testing.T) {
 	if nil != err {
 		t.Error(err.Error())
 	}
+}
+
+func Test_getLogger_0(t *testing.T) {
+	dest := "/dev/null"
+	conf := "config.ini"
+	logchan := make(chan *log.Logger)
+	getLogger(dest, conf, logchan)
+	//getLogger(destination, configfile string, logger chan *log.Logger)
+	<-logchan
 }

@@ -14,6 +14,10 @@ import (
 // Create a Logger which logs to the given destination
 // Valid destinations are files (+path), stdout and stderr
 func createLogger(destination *string) *log.Logger {
+	if destination == nil {
+		fmt.Errorf("given destination pointer is nil\n")
+		return nil
+	}
 	var logdest io.Writer = nil
 	var logfile *os.File = nil
 	var logger *log.Logger = nil
@@ -232,13 +236,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	if 0 == len(*configfile) {
-		fmt.Println("no config file given, using defaults")
-	} else {
-		fmt.Fprintln(os.Stderr, "configuration file parsing not implemented yet")
-		os.Exit(1)
-	}
-
 	// determine config values concurrently with go-routines
 	// "fork" roughly according to need, choose non-default
 	// flags over config file values, collect config values
@@ -288,7 +285,7 @@ func main() {
 	if err != nil {
 		logger.Println("connecting to server failed")
 		logger.Println(err.Error())
-		os.Exit(1)
+		os.Exit(2)
 	}
 	logger.Println("connecting to server succeeded")
 
@@ -300,16 +297,16 @@ func main() {
 		irccon.Join(channel)
 	})
 
-	irccon.AddCallback("PRIVMSG", func(e *irc.Event) {
-		offlineMessengerCommand(e, irccon, nick, logger)
-	})
-	irccon.AddCallback("JOIN", func(e *irc.Event) {
-		offlineMessengerDrone(e, irccon, nick, channel, logger)
-	})
-	irccon.AddCallback("353", func(e *irc.Event) {
-		offlineMessengerDrone(e, irccon, nick, channel, logger)
-	})
-
+	/*	irccon.AddCallback("PRIVMSG", func(e *irc.Event) {
+			offlineMessengerCommand(e, irccon, nick, logger)
+		})
+		irccon.AddCallback("JOIN", func(e *irc.Event) {
+			offlineMessengerDrone(e, irccon, nick, channel, logger)
+		})
+		irccon.AddCallback("353", func(e *irc.Event) {
+			offlineMessengerDrone(e, irccon, nick, channel, logger)
+		})
+	*/
 	logger.Println("starting event loop")
 	irccon.Loop()
 }
