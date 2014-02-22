@@ -169,5 +169,3 @@ func Test_offlineMessengerCommand_5(t *testing.T) {
 	con := &irc.Connection{}
 	offlineMessengerCommand(event, con, "testuser", nil)
 }
-
-// getOfflineDBfilename(dbfile, configfile string, channel chan string, logger *log.Logger)

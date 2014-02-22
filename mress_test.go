@@ -483,3 +483,52 @@ func Test_getPort_3(t *testing.T) {
 		t.Error("did not handle missing port numbers")
 	}
 }
+
+// test determining database filename
+func Test_getOfflineDBfilename_0(t *testing.T) {
+	testflag := "foobar.db"
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineDBfilename(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != testflag {
+		t.Error("read wrong database filename")
+	}
+}
+
+func Test_getOfflineDBfilename_1(t *testing.T) {
+	testflag := ""
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineDBfilename(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "messages.db" {
+		t.Error("read wrong filename (" + cstring + ") from config")
+	}
+}
+
+func Test_getOfflineDBfilename_2(t *testing.T) {
+	testflag := "foobar.db"
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineDBfilename(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "foobar.db" {
+		t.Error("did not select flag over config value")
+	}
+}
+
+func Test_getOfflineDBfilename_3(t *testing.T) {
+	testflag := ""
+	config := "empty_test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineDBfilename(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "" {
+		t.Error("did not handle empty/missing database filename")
+	}
+}
