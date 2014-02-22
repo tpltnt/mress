@@ -237,8 +237,8 @@ func Test_getLogger_1(t *testing.T) {
 	logchan := make(chan *log.Logger)
 	go getLogger(dest, conf, logchan)
 	logger := <-logchan
-	if logger != nil {
-		t.Error("detecting empty destination string failed")
+	if logger == nil {
+		t.Error("handling empty destination string failed")
 	}
 }
 
@@ -248,7 +248,7 @@ func Test_getLogger_2(t *testing.T) {
 	logchan := make(chan *log.Logger)
 	go getLogger(dest, conf, logchan)
 	logger := <-logchan
-	if logger != nil {
-		t.Error("detecting empty file path failed")
+	if logger == nil {
+		t.Error("handling empty file path failed")
 	}
 }
