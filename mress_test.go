@@ -81,6 +81,66 @@ func Test_readConfigInt_0(t *testing.T) {
 	}
 }
 
+func Test_readConfigInt_1(t *testing.T) {
+	config := ""
+	section := "IRC"
+	key := "port"
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	_, err := readConfigInt(config, section, key, logger)
+	if err == nil {
+		t.Error("failed to detect empty configuration file path")
+	}
+}
+
+func Test_readConfigInt_2(t *testing.T) {
+	config := "config.ini"
+	section := ""
+	key := "port"
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	_, err := readConfigInt(config, section, key, logger)
+	if err == nil {
+		t.Fatal("failed to detect empty section string")
+	}
+}
+
+func Test_readConfigInt_3(t *testing.T) {
+	config := "config.ini"
+	section := "IRC"
+	key := ""
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	_, err := readConfigInt(config, section, key, logger)
+	if err == nil {
+		t.Error("failed to detect empty key string")
+	}
+}
+
+func Test_readConfigInt_4(t *testing.T) {
+	config := "empty_config.ini"
+	section := "IRC"
+	key := "port"
+	logdest := "/dev/null"
+	logger := createLogger(&logdest)
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	_, err := readConfigInt(config, section, key, logger)
+	if err == nil {
+		t.Error("failed to detect missing entries in config")
+	}
+}
+
 /*
 func Test_getLogger_0(t *testing.T) {
 	dest := "/dev/null"
