@@ -79,6 +79,7 @@ func getLogger(destination, configfile string, logger chan *log.Logger) {
 
 // Get IRC channel and choose commandline value over config file.
 // Return IRC channel through channel (to facilitate concurrent setups).
+// A returning empty channel indicates errors.
 func getChannel(flag, configfile string, channel chan string, logger *log.Logger) {
 	if logger == nil {
 		channel <- ""
@@ -100,6 +101,7 @@ func getChannel(flag, configfile string, channel chan string, logger *log.Logger
 
 // Get IRC nickname and choose commandline value over config file.
 // Return IRC nickname through channel (to facilitate concurrent setups).
+// A returning empty nick indicates errors.
 func getNick(inick, configfile string, channel chan string, logger *log.Logger) {
 	if logger == nil {
 		return
@@ -157,6 +159,7 @@ func getServer(iserver, configfile string, channel chan string, logger *log.Logg
 
 // Get port to connect to and choose commandline value over config file.
 // Return IRC server through channel (to facilitate concurrent setups).
+// A port number of 0 indicates errors.
 func getPort(iport int, configfile string, channel chan int, logger *log.Logger) {
 	if logger == nil {
 		return
