@@ -13,27 +13,23 @@ import (
 
 // Create a Logger which logs to the given destination
 // Valid destinations are files (+path), stdout and stderr
-func createLogger(destination *string) *log.Logger {
-	if destination == nil {
-		fmt.Errorf("given destination pointer is nil\n")
-		return nil
-	}
+func createLogger(destination string) *log.Logger {
 	var logdest io.Writer = nil
 	var logfile *os.File = nil
 	var logger *log.Logger = nil
 	var err error
-	if len(*destination) > 0 {
-		switch *destination {
+	if len(destination) > 0 {
+		switch destination {
 		case "stdout":
 			logdest = os.Stdout
 		case "stderr":
 			logdest = os.Stderr
 		default:
 			// assuming the logfile already exists
-			logfile, err = os.OpenFile(*destination, os.O_WRONLY|os.O_APPEND, 0644)
+			logfile, err = os.OpenFile(destination, os.O_WRONLY|os.O_APPEND, 0644)
 			if nil != err {
 				// it didn't, so create a new one
-				logfile, err = os.Create(*destination)
+				logfile, err = os.Create(destination)
 				if nil != err {
 					fmt.Fprintln(os.Stderr, err.Error())
 					return nil
@@ -73,7 +69,7 @@ func getLogger(destination, configfile string, logger chan *log.Logger) {
 	} else {
 		dest = destination
 	}
-	logger <- createLogger(&dest)
+	logger <- createLogger(dest)
 	return
 }
 

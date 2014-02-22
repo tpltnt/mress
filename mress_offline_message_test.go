@@ -111,23 +111,20 @@ func Test_offlineMessengerCommand_0(t *testing.T) {
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	offlineMessengerCommand(event, con, "testuser", logger)
 }
 
 func Test_offlineMessengerCommand_1(t *testing.T) {
 	con := &irc.Connection{}
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	offlineMessengerCommand(nil, con, "testuser", logger)
 }
 
 func Test_offlineMessengerCommand_2(t *testing.T) {
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	offlineMessengerCommand(event, nil, "testuser", logger)
 }
 
@@ -135,8 +132,7 @@ func Test_offlineMessengerCommand_3(t *testing.T) {
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	offlineMessengerCommand(event, con, "test user", logger)
 }
 
@@ -144,8 +140,7 @@ func Test_offlineMessengerCommand_4(t *testing.T) {
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	offlineMessengerCommand(event, con, "", logger)
 }
 

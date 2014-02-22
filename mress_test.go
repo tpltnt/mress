@@ -12,7 +12,7 @@ import (
 // TODO acually check stdout
 func Test_create_Logger_1(t *testing.T) {
 	dest := "stdout"
-	logger := createLogger(&dest)
+	logger := createLogger(dest)
 	if logger == nil {
 		t.Error("creating logger to '" + dest + "' returned 'nil'")
 	}
@@ -22,7 +22,7 @@ func Test_create_Logger_1(t *testing.T) {
 // TODO actually check stderr
 func Test_create_Logger_2(t *testing.T) {
 	dest := "stderr"
-	logger := createLogger(&dest)
+	logger := createLogger("stderr")
 	if logger == nil {
 		t.Error("creating logger to '" + dest + "' returned 'nil'")
 	}
@@ -31,7 +31,7 @@ func Test_create_Logger_2(t *testing.T) {
 // test logfile destination
 func Test_create_Logger_3(t *testing.T) {
 	dest := "test-logger.log"
-	logger := createLogger(&dest)
+	logger := createLogger(dest)
 	if logger == nil {
 		t.Error("creating logger to '" + dest + "' returned 'nil'")
 	}
@@ -58,9 +58,9 @@ func Test_create_Logger_3(t *testing.T) {
 }
 
 func Test_create_Logger_4(t *testing.T) {
-	logger := createLogger(nil)
-	if logger != nil {
-		t.Error("creating with 'nil' destination didn't fail")
+	logger := createLogger("")
+	if logger == nil {
+		t.Error("creating with empty destination did fail")
 	}
 }
 
@@ -68,8 +68,7 @@ func Test_readConfigInt_0(t *testing.T) {
 	config := "test.ini"
 	section := "IRC"
 	key := "port"
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	if logger == nil {
 		t.Log("creating test logger failed")
 	}
@@ -86,8 +85,7 @@ func Test_readConfigInt_1(t *testing.T) {
 	config := ""
 	section := "IRC"
 	key := "port"
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	if logger == nil {
 		t.Log("creating test logger failed")
 	}
@@ -101,8 +99,7 @@ func Test_readConfigInt_2(t *testing.T) {
 	config := "test.ini"
 	section := ""
 	key := "port"
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	if logger == nil {
 		t.Log("creating test logger failed")
 	}
@@ -116,8 +113,7 @@ func Test_readConfigInt_3(t *testing.T) {
 	config := "test.ini"
 	section := "IRC"
 	key := ""
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	if logger == nil {
 		t.Log("creating test logger failed")
 	}
@@ -131,8 +127,7 @@ func Test_readConfigInt_4(t *testing.T) {
 	config := "empty_test.ini"
 	section := "IRC"
 	key := "port"
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	if logger == nil {
 		t.Log("creating test logger failed")
 	}
@@ -146,8 +141,7 @@ func Test_readConfigString_0(t *testing.T) {
 	config := "test.ini"
 	section := "IRC"
 	key := "server"
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	if logger == nil {
 		t.Log("creating test logger failed")
 	}
@@ -164,8 +158,7 @@ func Test_readConfigString_1(t *testing.T) {
 	config := ""
 	section := "IRC"
 	key := "server"
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	if logger == nil {
 		t.Log("creating test logger failed")
 	}
@@ -179,8 +172,7 @@ func Test_readConfigString_2(t *testing.T) {
 	config := "test.ini"
 	section := ""
 	key := "server"
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	if logger == nil {
 		t.Log("creating test logger failed")
 	}
@@ -194,8 +186,7 @@ func Test_readConfigString_3(t *testing.T) {
 	config := "test.ini"
 	section := "IRC"
 	key := ""
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	if logger == nil {
 		t.Log("creating test logger failed")
 	}
@@ -209,8 +200,7 @@ func Test_readConfigString_4(t *testing.T) {
 	config := "empty_test.ini"
 	section := "IRC"
 	key := "server"
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	if logger == nil {
 		t.Log("creating test logger failed")
 	}
@@ -221,7 +211,7 @@ func Test_readConfigString_4(t *testing.T) {
 }
 
 func Test_getLogger_0(t *testing.T) {
-	dest := "/dev/null"
+	dest := ""
 	conf := "test.ini"
 	logchan := make(chan *log.Logger)
 	go getLogger(dest, conf, logchan)
@@ -244,7 +234,7 @@ func Test_getLogger_1(t *testing.T) {
 }
 
 func Test_getLogger_2(t *testing.T) {
-	dest := "/dev/null"
+	dest := ""
 	conf := ""
 	logchan := make(chan *log.Logger)
 	go getLogger(dest, conf, logchan)
@@ -258,8 +248,7 @@ func Test_getChannel_0(t *testing.T) {
 	testflag := "#bar"
 	config := "test.ini"
 	testchan := make(chan string)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getChannel(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != "#bar" {
@@ -271,8 +260,7 @@ func Test_getChannel_1(t *testing.T) {
 	testflag := ""
 	config := "test.ini"
 	testchan := make(chan string)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getChannel(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != "#foo" {
@@ -284,8 +272,7 @@ func Test_getChannel_2(t *testing.T) {
 	testflag := "#bar"
 	config := "test.ini"
 	testchan := make(chan string)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getChannel(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != "#bar" {
@@ -297,8 +284,7 @@ func Test_getChannel_3(t *testing.T) {
 	testflag := ""
 	config := "empty_test.ini"
 	testchan := make(chan string)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getChannel(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != "" {
@@ -310,8 +296,7 @@ func Test_getNick_0(t *testing.T) {
 	testflag := "testbot"
 	config := "test.ini"
 	testchan := make(chan string)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getNick(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != testflag {
@@ -323,8 +308,7 @@ func Test_getNick_1(t *testing.T) {
 	testflag := ""
 	config := "test.ini"
 	testchan := make(chan string)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getNick(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != "mress" {
@@ -336,8 +320,7 @@ func Test_getNick_2(t *testing.T) {
 	testflag := "testbot"
 	config := "test.ini"
 	testchan := make(chan string)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getNick(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != "testbot" {
@@ -349,8 +332,7 @@ func Test_getNick_3(t *testing.T) {
 	testflag := ""
 	config := "empty_test.ini"
 	testchan := make(chan string)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getNick(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != "" {
@@ -362,8 +344,7 @@ func Test_getPassword_0(t *testing.T) {
 	testflag := "424242"
 	config := "test.ini"
 	testchan := make(chan string)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getPassword(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != testflag {
@@ -375,8 +356,7 @@ func Test_getPassword_1(t *testing.T) {
 	testflag := ""
 	config := "test.ini"
 	testchan := make(chan string)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getPassword(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != "1234foobar" {
@@ -388,8 +368,7 @@ func Test_getPassword_2(t *testing.T) {
 	testflag := "424242"
 	config := "test.ini"
 	testchan := make(chan string)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getNick(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != "424242" {
@@ -401,8 +380,7 @@ func Test_getPassword_3(t *testing.T) {
 	testflag := ""
 	config := "empty_test.ini"
 	testchan := make(chan string)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getNick(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != "" {
@@ -414,8 +392,7 @@ func Test_getServer_0(t *testing.T) {
 	testflag := "example.org"
 	config := "test.ini"
 	testchan := make(chan string)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getServer(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != testflag {
@@ -427,8 +404,7 @@ func Test_getServer_1(t *testing.T) {
 	testflag := ""
 	config := "test.ini"
 	testchan := make(chan string)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getServer(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != "chat.freenode.net" {
@@ -440,8 +416,7 @@ func Test_getServer_2(t *testing.T) {
 	testflag := "example.org"
 	config := "test.ini"
 	testchan := make(chan string)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getServer(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != "example.org" {
@@ -453,8 +428,7 @@ func Test_getServer_3(t *testing.T) {
 	testflag := ""
 	config := "empty_test.ini"
 	testchan := make(chan string)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getServer(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != "" {
@@ -466,8 +440,7 @@ func Test_getPort_0(t *testing.T) {
 	testflag := 23
 	config := "test.ini"
 	testchan := make(chan int)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getPort(testflag, config, testchan, logger)
 	cint := <-testchan
 	if cint != testflag {
@@ -479,8 +452,7 @@ func Test_getPort_1(t *testing.T) {
 	testflag := 0
 	config := "test.ini"
 	testchan := make(chan int)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getPort(testflag, config, testchan, logger)
 	cint := <-testchan
 	if cint != 6697 {
@@ -492,8 +464,7 @@ func Test_getPort_2(t *testing.T) {
 	testflag := 23
 	config := "test.ini"
 	testchan := make(chan int)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getPort(testflag, config, testchan, logger)
 	cint := <-testchan
 	if cint != 23 {
@@ -505,8 +476,7 @@ func Test_getPort_3(t *testing.T) {
 	testflag := 0
 	config := "empty_test.ini"
 	testchan := make(chan int)
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
+	logger := createLogger("")
 	go getPort(testflag, config, testchan, logger)
 	cint := <-testchan
 	if cint != 0 {
