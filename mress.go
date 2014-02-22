@@ -152,6 +152,28 @@ func getServer(iserver, configfile string, channel chan string, logger *log.Logg
 	}
 }
 
+// Get port to connect to and choose commandline value over config file.
+// Return IRC server through channel (to facilitate concurrent setups).
+func getPort(iport int, configfile string, channel chan int, logger *log.Logger) {
+	if logger == nil {
+		return
+	}
+	cport, err := readConfigInt(configfile, "IRC", "port", logger)
+	if err != nil {
+		logger.Println(err.Error())
+		channel <- 0
+		return
+	}
+	//choose config over default value
+	if iport == 6697 {
+		//default and config value -> config
+		channel <- cport
+	} else {
+		//non-default flag -> flag (over config)
+		channel <- iport
+	}
+}
+
 // Read string from config file
 func readConfigString(filename, section, key string, logger *log.Logger) (string, error) {
 	if logger == nil {
@@ -253,11 +275,10 @@ func main() {
 	// config file values
 	nickchan := make(chan string)
 	go getNick(*ircNick, *configfile, nickchan, logger)
-
 	servchan := make(chan string)
 	go getServer(*ircServer, *configfile, servchan, logger)
-	// server
-	// port
+	portchan := make(chan int)
+	go getPort(*ircPort, *configfile, portchan, logger)
 	// tls
 	// debug
 	chanchan := make(chan string)
@@ -292,7 +313,7 @@ func main() {
 	}
 
 	// connect to server
-	socketstring := <-servchan + ":" + strconv.Itoa(*ircPort)
+	socketstring := <-servchan + ":" + strconv.Itoa(<-portchan)
 	logger.Println("connecting to " + socketstring)
 	err := irccon.Connect(socketstring)
 	if err != nil {
