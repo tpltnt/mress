@@ -230,3 +230,27 @@ func Test_getLogger_0(t *testing.T) {
 		t.Error("creating logger failed")
 	}
 }
+
+func Test_getLogger_1(t *testing.T) {
+	dest := ""
+	conf := "config.ini"
+	logchan := make(chan *log.Logger)
+	go getLogger(dest, conf, logchan)
+	//getLogger(destination, configfile string, logger chan *log.Logger)
+	logger := <-logchan
+	if logger != nil {
+		t.Error("detecting empty destination string failed")
+	}
+}
+
+func Test_getLogger_2(t *testing.T) {
+	dest := "/dev/null"
+	conf := ""
+	logchan := make(chan *log.Logger)
+	go getLogger(dest, conf, logchan)
+	//getLogger(destination, configfile string, logger chan *log.Logger)
+	logger := <-logchan
+	if logger != nil {
+		t.Error("detecting empty file path failed")
+	}
+}
