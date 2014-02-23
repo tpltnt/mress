@@ -47,3 +47,12 @@ resources
 * [go-sqlite3](https://github.com/mattn/go-sqlite3): a Go-binding for [sqlite](https://sqlite.org/)
 * [goini](https://github.com/jurka/goini): a [ini-style](https://en.wikipedia.org/wiki/INI_file) configfile parser ([documentation](http://godoc.org/github.com/jurka/goini)
 * [M'Ress](https://en.wikipedia.org/wiki/M%27Ress)
+
+version history
+---------------
+* v0.25
+  * offline message db filename as parameter
+  * configuration code in extra file
+  * concurrent parsing of config file
+* v0.2
+  * enable offline messages
