@@ -180,45 +180,65 @@ func Test_deliverOfflineMessage_4(t *testing.T) {
 
 // callbacks shouldn't explode
 func Test_offlineMessengerCommand_0(t *testing.T) {
+	dbfile := "testmsg.db"
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
 	logger := createLogger("")
-	offlineMessengerCommand(event, con, "testuser", logger)
+	offlineMessengerCommand(event, con, "testuser", dbfile, logger)
+	os.Remove(dbfile)
 }
 
 func Test_offlineMessengerCommand_1(t *testing.T) {
+	dbfile := "testmsg.db"
 	con := &irc.Connection{}
 	logger := createLogger("")
-	offlineMessengerCommand(nil, con, "testuser", logger)
+	offlineMessengerCommand(nil, con, "testuser", dbfile, logger)
+	os.Remove(dbfile)
 }
 
 func Test_offlineMessengerCommand_2(t *testing.T) {
+	dbfile := "testmsg.db"
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	logger := createLogger("")
-	offlineMessengerCommand(event, nil, "testuser", logger)
+	offlineMessengerCommand(event, nil, "testuser", dbfile, logger)
+	os.Remove(dbfile)
 }
 
 func Test_offlineMessengerCommand_3(t *testing.T) {
+	dbfile := "testmsg.db"
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
 	logger := createLogger("")
-	offlineMessengerCommand(event, con, "test user", logger)
+	offlineMessengerCommand(event, con, "test user", dbfile, logger)
+	os.Remove(dbfile)
 }
 
 func Test_offlineMessengerCommand_4(t *testing.T) {
+	dbfile := "testmsg.db"
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
 	logger := createLogger("")
-	offlineMessengerCommand(event, con, "", logger)
+	offlineMessengerCommand(event, con, "", dbfile, logger)
+	os.Remove(dbfile)
 }
 
 func Test_offlineMessengerCommand_5(t *testing.T) {
+	dbfile := "testmsg.db"
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
-	offlineMessengerCommand(event, con, "testuser", nil)
+	offlineMessengerCommand(event, con, "testuser", dbfile, nil)
+	os.Remove(dbfile)
+}
+
+func Test_offlineMessengerCommand_6(t *testing.T) {
+	dbfile := ""
+	args := []string{"bla bla foo bar baz"}
+	event := &irc.Event{Arguments: args}
+	con := &irc.Connection{}
+	offlineMessengerCommand(event, con, "testuser", dbfile, nil)
 }
