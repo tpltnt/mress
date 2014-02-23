@@ -43,7 +43,11 @@ func Test_saveOfflineMessage_0(t *testing.T) {
 // empty target
 func Test_saveOfflineMessage_1(t *testing.T) {
 	dbfile := "testmsg.db"
-	err := saveOfflineMessage(dbfile, "testsource", "", "testmessage")
+	err := initOfflineMessageDatabase(dbfile)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	err = saveOfflineMessage(dbfile, "testsource", "", "testmessage")
 	if err == nil {
 		t.Error("empty target not detected")
 	}
@@ -56,7 +60,11 @@ func Test_saveOfflineMessage_1(t *testing.T) {
 // target with space
 func Test_saveOfflineMessage_2(t *testing.T) {
 	dbfile := "testmsg.db"
-	err := saveOfflineMessage(dbfile, "testsource", "test target", "testmessage")
+	err := initOfflineMessageDatabase(dbfile)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	err = saveOfflineMessage(dbfile, "testsource", "test target", "testmessage")
 	if err == nil {
 		t.Error("target with space not detected")
 	}
@@ -69,7 +77,11 @@ func Test_saveOfflineMessage_2(t *testing.T) {
 // emtpy message
 func Test_saveOfflineMessage_3(t *testing.T) {
 	dbfile := "testmsg.db"
-	err := saveOfflineMessage(dbfile, "testsource", "testtarget", "")
+	err := initOfflineMessageDatabase(dbfile)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	err = saveOfflineMessage(dbfile, "testsource", "testtarget", "")
 	if err == nil {
 		t.Error("empty message not detected")
 	}
@@ -82,7 +94,11 @@ func Test_saveOfflineMessage_3(t *testing.T) {
 // empty source
 func Test_saveOfflineMessage_4(t *testing.T) {
 	dbfile := "testmsg.db"
-	err := saveOfflineMessage(dbfile, "", "testtarget", "testmessage")
+	err := initOfflineMessageDatabase(dbfile)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	err = saveOfflineMessage(dbfile, "", "testtarget", "testmessage")
 	if err == nil {
 		t.Error("empty source not detected")
 	}
@@ -95,7 +111,11 @@ func Test_saveOfflineMessage_4(t *testing.T) {
 // source with space
 func Test_saveOfflineMessage_5(t *testing.T) {
 	dbfile := "testmsg.db"
-	err := saveOfflineMessage(dbfile, "test source", "testtarget", "testmessage")
+	err := initOfflineMessageDatabase(dbfile)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	err = saveOfflineMessage(dbfile, "test source", "testtarget", "testmessage")
 	if err == nil {
 		t.Error("source with space not detected")
 	}
