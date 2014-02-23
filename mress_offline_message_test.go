@@ -116,7 +116,8 @@ func Test_saveOfflineMessage_6(t *testing.T) {
 
 func Test_deliverOfflineMessage_0(t *testing.T) {
 	// prepare db
-	db, err := sql.Open("sqlite3", "./messages.db")
+	dbfile := "testmsg.db"
+	db, err := sql.Open("sqlite3", dbfile)
 	if err != nil {
 		t.Error("failed to open database file: " + err.Error())
 	}
@@ -128,36 +129,53 @@ func Test_deliverOfflineMessage_0(t *testing.T) {
 	}
 
 	con := &irc.Connection{}
-	err = deliverOfflineMessage("testuser", con)
+	err = deliverOfflineMessage(dbfile, "testuser", con)
 	if err != nil {
 		t.Log("valid call failed")
 		t.Error(err.Error())
 	}
 
-	os.Remove("./messages.db")
+	os.Remove(dbfile)
 }
 
 func Test_deliverOfflineMessage_1(t *testing.T) {
+	dbfile := "testmsg.db"
 	con := &irc.Connection{}
-	err := deliverOfflineMessage("test user", con)
+	err := deliverOfflineMessage(dbfile, "test user", con)
 	if err == nil {
 		t.Log("username with spaces shouldn't be accepted")
 	}
+
+	os.Remove(dbfile)
 }
 
 func Test_deliverOfflineMessage_2(t *testing.T) {
+	dbfile := "testmsg.db"
 	con := &irc.Connection{}
-	err := deliverOfflineMessage("", con)
+	err := deliverOfflineMessage(dbfile, "", con)
 	if err == nil {
 		t.Log("empty username shouldn't be accepted")
 	}
+	os.Remove(dbfile)
 }
 
 func Test_deliverOfflineMessage_3(t *testing.T) {
-	err := deliverOfflineMessage("testuser", nil)
+	dbfile := ""
+	con := &irc.Connection{}
+	err := deliverOfflineMessage(dbfile, "testuser", con)
 	if err == nil {
 		t.Log("nil connection pointer shouldn't be accepted")
 	}
+	os.Remove(dbfile)
+}
+
+func Test_deliverOfflineMessage_4(t *testing.T) {
+	dbfile := "testmsg.db"
+	err := deliverOfflineMessage(dbfile, "testuser", nil)
+	if err == nil {
+		t.Log("nil connection pointer shouldn't be accepted")
+	}
+	os.Remove(dbfile)
 }
 
 // callbacks shouldn't explode
