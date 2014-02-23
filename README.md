@@ -25,11 +25,17 @@ get mress up and running
 ------------------------
 * install a [Go toolchain](http://golang.org/doc/install)
 * install go-ircevent: $go get github.com/thoj/go-ircevent
-* install go-sqlite3: $go get mattn/go-sqlite3
+* install go-sqlite3: $go get github.com/mattn/go-sqlite3
+* install goini: $go get github.com/jurka/goini
 * run (optional) tests: $go test
 * create executable: $go build mress.go
 * check usage: $./mress --help
-* run mress with flags of your choice
+* run mress with flags or config of your choice
+
+notes on operation
+------------------
+To disable TLS and/or use debugging should always be conscious 
+decisions and are therefore not part of the config.
 
 resources
 ---------
@@ -39,4 +45,14 @@ resources
 * [RFC 2812: Internet Relay Chat: Client Protocol](https://tools.ietf.org/html/rfc2812)
 * [RFC 2813: Internet Relay Chat: Server Protocol](https://tools.ietf.org/html/rfc2813)
 * [go-sqlite3](https://github.com/mattn/go-sqlite3): a Go-binding for [sqlite](https://sqlite.org/)
+* [goini](https://github.com/jurka/goini): a [ini-style](https://en.wikipedia.org/wiki/INI_file) configfile parser ([documentation](http://godoc.org/github.com/jurka/goini)
 * [M'Ress](https://en.wikipedia.org/wiki/M%27Ress)
+
+version history
+---------------
+* v0.25
+  * offline message db filename as parameter
+  * configuration code in extra file
+  * concurrent parsing of config file
+* v0.2
+  * enable offline messages

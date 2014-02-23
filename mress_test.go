@@ -1,10 +1,10 @@
 package main
 
 import (
-	"database/sql"
-	_ "github.com/mattn/go-sqlite3"
-	"github.com/thoj/go-ircevent"
+	//"github.com/thoj/go-ircevent"
+	"log"
 	"os"
+	"strconv"
 	"testing"
 )
 
@@ -12,7 +12,7 @@ import (
 // TODO acually check stdout
 func Test_create_Logger_1(t *testing.T) {
 	dest := "stdout"
-	logger := createLogger(&dest)
+	logger := createLogger(dest)
 	if logger == nil {
 		t.Error("creating logger to '" + dest + "' returned 'nil'")
 	}
@@ -22,7 +22,7 @@ func Test_create_Logger_1(t *testing.T) {
 // TODO actually check stderr
 func Test_create_Logger_2(t *testing.T) {
 	dest := "stderr"
-	logger := createLogger(&dest)
+	logger := createLogger("stderr")
 	if logger == nil {
 		t.Error("creating logger to '" + dest + "' returned 'nil'")
 	}
@@ -31,7 +31,7 @@ func Test_create_Logger_2(t *testing.T) {
 // test logfile destination
 func Test_create_Logger_3(t *testing.T) {
 	dest := "test-logger.log"
-	logger := createLogger(&dest)
+	logger := createLogger(dest)
 	if logger == nil {
 		t.Error("creating logger to '" + dest + "' returned 'nil'")
 	}
@@ -57,150 +57,478 @@ func Test_create_Logger_3(t *testing.T) {
 	}
 }
 
-// valid transaction
-func Test_saveOfflineMessage_0(t *testing.T) {
-	err := saveOfflineMessage("testsource", "testtarget", "testmessage")
+func Test_create_Logger_4(t *testing.T) {
+	logger := createLogger("")
+	if logger == nil {
+		t.Error("creating with empty destination did fail")
+	}
+}
+
+func Test_readConfigInt_0(t *testing.T) {
+	config := "test.ini"
+	section := "IRC"
+	key := "port"
+	logger := createLogger("")
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	port, err := readConfigInt(config, section, key, logger)
 	if err != nil {
-		t.Error(err.Error())
+		t.Fatal(err.Error())
 	}
-	err = os.Remove("./messages.db")
-	if nil != err {
-		t.Error(err.Error())
+	if port != 6697 {
+		t.Error("wrong integer read")
 	}
 }
 
-// empty target
-func Test_saveOfflineMessage_1(t *testing.T) {
-	err := saveOfflineMessage("testsource", "", "testmessage")
+func Test_readConfigInt_1(t *testing.T) {
+	config := ""
+	section := "IRC"
+	key := "port"
+	logger := createLogger("")
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	_, err := readConfigInt(config, section, key, logger)
 	if err == nil {
-		t.Error("empty target not detected")
+		t.Error("failed to detect empty configuration file path")
 	}
 }
 
-// target with space
-func Test_saveOfflineMessage_2(t *testing.T) {
-	err := saveOfflineMessage("testsource", "test target", "testmessage")
+func Test_readConfigInt_2(t *testing.T) {
+	config := "test.ini"
+	section := ""
+	key := "port"
+	logger := createLogger("")
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	_, err := readConfigInt(config, section, key, logger)
 	if err == nil {
-		t.Error("target with space not detected")
+		t.Fatal("failed to detect empty section string")
 	}
 }
 
-// emtpy message
-func Test_saveOfflineMessage_3(t *testing.T) {
-	err := saveOfflineMessage("testsource", "testtarget", "")
+func Test_readConfigInt_3(t *testing.T) {
+	config := "test.ini"
+	section := "IRC"
+	key := ""
+	logger := createLogger("")
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	_, err := readConfigInt(config, section, key, logger)
 	if err == nil {
-		t.Error("empty message not detected")
+		t.Error("failed to detect empty key string")
 	}
 }
 
-// empty source
-func Test_saveOfflineMessage_4(t *testing.T) {
-	err := saveOfflineMessage("", "testtarget", "testmessage")
+func Test_readConfigInt_4(t *testing.T) {
+	config := "empty_test.ini"
+	section := "IRC"
+	key := "port"
+	logger := createLogger("")
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	_, err := readConfigInt(config, section, key, logger)
 	if err == nil {
-		t.Error("empty source not detected")
+		t.Error("failed to detect missing entries in config")
 	}
 }
 
-// source with space
-func Test_saveOfflineMessage_5(t *testing.T) {
-	err := saveOfflineMessage("test source", "testtarget", "testmessage")
-	if err == nil {
-		t.Error("source with space not detected")
+func Test_readConfigString_0(t *testing.T) {
+	config := "test.ini"
+	section := "IRC"
+	key := "server"
+	logger := createLogger("")
+	if logger == nil {
+		t.Log("creating test logger failed")
 	}
-}
-
-func Test_deliverOfflineMessage_0(t *testing.T) {
-	// prepare db
-	db, err := sql.Open("sqlite3", "./messages.db")
+	server, err := readConfigString(config, section, key, logger)
 	if err != nil {
-		t.Error("failed to open database file: " + err.Error())
+		t.Fatal(err.Error())
 	}
-	defer db.Close()
-	sql := `CREATE TABLE IF NOT EXISTS messages (target TEXT, source TEXT, content TEXT);`
-	_, err = db.Exec(sql)
-	if err != nil {
-		t.Error("failed to create database table: " + err.Error())
+	if server != "chat.freenode.net" {
+		t.Error("wrong server read")
 	}
-
-	con := &irc.Connection{}
-	err = deliverOfflineMessage("testuser", con)
-	if err != nil {
-		t.Log("valid call failed")
-		t.Error(err.Error())
-	}
-
-	os.Remove("./messages.db")
 }
 
-func Test_deliverOfflineMessage_1(t *testing.T) {
-	con := &irc.Connection{}
-	err := deliverOfflineMessage("test user", con)
+func Test_readConfigString_1(t *testing.T) {
+	config := ""
+	section := "IRC"
+	key := "server"
+	logger := createLogger("")
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	_, err := readConfigString(config, section, key, logger)
 	if err == nil {
-		t.Log("username with spaces shouldn't be accepted")
+		t.Error("failed to detect empty configuration file path")
 	}
 }
 
-func Test_deliverOfflineMessage_2(t *testing.T) {
-	con := &irc.Connection{}
-	err := deliverOfflineMessage("", con)
+func Test_readConfigString_2(t *testing.T) {
+	config := "test.ini"
+	section := ""
+	key := "server"
+	logger := createLogger("")
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	_, err := readConfigString(config, section, key, logger)
 	if err == nil {
-		t.Log("empty username shouldn't be accepted")
+		t.Fatal("failed to detect empty section string")
 	}
 }
 
-func Test_deliverOfflineMessage_3(t *testing.T) {
-	err := deliverOfflineMessage("testuser", nil)
+func Test_readConfigString_3(t *testing.T) {
+	config := "test.ini"
+	section := "IRC"
+	key := ""
+	logger := createLogger("")
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	_, err := readConfigString(config, section, key, logger)
 	if err == nil {
-		t.Log("nil connection pointer shouldn't be accepted")
+		t.Error("failed to detect empty key string")
 	}
 }
 
-// callbacks shouldn't explode
-func Test_offlineMessengerCommand_0(t *testing.T) {
-	args := []string{"bla bla foo bar baz"}
-	event := &irc.Event{Arguments: args}
-	con := &irc.Connection{}
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
-	offlineMessengerCommand(event, con, "testuser", logger)
+func Test_readConfigString_4(t *testing.T) {
+	config := "empty_test.ini"
+	section := "IRC"
+	key := "server"
+	logger := createLogger("")
+	if logger == nil {
+		t.Log("creating test logger failed")
+	}
+	_, err := readConfigString(config, section, key, logger)
+	if err == nil {
+		t.Error("failed to detect missing entries in config")
+	}
 }
 
-func Test_offlineMessengerCommand_1(t *testing.T) {
-	con := &irc.Connection{}
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
-	offlineMessengerCommand(nil, con, "testuser", logger)
+func Test_getLogger_0(t *testing.T) {
+	dest := ""
+	conf := "test.ini"
+	logchan := make(chan *log.Logger)
+	go getLogger(dest, conf, logchan)
+	//getLogger(destination, configfile string, logger chan *log.Logger)
+	logger := <-logchan
+	if logger == nil {
+		t.Error("creating logger failed")
+	}
 }
 
-func Test_offlineMessengerCommand_2(t *testing.T) {
-	args := []string{"bla bla foo bar baz"}
-	event := &irc.Event{Arguments: args}
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
-	offlineMessengerCommand(event, nil, "testuser", logger)
+func Test_getLogger_1(t *testing.T) {
+	dest := ""
+	conf := "test.ini"
+	logchan := make(chan *log.Logger)
+	go getLogger(dest, conf, logchan)
+	logger := <-logchan
+	if logger == nil {
+		t.Error("handling empty destination string failed")
+	}
 }
 
-func Test_offlineMessengerCommand_3(t *testing.T) {
-	args := []string{"bla bla foo bar baz"}
-	event := &irc.Event{Arguments: args}
-	con := &irc.Connection{}
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
-	offlineMessengerCommand(event, con, "test user", logger)
+func Test_getLogger_2(t *testing.T) {
+	dest := ""
+	conf := ""
+	logchan := make(chan *log.Logger)
+	go getLogger(dest, conf, logchan)
+	logger := <-logchan
+	if logger == nil {
+		t.Error("handling empty file path failed")
+	}
 }
 
-func Test_offlineMessengerCommand_4(t *testing.T) {
-	args := []string{"bla bla foo bar baz"}
-	event := &irc.Event{Arguments: args}
-	con := &irc.Connection{}
-	logdest := "/dev/null"
-	logger := createLogger(&logdest)
-	offlineMessengerCommand(event, con, "", logger)
+func Test_getChannel_0(t *testing.T) {
+	testflag := "#bar"
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getChannel(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "#bar" {
+		t.Error("read wrong channel")
+	}
 }
 
-func Test_offlineMessengerCommand_5(t *testing.T) {
-	args := []string{"bla bla foo bar baz"}
-	event := &irc.Event{Arguments: args}
-	con := &irc.Connection{}
-	offlineMessengerCommand(event, con, "testuser", nil)
+func Test_getChannel_1(t *testing.T) {
+	testflag := ""
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getChannel(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "#foo" {
+		t.Error("read wrong channel")
+	}
+}
+
+func Test_getChannel_2(t *testing.T) {
+	testflag := "#bar"
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getChannel(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "#bar" {
+		t.Error("did not select flag over config value")
+	}
+}
+
+func Test_getChannel_3(t *testing.T) {
+	testflag := ""
+	config := "empty_test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getChannel(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "" {
+		t.Error("did not handle empty/missing channel strings")
+	}
+}
+
+func Test_getNick_0(t *testing.T) {
+	testflag := "testbot"
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getNick(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != testflag {
+		t.Error("read wrong nick")
+	}
+}
+
+func Test_getNick_1(t *testing.T) {
+	testflag := ""
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getNick(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "mress" {
+		t.Error("read wrong nick (" + cstring + ") from config")
+	}
+}
+
+func Test_getNick_2(t *testing.T) {
+	testflag := "testbot"
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getNick(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "testbot" {
+		t.Error("did not select flag over config value")
+	}
+}
+
+func Test_getNick_3(t *testing.T) {
+	testflag := ""
+	config := "empty_test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getNick(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "" {
+		t.Error("did not handle empty/missing nick strings")
+	}
+}
+
+func Test_getPassword_0(t *testing.T) {
+	testflag := "424242"
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getPassword(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != testflag {
+		t.Error("read wrong password")
+	}
+}
+
+func Test_getPassword_1(t *testing.T) {
+	testflag := ""
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getPassword(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "1234foobar" {
+		t.Error("read wrong password (" + cstring + ") from config")
+	}
+}
+
+func Test_getPassword_2(t *testing.T) {
+	testflag := "424242"
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getNick(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "424242" {
+		t.Error("did not select flag over config value")
+	}
+}
+
+func Test_getPassword_3(t *testing.T) {
+	testflag := ""
+	config := "empty_test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getNick(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "" {
+		t.Error("did not handle empty/missing nick strings")
+	}
+}
+
+func Test_getServer_0(t *testing.T) {
+	testflag := "example.org"
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getServer(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != testflag {
+		t.Error("read wrong server")
+	}
+}
+
+func Test_getServer_1(t *testing.T) {
+	testflag := ""
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getServer(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "chat.freenode.net" {
+		t.Error("read wrong server (" + cstring + ") from config")
+	}
+}
+
+func Test_getServer_2(t *testing.T) {
+	testflag := "example.org"
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getServer(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "example.org" {
+		t.Error("did not select flag over config value")
+	}
+}
+
+func Test_getServer_3(t *testing.T) {
+	testflag := ""
+	config := "empty_test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getServer(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "" {
+		t.Error("did not handle empty/missing server strings")
+	}
+}
+
+func Test_getPort_0(t *testing.T) {
+	testflag := 23
+	config := "test.ini"
+	testchan := make(chan int)
+	logger := createLogger("")
+	go getPort(testflag, config, testchan, logger)
+	cint := <-testchan
+	if cint != testflag {
+		t.Error("read wrong port")
+	}
+}
+
+func Test_getPort_1(t *testing.T) {
+	testflag := 0
+	config := "test.ini"
+	testchan := make(chan int)
+	logger := createLogger("")
+	go getPort(testflag, config, testchan, logger)
+	cint := <-testchan
+	if cint != 6697 {
+		t.Error("read wrong port (" + strconv.Itoa(cint) + ") from config")
+	}
+}
+
+func Test_getPort_2(t *testing.T) {
+	testflag := 23
+	config := "test.ini"
+	testchan := make(chan int)
+	logger := createLogger("")
+	go getPort(testflag, config, testchan, logger)
+	cint := <-testchan
+	if cint != 23 {
+		t.Error("did not select flag over config value")
+	}
+}
+
+func Test_getPort_3(t *testing.T) {
+	testflag := 0
+	config := "empty_test.ini"
+	testchan := make(chan int)
+	logger := createLogger("")
+	go getPort(testflag, config, testchan, logger)
+	cint := <-testchan
+	if cint != 0 {
+		t.Error("did not handle missing port numbers")
+	}
+}
+
+// test determining database filename
+func Test_getOfflineDBfilename_0(t *testing.T) {
+	testflag := "foobar.db"
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineDBfilename(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != testflag {
+		t.Error("read wrong database filename")
+	}
+}
+
+func Test_getOfflineDBfilename_1(t *testing.T) {
+	testflag := ""
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineDBfilename(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "messages.db" {
+		t.Error("read wrong filename (" + cstring + ") from config")
+	}
+}
+
+func Test_getOfflineDBfilename_2(t *testing.T) {
+	testflag := "foobar.db"
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineDBfilename(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "foobar.db" {
+		t.Error("did not select flag over config value")
+	}
+}
+
+func Test_getOfflineDBfilename_3(t *testing.T) {
+	testflag := ""
+	config := "empty_test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineDBfilename(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "" {
+		t.Error("did not handle empty/missing database filename")
+	}
 }
