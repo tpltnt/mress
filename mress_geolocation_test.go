@@ -9,7 +9,10 @@ func Test_serverLookupCoordinates_0(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	port := 2702
+	port, err := readConfigInt("test2.ini", "geolocation", "port", logger)
+	if err != nil {
+		t.Error(err.Error())
+	}
 	lat, lon, err := serverLookupCoordinates(ipstring, server, port)
 	if err != nil {
 		t.Error(err.Error())
