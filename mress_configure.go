@@ -190,6 +190,28 @@ func getOfflineDBfilename(dbfile, configfile string, channel chan string, logger
 	}
 }
 
+// Read the geoip server from the configuration file.
+func getGeoipServer(configfile string, channel chan string, logger *log.Logger) {
+	cstring, err := readConfigString(configfile, "geolocation", "server", logger)
+	if err != nil {
+		logger.Println(err.Error())
+		channel <- ""
+		return
+	}
+	channel <- cstring
+}
+
+// Read the geoip server port from the configuration file.
+func getGeoipPort(configfile string, channel chan int, logger *log.Logger) {
+	cint, err := readConfigInt(configfile, "geolocation", "port", logger)
+	if err != nil {
+		logger.Println(err.Error())
+		channel <- 0
+		return
+	}
+	channel <- cint
+}
+
 // Read string from config file
 func readConfigString(filename, section, key string, logger *log.Logger) (string, error) {
 	if logger == nil {
