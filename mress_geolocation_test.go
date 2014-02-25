@@ -10,6 +10,10 @@ func Test_serverLookupCoordinates_0(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	t.Log(lat)
-	t.Log(lon)
+	if lat != 0 {
+		t.Error("wrong latitude returned")
+	}
+	if lon != 0 {
+		t.Error("wrong longitude returned")
+	}
 }
