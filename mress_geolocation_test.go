@@ -7,14 +7,17 @@ func Test_serverLookupCoordinates_0(t *testing.T) {
 	logger := createLogger("")
 	server, err := readConfigString("test2.ini", "geolocation", "server", logger)
 	if err != nil {
+		t.Log("please host your own lookup service https://github.com/fiorix/freegeoip")
 		t.Error(err.Error())
 	}
 	port, err := readConfigInt("test2.ini", "geolocation", "port", logger)
 	if err != nil {
+		t.Log("please host your own lookup service https://github.com/fiorix/freegeoip")
 		t.Error(err.Error())
 	}
 	lat, lon, err := serverLookupCoordinates(ipstring, server, port)
 	if err != nil {
+		t.Log("please host your own lookup service https://github.com/fiorix/freegeoip")
 		t.Error(err.Error())
 	}
 	if lat != 0 {
