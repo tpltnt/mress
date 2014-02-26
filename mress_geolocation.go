@@ -62,10 +62,10 @@ func serverLookupCoordinates(ip string, server string, port int) (lat, lon float
 	}
 	// decode JSON data
 	type Geodata struct {
-		ip, country_code, country_name          string
-		region_code, region_name, city, zipcode string
-		latitude, longitude                     float64
-		metro_code, areacode                    string
+		Ip, Country_code, Country_name          string
+		Region_code, Region_name, City, Zipcode string
+		Latitude, Longitude                     float64
+		Metro_code, Areacode                    string
 	}
 	dec := json.NewDecoder(strings.NewReader(jsonstring))
 	var gip Geodata
@@ -74,5 +74,5 @@ func serverLookupCoordinates(ip string, server string, port int) (lat, lon float
 		return 0.0, 0.0, fmt.Errorf(err.Error())
 	}
 
-	return float32(gip.latitude), float32(gip.longitude), nil
+	return float32(gip.Latitude), float32(gip.Longitude), nil
 }
