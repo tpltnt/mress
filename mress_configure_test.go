@@ -532,3 +532,25 @@ func Test_getOfflineDBfilename_3(t *testing.T) {
 		t.Error("did not handle empty/missing database filename")
 	}
 }
+
+func Test_getGeoipServer_0(t *testing.T) {
+	configfile := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getGeoipServer(configfile, testchan, logger)
+	cstring := <-testchan
+	if cstring != "geoip.foo.bar" {
+		t.Error("wrong geoip server read")
+	}
+}
+
+func Test_getGeoipPort_0(t *testing.T) {
+	configfile := "test.ini"
+	testchan := make(chan int)
+	logger := createLogger("")
+	go getGeoipPort(configfile, testchan, logger)
+	cint := <-testchan
+	if cint != 2345 {
+		t.Error("wrong geoip server port read")
+	}
+}

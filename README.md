@@ -48,8 +48,14 @@ resources
 * [goini](https://github.com/jurka/goini): a [ini-style](https://en.wikipedia.org/wiki/INI_file) configfile parser ([documentation](http://godoc.org/github.com/jurka/goini)
 * [M'Ress](https://en.wikipedia.org/wiki/M%27Ress)
 
+TODO
+----
+* enable lookup of IPv6 addresses
+
 version history
 ---------------
+* v0.3
+  * IPv4 lookup added
 * v0.25
   * offline message db filename as parameter
   * configuration code in extra file
