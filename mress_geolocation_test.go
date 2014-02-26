@@ -69,9 +69,52 @@ func Test_serverLookupCoordinates_2(t *testing.T) {
 		t.Log("please host your own lookup service https://github.com/fiorix/freegeoip")
 		t.Error(err.Error())
 	}
+
 	lat, lon, err := serverLookupCoordinates(ipstring, server, port)
 	if err == nil {
 		t.Error("empty ip string not dectected")
+	}
+	if lat != 0 {
+		t.Error("wrong latitude returned")
+	}
+	if lon != 0 {
+		t.Error("wrong longitude returned")
+	}
+}
+
+func Test_serverLookupCoordinates_3(t *testing.T) {
+	ipstring := "127.0.0.1"
+	logger := createLogger("")
+	port, err := readConfigInt("test2.ini", "geolocation", "port", logger)
+	if err != nil {
+		t.Log("please host your own lookup service https://github.com/fiorix/freegeoip")
+		t.Error(err.Error())
+	}
+
+	lat, lon, err := serverLookupCoordinates(ipstring, "", port)
+	if err == nil {
+		t.Error("empty server string not dectected")
+	}
+	if lat != 0 {
+		t.Error("wrong latitude returned")
+	}
+	if lon != 0 {
+		t.Error("wrong longitude returned")
+	}
+}
+
+func Test_serverLookupCoordinates_4(t *testing.T) {
+	ipstring := "127.0.0.1"
+	logger := createLogger("")
+	server, err := readConfigString("test2.ini", "geolocation", "server", logger)
+	if err != nil {
+		t.Log("please host your own lookup service https://github.com/fiorix/freegeoip")
+		t.Error(err.Error())
+	}
+
+	lat, lon, err := serverLookupCoordinates(ipstring, server, 0)
+	if err == nil {
+		t.Error("invalid port not dectected")
 	}
 	if lat != 0 {
 		t.Error("wrong latitude returned")
