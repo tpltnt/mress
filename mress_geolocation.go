@@ -83,11 +83,34 @@ func haversin(value float64) float64 {
 	return math.Sin(value/2) * math.Sin(value/2)
 }
 
-// Calculate the distance between two (GPS) points using the
-// Haversine formula. This yields an error of ca. 0.5%.
+// Calculate the distance (in km) between two (GPS) points using
+// the Haversine formula. This yields an error of ca. 0.5%.
 // Using Vincenty's formulae yields better precision of needed.
-func calcDistance(lat1, lon1, lat2, lon2 float32) (float32, error) {
-	// first haversin term
-	//	fmt.Println(term1)
-	return 0.0, fmt.Errorf("not implemented yet")
+// Details: http://spatialreference.org/ref/epsg/4326/
+func calcDistance(lat1, lon1, lat2, lon2 float64) (float64, error) {
+	// sanity checks
+	if !((lat1 >= -90.0) && (lat1 <= 90.0)) {
+		return 0.0, fmt.Errorf("latitude 1 outside valid range")
+	}
+	if !((lat2 >= -90.0) && (lat2 <= 90.0)) {
+		return 0.0, fmt.Errorf("latitude 2 outside valid range")
+	}
+	if !((lon1 >= -180.0) && (lon1 <= 180.0)) {
+		return 0.0, fmt.Errorf("longitude 1 outside valid range")
+	}
+	if !((lon2 >= -180.0) && (lon2 <= 180.0)) {
+		return 0.0, fmt.Errorf("longitude 2 outside valid range")
+	}
+
+	// WGS84 radius in km
+	radius := 6371.0008
+	// do the math
+	term1 := haversin(lat2 - lat1)
+	term2 := math.Cos(lat1) * math.Cos(lat2) * haversin(lon2-lon1)
+	if (term1 + term2) < 0 {
+		return 0.0, fmt.Errorf("attempting to calculate square root of negative number")
+	}
+	sqrt_term := math.Sqrt(term1 + term2)
+	distance := 2 * radius * math.Asin(sqrt_term)
+	return distance, nil
 }

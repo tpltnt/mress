@@ -133,3 +133,193 @@ func Test_haversin_0(t *testing.T) {
 		t.Error("haversine returned too large value")
 	}
 }
+
+func Test_calcDistance_0(t *testing.T) {
+	lat1 := 31.2
+	lon1 := 121.5
+	lat2 := 31.2
+	lon2 := 121.5
+	result, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	if result != 0.0 {
+		t.Error("calculated wrong distance")
+	}
+}
+
+func Test_calcDistance_1(t *testing.T) {
+	lat1 := 90.0
+	lon1 := 121.5
+	lat2 := 31.2
+	lon2 := 121.5
+	_, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func Test_calcDistance_2(t *testing.T) {
+	lat1 := 90.1
+	lon1 := 121.5
+	lat2 := 31.2
+	lon2 := 121.5
+	_, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err == nil {
+		t.Error("did not catch latitude 1 outside valid range")
+	}
+}
+
+func Test_calcDistance_3(t *testing.T) {
+	lat1 := -90.0
+	lon1 := 121.5
+	lat2 := 31.2
+	lon2 := 121.5
+	_, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func Test_calcDistance_4(t *testing.T) {
+	lat1 := -90.1
+	lon1 := 121.5
+	lat2 := 31.2
+	lon2 := 121.5
+	_, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err == nil {
+		t.Error("did not catch latitude 1 outside valid range")
+	}
+}
+
+func Test_calcDistance_5(t *testing.T) {
+	lat1 := 31.2
+	lon1 := 121.5
+	lat2 := 90.0
+	lon2 := 121.5
+	_, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func Test_calcDistance_6(t *testing.T) {
+	lat1 := 31.2
+	lon1 := 121.5
+	lat2 := 90.1
+	lon2 := 121.5
+	_, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err == nil {
+		t.Error("did not catch latitude 2 outside valid range")
+	}
+}
+
+func Test_calcDistance_7(t *testing.T) {
+	lat1 := 31.2
+	lon1 := 121.5
+	lat2 := -90.0
+	lon2 := 121.5
+	_, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func Test_calcDistance_8(t *testing.T) {
+	lat1 := 31.2
+	lon1 := 121.5
+	lat2 := -90.1
+	lon2 := 121.5
+	_, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err == nil {
+		t.Error("did not catch latitude 2 outside valid range")
+	}
+}
+
+func Test_calcDistance_9(t *testing.T) {
+	lat1 := 31.2
+	lon1 := 180.0
+	lat2 := 31.2
+	lon2 := 121.5
+	_, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func Test_calcDistance_10(t *testing.T) {
+	lat1 := 31.2
+	lon1 := 180.1
+	lat2 := 31.2
+	lon2 := 121.5
+	_, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err == nil {
+		t.Error("did not catch longitude 1 outside valid range")
+	}
+}
+
+func Test_calcDistance_11(t *testing.T) {
+	lat1 := 31.2
+	lon1 := -180.0
+	lat2 := 31.2
+	lon2 := 121.5
+	_, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func Test_calcDistance_12(t *testing.T) {
+	lat1 := 31.2
+	lon1 := -180.1
+	lat2 := 31.2
+	lon2 := 121.5
+	_, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err == nil {
+		t.Error("did not catch longitude 2 outside valid range")
+	}
+}
+
+func Test_calcDistance_13(t *testing.T) {
+	lat1 := 31.2
+	lon1 := 121.5
+	lat2 := 31.2
+	lon2 := 180.0
+	_, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func Test_calcDistance_14(t *testing.T) {
+	lat1 := 31.2
+	lon1 := 121.5
+	lat2 := 31.2
+	lon2 := 180.1
+	_, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err == nil {
+		t.Error("did not catch longitude 2 outside valid range")
+	}
+}
+
+func Test_calcDistance_15(t *testing.T) {
+	lat1 := 31.2
+	lon1 := 121.5
+	lat2 := 31.2
+	lon2 := -180.0
+	_, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func Test_calcDistance_16(t *testing.T) {
+	lat1 := 31.2
+	lon1 := 121.5
+	lat2 := 31.2
+	lon2 := -180.1
+	_, err := calcDistance(lat1, lon1, lat2, lon2)
+	if err == nil {
+		t.Error("did not catch longitude 2 outside valid range")
+	}
+}
