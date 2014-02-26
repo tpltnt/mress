@@ -5,6 +5,7 @@ import (
 	//	"github.com/thoj/go-ircevent" // imported as "irc"
 	"bufio"
 	"encoding/json"
+	"math"
 	"net"
 	"regexp"
 	"strconv"
@@ -75,4 +76,18 @@ func serverLookupCoordinates(ip string, server string, port int) (lat, lon float
 	}
 
 	return float32(gip.Latitude), float32(gip.Longitude), nil
+}
+
+// Haversin math helper function.
+func haversin(value float64) float64 {
+	return math.Sin(value/2) * math.Sin(value/2)
+}
+
+// Calculate the distance between two (GPS) points using the
+// Haversine formula. This yields an error of ca. 0.5%.
+// Using Vincenty's formulae yields better precision of needed.
+func calcDistance(lat1, lon1, lat2, lon2 float32) (float32, error) {
+	// first haversin term
+	//	fmt.Println(term1)
+	return 0.0, fmt.Errorf("not implemented yet")
 }

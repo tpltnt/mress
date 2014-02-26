@@ -123,3 +123,13 @@ func Test_serverLookupCoordinates_4(t *testing.T) {
 		t.Error("wrong longitude returned")
 	}
 }
+
+func Test_haversin_0(t *testing.T) {
+	// 0.2298488470659301412995316962785116981338447896910388...
+	if 0.2298488470659301412995316962785116981338447896910388 > haversin(1.0) {
+		t.Error("haversine returned too small value")
+	}
+	if 0.2298488470659301412995316962785116981338447896910389 < haversin(1.0) {
+		t.Error("haversine returned too large value")
+	}
+}
