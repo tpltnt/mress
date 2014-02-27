@@ -56,6 +56,7 @@ version history
 ---------------
 * v0.3
   * IPv4 lookup added
+  * Postgresql backend for better performance (if needed)
 * v0.25
   * offline message db filename as parameter
   * configuration code in extra file
