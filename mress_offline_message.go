@@ -11,7 +11,7 @@ import (
 
 // Inital setup of database. Handle things as needed to reduce
 // false alarms.
-func initOfflineMessageDatabase(filename string) error {
+func initOfflineMessageSqlite3Database(filename string) error {
 	if len(filename) == 0 {
 		return fmt.Errorf("empty filename given")
 	}

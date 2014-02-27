@@ -9,8 +9,8 @@ import (
 )
 
 // test db initialization
-func Test_initOfflineMessageDatabase_0(t *testing.T) {
-	err := initOfflineMessageDatabase("testoffline.db")
+func Test_initOfflineMessageSqlite3Database_0(t *testing.T) {
+	err := initOfflineMessageSqlite3Database("testoffline.db")
 	if err != nil {
 		t.Error(err.Error())
 	}
@@ -20,8 +20,8 @@ func Test_initOfflineMessageDatabase_0(t *testing.T) {
 	}
 }
 
-func Test_initOfflineMessageDatabase_1(t *testing.T) {
-	err := initOfflineMessageDatabase("")
+func Test_initOfflineMessageSqlite3Database_1(t *testing.T) {
+	err := initOfflineMessageSqlite3Database("")
 	if err == nil {
 		t.Error("empty filename did not yield error")
 	}
@@ -43,7 +43,7 @@ func Test_saveOfflineMessage_0(t *testing.T) {
 // empty target
 func Test_saveOfflineMessage_1(t *testing.T) {
 	dbfile := "testmsg.db"
-	err := initOfflineMessageDatabase(dbfile)
+	err := initOfflineMessageSqlite3Database(dbfile)
 	if err != nil {
 		t.Error(err.Error())
 	}
@@ -60,7 +60,7 @@ func Test_saveOfflineMessage_1(t *testing.T) {
 // target with space
 func Test_saveOfflineMessage_2(t *testing.T) {
 	dbfile := "testmsg.db"
-	err := initOfflineMessageDatabase(dbfile)
+	err := initOfflineMessageSqlite3Database(dbfile)
 	if err != nil {
 		t.Error(err.Error())
 	}
@@ -77,7 +77,7 @@ func Test_saveOfflineMessage_2(t *testing.T) {
 // emtpy message
 func Test_saveOfflineMessage_3(t *testing.T) {
 	dbfile := "testmsg.db"
-	err := initOfflineMessageDatabase(dbfile)
+	err := initOfflineMessageSqlite3Database(dbfile)
 	if err != nil {
 		t.Error(err.Error())
 	}
@@ -94,7 +94,7 @@ func Test_saveOfflineMessage_3(t *testing.T) {
 // empty source
 func Test_saveOfflineMessage_4(t *testing.T) {
 	dbfile := "testmsg.db"
-	err := initOfflineMessageDatabase(dbfile)
+	err := initOfflineMessageSqlite3Database(dbfile)
 	if err != nil {
 		t.Error(err.Error())
 	}
@@ -111,7 +111,7 @@ func Test_saveOfflineMessage_4(t *testing.T) {
 // source with space
 func Test_saveOfflineMessage_5(t *testing.T) {
 	dbfile := "testmsg.db"
-	err := initOfflineMessageDatabase(dbfile)
+	err := initOfflineMessageSqlite3Database(dbfile)
 	if err != nil {
 		t.Error(err.Error())
 	}
