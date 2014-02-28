@@ -198,6 +198,22 @@ func getOfflineDBfilename(dbfile, configfile string, channel chan string, logger
 	}
 }
 
+// Determine name of the (database) table for offline messages.
+func getOfflineTableName(tableflag, configfile string, channel chan string, logger *log.Logger) {
+	ctable, err := readConfigString(configfile, "offline messaging", "table", logger)
+	if err != nil {
+		logger.Println(err.Error())
+		channel <- ""
+		return
+	}
+	//choose config over "empty" value
+	if len(tableflag) == 0 {
+		channel <- ctable
+	} else {
+		channel <- tableflag
+	}
+}
+
 // Read the name of mress (PostgreSQL) database.
 func getMressDbName(dbname, configfile string, channel chan string, logger *log.Logger) {
 	cdb, err := readConfigString(configfile, "maintainance", "dbname", logger)

@@ -533,6 +533,55 @@ func Test_getOfflineDBfilename_3(t *testing.T) {
 	}
 }
 
+// test determining table name for offline messages
+func Test_getOfflineTableName_0(t *testing.T) {
+	testflag := "blah"
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineTableName(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != testflag {
+		t.Error("read wrong offline message table name")
+	}
+}
+
+func Test_getOfflineTableName_1(t *testing.T) {
+	testflag := ""
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineTableName(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "offline-messages" {
+		t.Error("read wrong filename (" + cstring + ") from config")
+	}
+}
+
+func Test_getOfflineTableName_2(t *testing.T) {
+	testflag := "blah"
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineDBfilename(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "blah" {
+		t.Error("did not select flag over config value")
+	}
+}
+
+func Test_getOfflineTableName_3(t *testing.T) {
+	testflag := ""
+	config := "empty_test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineTableName(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "" {
+		t.Error("did not handle empty/missing database table in config")
+	}
+}
+
 // test determining database name
 func Test_getMressDbName_0(t *testing.T) {
 	testflag := "foobar"
