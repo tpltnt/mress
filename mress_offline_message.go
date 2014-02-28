@@ -9,9 +9,17 @@ import (
 	"strings"
 )
 
-// Inital setup of database. Handle things as needed to reduce
-// false alarms.
-func initOfflineMessageSqlite3Database(filename string) error {
+// Store the (SQL) data in one config struct.
+type dbconfig struct {
+	backend  string // either "sqlite3" or "postgresql"
+	filename string // for sqlite3 only
+	dbname   string // for postgres
+	dbtable  string // generic, defaults to "messages"
+}
+
+// Inital setup of the database. Handle things as needed
+// to reduce false alarms.
+func initOfflineMessageSqlite3Database(config dbconfig) error {
 	if len(filename) == 0 {
 		return fmt.Errorf("empty filename given")
 	}
