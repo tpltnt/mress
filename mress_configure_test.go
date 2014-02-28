@@ -624,10 +624,108 @@ func Test_getMressDbName_3(t *testing.T) {
 	config := "empty_test.ini"
 	testchan := make(chan string)
 	logger := createLogger("")
-	go getOfflineDBfilename(testflag, config, testchan, logger)
+	go getMressDbName(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != "" {
 		t.Error("did not handle empty/missing database name")
+	}
+}
+
+// test determining database user name
+func Test_getMressDbUser_0(t *testing.T) {
+	testflag := "testuser"
+	config := "test2.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getMressDbUser(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != testflag {
+		t.Error("read wrong database user")
+	}
+}
+
+func Test_getMressDbName_1(t *testing.T) {
+	testflag := ""
+	config := "test2.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getMressDbName(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "mress-data" {
+		t.Error("read wrong database name (" + cstring + ") from config")
+	}
+}
+
+func Test_getMressDbName_2(t *testing.T) {
+	testflag := "foobar"
+	config := "test2.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getMressDbName(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "foobar" {
+		t.Error("did not select flag over config value")
+	}
+}
+
+func Test_getMressDbName_3(t *testing.T) {
+	testflag := ""
+	config := "empty_test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineDbName(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "" {
+		t.Error("did not handle empty/missing database name")
+	}
+}
+
+// test determining database password
+func Test_getMressDbPassword_0(t *testing.T) {
+	testflag := "secretpassword"
+	config := "test2.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getMressDbPassword(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != testflag {
+		t.Error("read wrong database secretpassword")
+	}
+}
+
+func Test_getMressDbPassword_1(t *testing.T) {
+	testflag := ""
+	config := "test2.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getMressDbPassword(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "1234" {
+		t.Error("read wrong database password (" + cstring + ") from config")
+	}
+}
+
+func Test_getMressDbPassword_2(t *testing.T) {
+	testflag := "secretpassword"
+	config := "test2.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getMressDbPassword(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "secretpassword" {
+		t.Error("did not select flag over config value")
+	}
+}
+
+func Test_getMressDbPassword_3(t *testing.T) {
+	testflag := ""
+	config := "empty_test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getMressDbPassword(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "" {
+		t.Error("did not handle empty/missing password entry")
 	}
 }
 

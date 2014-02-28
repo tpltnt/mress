@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/thoj/go-ircevent" // imported as "irc"
 	"log"
@@ -15,11 +16,14 @@ func initOfflineMessageDatabase(config MressDbConfig) error {
 	if len(config.backend) == 0 {
 		return fmt.Errorf("empty backend string given")
 	}
-	if config.backend != "sqlite3" {
+	if !((config.backend == "sqlite3") || (config.backend == "postgres")) {
 		return fmt.Errorf("backend/database not supported")
 	}
 	if len(config.filename) == 0 {
 		return fmt.Errorf("empty filename given")
+	}
+	if len(config.dbname) == 0 {
+		return fmt.Errorf("empty database name given")
 	}
 	if len(config.offlineMsgTable) == 0 {
 		return fmt.Errorf("no offline message table name given")
@@ -29,6 +33,9 @@ func initOfflineMessageDatabase(config MressDbConfig) error {
 	db, _ := sql.Open("", "")
 	if config.backend == "sqlite3" {
 		db, err = sql.Open("sqlite3", config.filename)
+	}
+	if config.backend == "postgres" {
+		db, err = sql.Open("postgres", "host=localhost user=mress-bot password="+config.password+" dbname="+config.dbname+" sslmode=disable")
 	}
 	if err != nil {
 		return fmt.Errorf("failed to open database: " + err.Error())

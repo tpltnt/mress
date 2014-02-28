@@ -10,9 +10,12 @@ import (
 )
 
 // Store the (SQL) data in one config struct.
+// TODO: check for SQL injection vectors
 type MressDbConfig struct {
 	backend         string // either "sqlite3" or "postgresql"
 	filename        string // for sqlite3 only
+	user            string // for postgres
+	password        string // for postgres
 	dbname          string // for postgres
 	offlineMsgTable string // generic, defaults to "messages"
 }
@@ -227,6 +230,38 @@ func getMressDbName(dbname, configfile string, channel chan string, logger *log.
 		channel <- cdb
 	} else {
 		channel <- dbname
+	}
+}
+
+// Read the name of the user for the mress (PostgreSQL) database.
+func getMressDbUser(dbuserflag, configfile string, channel chan string, logger *log.Logger) {
+	cdbuser, err := readConfigString(configfile, "maintainance", "dbuser", logger)
+	if err != nil {
+		logger.Println(err.Error())
+		channel <- ""
+		return
+	}
+	//choose config over "empty" value
+	if len(dbuserflag) == 0 {
+		channel <- cdbuser
+	} else {
+		channel <- dbuserflag
+	}
+}
+
+// Read the password for the mress (PostgreSQL) database user.
+func getMressDbPassword(dbpasswordflag, configfile string, channel chan string, logger *log.Logger) {
+	cdbpwd, err := readConfigString(configfile, "maintainance", "dbpassword", logger)
+	if err != nil {
+		logger.Println(err.Error())
+		channel <- ""
+		return
+	}
+	//choose config over "empty" value
+	if len(dbpasswordflag) == 0 {
+		channel <- cdbpwd
+	} else {
+		channel <- dbpasswordflag
 	}
 }
 
