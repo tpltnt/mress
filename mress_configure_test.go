@@ -651,7 +651,7 @@ func Test_getMressDbUser_1(t *testing.T) {
 	logger := createLogger("")
 	go getMressDbUser(testflag, config, testchan, logger)
 	cstring := <-testchan
-	if cstring != "mress-data" {
+	if cstring != "mress-bot" {
 		t.Error("read wrong database user (" + cstring + ") from config")
 	}
 }

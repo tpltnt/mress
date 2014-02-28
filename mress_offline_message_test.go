@@ -8,7 +8,7 @@ import (
 
 // test db initialization
 func Test_initOfflineMessageDatabase_0(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", dbname: "mress-data", offlineMsgTable: "messages"}
 	err := initOfflineMessageDatabase(config)
 	if err != nil {
 		t.Error(err.Error())
@@ -48,6 +48,14 @@ func Test_initOfflineMessageDatabase_4(t *testing.T) {
 	err := initOfflineMessageDatabase(config)
 	if err == nil {
 		t.Error("did not catch missing/empty offline message table name")
+	}
+}
+
+func Test_initOfflineMessageDatabase_5(t *testing.T) {
+	config := MressDbConfig{backend: "postgres", filename: "testoffline.db", dbname: "", offlineMsgTable: ""}
+	err := initOfflineMessageDatabase(config)
+	if err == nil {
+		t.Error("did not catch missing/empty postgres database name")
 	}
 }
 
