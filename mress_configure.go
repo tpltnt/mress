@@ -9,6 +9,14 @@ import (
 	"os"
 )
 
+// Store the (SQL) data in one config struct.
+type MressDbConfig struct {
+	backend         string // either "sqlite3" or "postgresql"
+	filename        string // for sqlite3 only
+	dbname          string // for postgres
+	offlineMsgTable string // generic, defaults to "messages"
+}
+
 // Create a Logger which logs to the given destination
 // Valid destinations are files (+path), stdout and stderr
 func createLogger(destination string) *log.Logger {

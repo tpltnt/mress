@@ -9,14 +9,6 @@ import (
 	"strings"
 )
 
-// Store the (SQL) data in one config struct.
-type MressDbConfig struct {
-	backend         string // either "sqlite3" or "postgresql"
-	filename        string // for sqlite3 only
-	dbname          string // for postgres
-	offlineMsgTable string // generic, defaults to "messages"
-}
-
 // Inital setup of the database. Handle things as needed
 // to reduce false alarms.
 func initOfflineMessageDatabase(config MressDbConfig) error {
