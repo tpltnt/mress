@@ -235,65 +235,81 @@ func Test_deliverOfflineMessage_4(t *testing.T) {
 
 // callbacks shouldn't explode
 func Test_offlineMessengerCommand_0(t *testing.T) {
-	dbfile := "testmsg.db"
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
 	logger := createLogger("")
-	offlineMessengerCommand(event, con, "testuser", dbfile, logger)
-	os.Remove(dbfile)
+	offlineMessengerCommand(event, con, "testuser", config, logger)
+	os.Remove(config.filename)
 }
 
 func Test_offlineMessengerCommand_1(t *testing.T) {
-	dbfile := "testmsg.db"
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
 	con := &irc.Connection{}
 	logger := createLogger("")
-	offlineMessengerCommand(nil, con, "testuser", dbfile, logger)
-	os.Remove(dbfile)
+	offlineMessengerCommand(nil, con, "testuser", config, logger)
+	os.Remove(config.filename)
 }
 
 func Test_offlineMessengerCommand_2(t *testing.T) {
-	dbfile := "testmsg.db"
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	logger := createLogger("")
-	offlineMessengerCommand(event, nil, "testuser", dbfile, logger)
-	os.Remove(dbfile)
+	offlineMessengerCommand(event, nil, "testuser", config, logger)
+	os.Remove(config.filename)
 }
 
 func Test_offlineMessengerCommand_3(t *testing.T) {
-	dbfile := "testmsg.db"
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
 	logger := createLogger("")
-	offlineMessengerCommand(event, con, "test user", dbfile, logger)
-	os.Remove(dbfile)
+	offlineMessengerCommand(event, con, "test user", config, logger)
+	os.Remove(config.filename)
 }
 
 func Test_offlineMessengerCommand_4(t *testing.T) {
-	dbfile := "testmsg.db"
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
 	logger := createLogger("")
-	offlineMessengerCommand(event, con, "", dbfile, logger)
-	os.Remove(dbfile)
+	offlineMessengerCommand(event, con, "", config, logger)
+	os.Remove(config.filename)
 }
 
 func Test_offlineMessengerCommand_5(t *testing.T) {
-	dbfile := "testmsg.db"
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
-	offlineMessengerCommand(event, con, "testuser", dbfile, nil)
-	os.Remove(dbfile)
+	offlineMessengerCommand(event, con, "testuser", config, nil)
+	os.Remove(config.filename)
 }
 
 func Test_offlineMessengerCommand_6(t *testing.T) {
-	dbfile := ""
+	config := MressDbConfig{backend: "", filename: "testoffline.db", offlineMsgTable: "messages"}
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
-	offlineMessengerCommand(event, con, "testuser", dbfile, nil)
+	offlineMessengerCommand(event, con, "testuser", config, nil)
+}
+
+func Test_offlineMessengerCommand_7(t *testing.T) {
+	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages"}
+	args := []string{"bla bla foo bar baz"}
+	event := &irc.Event{Arguments: args}
+	con := &irc.Connection{}
+	offlineMessengerCommand(event, con, "testuser", config, nil)
+}
+
+func Test_offlineMessengerCommand_8(t *testing.T) {
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.sb", offlineMsgTable: ""}
+	args := []string{"bla bla foo bar baz"}
+	event := &irc.Event{Arguments: args}
+	con := &irc.Connection{}
+	offlineMessengerCommand(event, con, "testuser", config, nil)
 }

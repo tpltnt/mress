@@ -175,7 +175,7 @@ func deliverOfflineMessage(dbfile, user string, con *irc.Connection) error {
 // To be in used as a callback for PRIVMSG.
 // mress command: tell <nick>: <message>
 // See also offlineMessengerDrone()
-func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user, dbfile string, logger *log.Logger) {
+func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, dbconfig MressDbConfig, logger *log.Logger) {
 	// sanity checks
 	if e == nil {
 		return
@@ -186,7 +186,10 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user, dbfile str
 	if len(user) == 0 {
 		return
 	}
-	if len(dbfile) == 0 {
+	if dbconfig.backend != "sqlite3" {
+		return
+	}
+	if len(dbconfig.filename) == 0 {
 		return
 	}
 	if logger == nil {
@@ -212,7 +215,7 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user, dbfile str
 	target := strings.Fields(e.Message())[1]
 	target = strings.Trim(target, ":")
 	msgstart := strings.Index(e.Message(), ":") + 1
-	err := saveOfflineMessage(dbfile, e.Nick, target, e.Message()[msgstart:])
+	err := saveOfflineMessage(dbconfig, e.Nick, target, e.Message()[msgstart:])
 	if err != nil {
 		logger.Println("offline message command failed")
 		logger.Println(err.Error())
