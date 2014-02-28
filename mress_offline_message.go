@@ -19,11 +19,15 @@ func initOfflineMessageDatabase(config MressDbConfig) error {
 	if !((config.backend == "sqlite3") || (config.backend == "postgres")) {
 		return fmt.Errorf("backend/database not supported")
 	}
-	if len(config.filename) == 0 {
-		return fmt.Errorf("empty filename given")
+	if config.backend == "sqlite3" {
+		if len(config.filename) == 0 {
+			return fmt.Errorf("empty filename given")
+		}
 	}
-	if len(config.dbname) == 0 {
-		return fmt.Errorf("empty database name given")
+	if config.backend == "postgres" {
+		if len(config.dbname) == 0 {
+			return fmt.Errorf("empty database name given")
+		}
 	}
 	if len(config.offlineMsgTable) == 0 {
 		return fmt.Errorf("no offline message table name given")

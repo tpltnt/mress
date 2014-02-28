@@ -7,7 +7,7 @@ import (
 )
 
 // test db initialization
-func Test_initOfflineMessageDatabase_0(t *testing.T) {
+func Test_initOfflineMessageDatabase_SL3_0(t *testing.T) {
 	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", dbname: "mress-data", offlineMsgTable: "messages"}
 	err := initOfflineMessageDatabase(config)
 	if err != nil {
@@ -19,8 +19,24 @@ func Test_initOfflineMessageDatabase_0(t *testing.T) {
 	}
 }
 
-func Test_initOfflineMessageDatabase_1(t *testing.T) {
+func Test_initOfflineMessageDatabase_PG_0(t *testing.T) {
+	config := MressDbConfig{backend: "postgres", filename: "testoffline.db", dbname: "mress-data", offlineMsgTable: "messages"}
+	err := initOfflineMessageDatabase(config)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func Test_initOfflineMessageDatabase_SL3_1(t *testing.T) {
 	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages"}
+	err := initOfflineMessageDatabase(config)
+	if err == nil {
+		t.Error("empty filename did not yield error")
+	}
+}
+
+func Test_initOfflineMessageDatabase_PG_1(t *testing.T) {
+	config := MressDbConfig{backend: "postgres", filename: "", dbname: "mress-data", offlineMsgTable: "messages"}
 	err := initOfflineMessageDatabase(config)
 	if err == nil {
 		t.Error("empty filename did not yield error")
@@ -43,8 +59,16 @@ func Test_initOfflineMessageDatabase_3(t *testing.T) {
 	}
 }
 
-func Test_initOfflineMessageDatabase_4(t *testing.T) {
+func Test_initOfflineMessageDatabase_SL3_4(t *testing.T) {
 	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: ""}
+	err := initOfflineMessageDatabase(config)
+	if err == nil {
+		t.Error("did not catch missing/empty offline message table name")
+	}
+}
+
+func Test_initOfflineMessageDatabase_PG_4(t *testing.T) {
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", dbname: "mress-data", offlineMsgTable: ""}
 	err := initOfflineMessageDatabase(config)
 	if err == nil {
 		t.Error("did not catch missing/empty offline message table name")
