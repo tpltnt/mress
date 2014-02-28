@@ -10,7 +10,7 @@ import (
 )
 
 // Store the (SQL) data in one config struct.
-type dbconfig struct {
+type MressDbconfig struct {
 	backend  string // either "sqlite3" or "postgresql"
 	filename string // for sqlite3 only
 	dbname   string // for postgres
@@ -19,11 +19,17 @@ type dbconfig struct {
 
 // Inital setup of the database. Handle things as needed
 // to reduce false alarms.
-func initOfflineMessageSqlite3Database(config dbconfig) error {
-	if len(filename) == 0 {
+func initOfflineMessageSqlite3Database(config MressDbconfig) error {
+	if len(config.backend) == 0 {
+		return fmt.Errorf("empty backend string given")
+	}
+	if config.backend != "sqlite3" {
+		return fmt.Errorf("backend (type)/database not supported")
+	}
+	if len(config.filename) == 0 {
 		return fmt.Errorf("empty filename given")
 	}
-	db, err := sql.Open("sqlite3", filename)
+	db, err := sql.Open("sqlite3", config.filename)
 	if err != nil {
 		return fmt.Errorf("failed to open database file: " + err.Error())
 	}
