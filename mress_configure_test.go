@@ -644,39 +644,39 @@ func Test_getMressDbUser_0(t *testing.T) {
 	}
 }
 
-func Test_getMressDbName_1(t *testing.T) {
+func Test_getMressDbUser_1(t *testing.T) {
 	testflag := ""
 	config := "test2.ini"
 	testchan := make(chan string)
 	logger := createLogger("")
-	go getMressDbName(testflag, config, testchan, logger)
+	go getMressDbUser(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != "mress-data" {
-		t.Error("read wrong database name (" + cstring + ") from config")
+		t.Error("read wrong database user (" + cstring + ") from config")
 	}
 }
 
-func Test_getMressDbName_2(t *testing.T) {
-	testflag := "foobar"
+func Test_getMressDbUser_2(t *testing.T) {
+	testflag := "testuser"
 	config := "test2.ini"
 	testchan := make(chan string)
 	logger := createLogger("")
-	go getMressDbName(testflag, config, testchan, logger)
+	go getMressDbUser(testflag, config, testchan, logger)
 	cstring := <-testchan
-	if cstring != "foobar" {
+	if cstring != "testuser" {
 		t.Error("did not select flag over config value")
 	}
 }
 
-func Test_getMressDbName_3(t *testing.T) {
+func Test_getMressDbUser_3(t *testing.T) {
 	testflag := ""
 	config := "empty_test.ini"
 	testchan := make(chan string)
 	logger := createLogger("")
-	go getOfflineDbName(testflag, config, testchan, logger)
+	go getMressDbUser(testflag, config, testchan, logger)
 	cstring := <-testchan
 	if cstring != "" {
-		t.Error("did not handle empty/missing database name")
+		t.Error("did not handle empty/missing database user")
 	}
 }
 
