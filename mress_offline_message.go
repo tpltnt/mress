@@ -54,8 +54,17 @@ func initOfflineMessageDatabase(config MressDbConfig) error {
 // is going to be logged (but not the message content)
 func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) error {
 	// sanity checks
-	if len(dbfile) == 0 {
+	if len(dbconfig.backend) == 0 {
+		return fmt.Errorf("no backend given")
+	}
+	if dbconfig.backend != "sqlite3" {
+		return fmt.Errorf("backend not supportend")
+	}
+	if len(dbconfig.filename) == 0 {
 		return fmt.Errorf("empty database filename")
+	}
+	if len(dbconfig.offlineMsgTable) == 0 {
+		return fmt.Errorf("no name for offline message table given")
 	}
 	if len(source) == 0 {
 		return fmt.Errorf("source of zero-length")
@@ -74,7 +83,12 @@ func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) 
 	}
 
 	// prepare db
-	db, err := sql.Open("sqlite3", dbfile)
+	var err error = nil
+	// TODO fix ugly hack
+	db, _ := sql.Open("", "")
+	if dbconfig.backend == "sqlite3" {
+		db, err = sql.Open("sqlite3", dbconfig.filename)
+	}
 	if err != nil {
 		return fmt.Errorf("failed to open database file: " + err.Error())
 	}

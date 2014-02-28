@@ -55,8 +55,8 @@ func Test_initOfflineMessageDatabase_4(t *testing.T) {
 
 // valid transaction
 func Test_saveOfflineMessage_0(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db"}
-	err := saveOfflineMessage(config.filename, "testsource", "testtarget", "testmessage")
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	err := saveOfflineMessage(config, "testsource", "testtarget", "testmessage")
 	if err != nil {
 		t.Error(err.Error())
 	}
@@ -73,7 +73,7 @@ func Test_saveOfflineMessage_1(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	err = saveOfflineMessage(config.filename, "testsource", "", "testmessage")
+	err = saveOfflineMessage(config, "testsource", "", "testmessage")
 	if err == nil {
 		t.Error("empty target not detected")
 	}
@@ -90,7 +90,7 @@ func Test_saveOfflineMessage_2(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	err = saveOfflineMessage(config.filename, "testsource", "test target", "testmessage")
+	err = saveOfflineMessage(config, "testsource", "test target", "testmessage")
 	if err == nil {
 		t.Error("target with space not detected")
 	}
@@ -107,7 +107,7 @@ func Test_saveOfflineMessage_3(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	err = saveOfflineMessage(config.filename, "testsource", "testtarget", "")
+	err = saveOfflineMessage(config, "testsource", "testtarget", "")
 	if err == nil {
 		t.Error("empty message not detected")
 	}
@@ -124,7 +124,7 @@ func Test_saveOfflineMessage_4(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	err = saveOfflineMessage(config.filename, "", "testtarget", "testmessage")
+	err = saveOfflineMessage(config, "", "testtarget", "testmessage")
 	if err == nil {
 		t.Error("empty source not detected")
 	}
@@ -141,7 +141,7 @@ func Test_saveOfflineMessage_5(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	err = saveOfflineMessage(config.filename, "test source", "testtarget", "testmessage")
+	err = saveOfflineMessage(config, "test source", "testtarget", "testmessage")
 	if err == nil {
 		t.Error("source with space not detected")
 	}
@@ -153,10 +153,19 @@ func Test_saveOfflineMessage_5(t *testing.T) {
 
 // empty db filename
 func Test_saveOfflineMessage_6(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: ""}
-	err := saveOfflineMessage(config.filename, "test source", "testtarget", "testmessage")
+	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages"}
+	err := saveOfflineMessage(config, "test source", "testtarget", "testmessage")
 	if err == nil {
 		t.Error("empty database filename not detected")
+	}
+}
+
+// empty offline msg table
+func Test_saveOfflineMessage_7(t *testing.T) {
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: ""}
+	err := saveOfflineMessage(config, "test source", "testtarget", "testmessage")
+	if err == nil {
+		t.Error("empty offline message table name not detected")
 	}
 }
 
