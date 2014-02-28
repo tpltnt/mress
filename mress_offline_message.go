@@ -11,10 +11,10 @@ import (
 
 // Store the (SQL) data in one config struct.
 type MressDbconfig struct {
-	backend  string // either "sqlite3" or "postgresql"
-	filename string // for sqlite3 only
-	dbname   string // for postgres
-	dbtable  string // generic, defaults to "messages"
+	backend         string // either "sqlite3" or "postgresql"
+	filename        string // for sqlite3 only
+	dbname          string // for postgres
+	offlineMsgTable string // generic, defaults to "messages"
 }
 
 // Inital setup of the database. Handle things as needed
@@ -29,12 +29,20 @@ func initOfflineMessageSqlite3Database(config MressDbconfig) error {
 	if len(config.filename) == 0 {
 		return fmt.Errorf("empty filename given")
 	}
-	db, err := sql.Open("sqlite3", config.filename)
+	if len(config.offlineMsgTable) == 0 {
+		return fmt.Errorf("no offline message table name given")
+	}
+	var err error = nil
+	//TODO: clean up ugly hack
+	db, _ := sql.Open("", "")
+	if config.backend == "sqlite3" {
+		db, err = sql.Open("sqlite3", config.filename)
+	}
 	if err != nil {
-		return fmt.Errorf("failed to open database file: " + err.Error())
+		return fmt.Errorf("failed to open database: " + err.Error())
 	}
 	defer db.Close()
-	sql := `CREATE TABLE IF NOT EXISTS messages (target TEXT, source TEXT, content TEXT);`
+	sql := "CREATE TABLE IF NOT EXISTS " + config.offlineMsgTable + " (target TEXT, source TEXT, content TEXT);"
 	_, err = db.Exec(sql)
 	if err != nil {
 		return fmt.Errorf("failed to create database table: " + err.Error())
