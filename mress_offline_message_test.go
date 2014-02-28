@@ -60,8 +60,8 @@ func Test_saveOfflineMessage_0(t *testing.T) {
 
 // empty target
 func Test_saveOfflineMessage_1(t *testing.T) {
-	dbfile := "testmsg.db"
-	err := initOfflineMessageSqlite3Database(dbfile)
+	config := MressDbconfig{backend: "sqlite3", filename: "testoffline.db"}
+	err := initOfflineMessageSqlite3Database(config.filename)
 	if err != nil {
 		t.Error(err.Error())
 	}
@@ -69,7 +69,7 @@ func Test_saveOfflineMessage_1(t *testing.T) {
 	if err == nil {
 		t.Error("empty target not detected")
 	}
-	err = os.Remove(dbfile)
+	err = os.Remove(config.filename)
 	if nil != err {
 		t.Error(err.Error())
 	}
