@@ -10,7 +10,7 @@ import (
 )
 
 // Store the (SQL) data in one config struct.
-type MressDbconfig struct {
+type MressDbConfig struct {
 	backend         string // either "sqlite3" or "postgresql"
 	filename        string // for sqlite3 only
 	dbname          string // for postgres
@@ -19,7 +19,7 @@ type MressDbconfig struct {
 
 // Inital setup of the database. Handle things as needed
 // to reduce false alarms.
-func initOfflineMessageDatabase(config MressDbconfig) error {
+func initOfflineMessageDatabase(config MressDbConfig) error {
 	if len(config.backend) == 0 {
 		return fmt.Errorf("empty backend string given")
 	}
@@ -52,7 +52,7 @@ func initOfflineMessageDatabase(config MressDbconfig) error {
 
 // Store a message for a target (user). If saving fails, this fact
 // is going to be logged (but not the message content)
-func saveOfflineMessage(dbfile, source, target, message string) error {
+func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) error {
 	// sanity checks
 	if len(dbfile) == 0 {
 		return fmt.Errorf("empty database filename")
