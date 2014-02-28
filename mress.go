@@ -50,6 +50,8 @@ func main() {
 	dbconfig := MressDbConfig{backend: "sqlite3", offlineMsgTable: "messages"}
 	offlinedbchan := make(chan string)
 	go getOfflineDBfilename(*offlineMsgDb, *configfile, offlinedbchan, logger)
+	dbnamechan := make(chan string)
+	go getMressDbName("", *configfile, dbnamechan, logger)
 	// create IRC connection
 	nick := <-nickchan
 	irccon := irc.IRC(nick, "mress")
@@ -94,6 +96,7 @@ func main() {
 	})
 
 	dbconfig.filename = <-offlinedbchan
+	dbconfig.dbname = <-dbnamechan
 	irccon.AddCallback("001", func(e *irc.Event) {
 		err := initOfflineMessageDatabase(dbconfig)
 		if err != nil {

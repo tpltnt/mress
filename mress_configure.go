@@ -199,7 +199,7 @@ func getOfflineDBfilename(dbfile, configfile string, channel chan string, logger
 }
 
 // Read the name of mress (PostgreSQL) database.
-func getOfflineDBname(dbname, configfile string, channel chan string, logger *log.Logger) {
+func getMressDbName(dbname, configfile string, channel chan string, logger *log.Logger) {
 	cdb, err := readConfigString(configfile, "maintainance", "dbname", logger)
 	if err != nil {
 		logger.Println(err.Error())
