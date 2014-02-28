@@ -1,8 +1,6 @@
 package main
 
 import (
-	"database/sql"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/thoj/go-ircevent"
 	"os"
 	"testing"
@@ -171,66 +169,100 @@ func Test_saveOfflineMessage_7(t *testing.T) {
 
 func Test_deliverOfflineMessage_0(t *testing.T) {
 	// prepare db
-	dbfile := "testmsg.db"
-	db, err := sql.Open("sqlite3", dbfile)
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	err := initOfflineMessageDatabase(config)
 	if err != nil {
-		t.Error("failed to open database file: " + err.Error())
+		t.Error(err.Error())
 	}
-	defer db.Close()
-	sql := `CREATE TABLE IF NOT EXISTS messages (target TEXT, source TEXT, content TEXT);`
-	_, err = db.Exec(sql)
-	if err != nil {
-		t.Error("failed to create database table: " + err.Error())
-	}
-
 	con := &irc.Connection{}
-	err = deliverOfflineMessage(dbfile, "testuser", con)
+
+	err = deliverOfflineMessage(config, "testuser", con)
 	if err != nil {
 		t.Log("valid call failed")
 		t.Error(err.Error())
 	}
 
-	os.Remove(dbfile)
+	os.Remove(config.filename)
 }
 
 func Test_deliverOfflineMessage_1(t *testing.T) {
-	dbfile := "testmsg.db"
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
 	con := &irc.Connection{}
-	err := deliverOfflineMessage(dbfile, "test user", con)
+	err := deliverOfflineMessage(config, "test user", con)
 	if err == nil {
 		t.Log("username with spaces shouldn't be accepted")
 	}
 
-	os.Remove(dbfile)
+	os.Remove(config.filename)
 }
 
 func Test_deliverOfflineMessage_2(t *testing.T) {
-	dbfile := "testmsg.db"
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
 	con := &irc.Connection{}
-	err := deliverOfflineMessage(dbfile, "", con)
+	err := deliverOfflineMessage(config, "", con)
 	if err == nil {
 		t.Log("empty username shouldn't be accepted")
 	}
-	os.Remove(dbfile)
+	os.Remove(config.filename)
 }
 
 func Test_deliverOfflineMessage_3(t *testing.T) {
-	dbfile := ""
+	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages"}
 	con := &irc.Connection{}
-	err := deliverOfflineMessage(dbfile, "testuser", con)
+	err := deliverOfflineMessage(config, "testuser", con)
 	if err == nil {
-		t.Log("nil connection pointer shouldn't be accepted")
+		t.Log("empty sqlite3 database filename shouldn't be accepted")
 	}
-	os.Remove(dbfile)
+	os.Remove(config.filename)
 }
 
 func Test_deliverOfflineMessage_4(t *testing.T) {
-	dbfile := "testmsg.db"
-	err := deliverOfflineMessage(dbfile, "testuser", nil)
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	err := deliverOfflineMessage(config, "testuser", nil)
 	if err == nil {
 		t.Log("nil connection pointer shouldn't be accepted")
 	}
-	os.Remove(dbfile)
+	os.Remove(config.filename)
+}
+
+func Test_deliverOfflineMessage_5(t *testing.T) {
+	config := MressDbConfig{backend: "", filename: "testoffline.db", offlineMsgTable: "messages"}
+	con := &irc.Connection{}
+	err := deliverOfflineMessage(config, "testuser", con)
+	if err == nil {
+		t.Log("empty backend not detected")
+	}
+	os.Remove(config.filename)
+}
+
+func Test_deliverOfflineMessage_6(t *testing.T) {
+	config := MressDbConfig{backend: "jksdgfrf", filename: "testoffline.db", offlineMsgTable: "messages"}
+	con := &irc.Connection{}
+	err := deliverOfflineMessage(config, "testuser", con)
+	if err == nil {
+		t.Log("invalid backend not detected")
+	}
+	os.Remove(config.filename)
+}
+
+func Test_deliverOfflineMessage_7(t *testing.T) {
+	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages"}
+	con := &irc.Connection{}
+	err := deliverOfflineMessage(config, "testuser", con)
+	if err == nil {
+		t.Log("empty sqlite3 filename not detected")
+	}
+	os.Remove(config.filename)
+}
+
+func Test_deliverOfflineMessage_8(t *testing.T) {
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: ""}
+	con := &irc.Connection{}
+	err := deliverOfflineMessage(config, "testuser", con)
+	if err == nil {
+		t.Log("empty offline message table name not detected")
+	}
+	os.Remove(config.filename)
 }
 
 // callbacks shouldn't explode

@@ -94,7 +94,6 @@ func main() {
 	})
 
 	dbconfig.filename = <-offlinedbchan
-	offlmsgdb := dbconfig.filename
 	irccon.AddCallback("001", func(e *irc.Event) {
 		err := initOfflineMessageDatabase(dbconfig)
 		if err != nil {
@@ -105,10 +104,10 @@ func main() {
 		offlineMessengerCommand(e, irccon, nick, dbconfig, logger)
 	})
 	irccon.AddCallback("JOIN", func(e *irc.Event) {
-		offlineMessengerDrone(e, irccon, offlmsgdb, nick, channel, logger)
+		offlineMessengerDrone(e, irccon, dbconfig, nick, channel, logger)
 	})
 	irccon.AddCallback("353", func(e *irc.Event) {
-		offlineMessengerDrone(e, irccon, offlmsgdb, nick, channel, logger)
+		offlineMessengerDrone(e, irccon, dbconfig, nick, channel, logger)
 	})
 
 	logger.Println("starting event loop")

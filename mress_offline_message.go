@@ -123,9 +123,12 @@ func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) 
 }
 
 // Retrieve and deliver previously stored message for user.
-func deliverOfflineMessage(dbfile, user string, con *irc.Connection) error {
+func deliverOfflineMessage(dbconfig MressDbConfig, user string, con *irc.Connection) error {
 	// sanity checks
-	if len(dbfile) == 0 {
+	if dbconfig.backend != "sqlite3" {
+		return fmt.Errorf("backend not supported")
+	}
+	if len(dbconfig.filename) == 0 {
 		return fmt.Errorf("database filename is empty")
 	}
 	if len(user) == 0 {
@@ -139,7 +142,12 @@ func deliverOfflineMessage(dbfile, user string, con *irc.Connection) error {
 	}
 
 	// prepare db
-	db, err := sql.Open("sqlite3", dbfile)
+	var err error = nil
+	// TODO fix ugly hack
+	db, _ := sql.Open("", "")
+	if dbconfig.backend == "sqlite3" {
+		db, err = sql.Open("sqlite3", dbconfig.filename)
+	}
 	if err != nil {
 		return fmt.Errorf("failed to open database file: " + err.Error())
 	}
@@ -226,7 +234,7 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, dbc
 // Deliver a message from a database. To be used as a callback for JOIN.
 // This implements the delivery part of the offline messenger command.
 // See also offlineMessengerCommand()
-func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbfile, user, channel string, logger *log.Logger) {
+func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbconfig MressDbConfig, user, channel string, logger *log.Logger) {
 	// sanity checks
 	if e == nil {
 		return
@@ -234,7 +242,13 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbfile, user, chan
 	if irc == nil {
 		return
 	}
-	if len(dbfile) == 0 {
+	if dbconfig.backend != "sqlite3" {
+		return
+	}
+	if len(dbconfig.filename) == 0 {
+		return
+	}
+	if len(dbconfig.offlineMsgTable) == 0 {
 		return
 	}
 	if len(user) == 0 {
@@ -265,7 +279,7 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbfile, user, chan
 		nickline := strings.Replace(e.Message(), "@", "", -1)
 		nicklist := strings.Fields(nickline)
 		for i := 0; i < len(nicklist); i++ {
-			err := deliverOfflineMessage(dbfile, nicklist[i], irc)
+			err := deliverOfflineMessage(dbconfig, nicklist[i], irc)
 			if err != nil {
 				logger.Println("delivering stale messages had problems")
 				logger.Println(err.Error())
@@ -274,7 +288,7 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbfile, user, chan
 		return
 	}
 	// handle others joining
-	err := deliverOfflineMessage(dbfile, e.Nick, irc)
+	err := deliverOfflineMessage(dbconfig, e.Nick, irc)
 	if err != nil {
 		logger.Println("message delivery had problems")
 		logger.Println(err.Error())
