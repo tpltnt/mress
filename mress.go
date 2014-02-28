@@ -96,7 +96,7 @@ func main() {
 	dbconfig.filename = <-offlinedbchan
 	offlmsgdb := dbconfig.filename
 	irccon.AddCallback("001", func(e *irc.Event) {
-		err := initOfflineMessageSqlite3Database(dbconfig)
+		err := initOfflineMessageDatabase(dbconfig)
 		if err != nil {
 			logger.Println(err.Error())
 		}

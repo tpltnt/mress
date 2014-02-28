@@ -19,7 +19,7 @@ type MressDbconfig struct {
 
 // Inital setup of the database. Handle things as needed
 // to reduce false alarms.
-func initOfflineMessageSqlite3Database(config MressDbconfig) error {
+func initOfflineMessageDatabase(config MressDbconfig) error {
 	if len(config.backend) == 0 {
 		return fmt.Errorf("empty backend string given")
 	}
