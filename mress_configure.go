@@ -198,6 +198,22 @@ func getOfflineDBfilename(dbfile, configfile string, channel chan string, logger
 	}
 }
 
+// Read the name of mress (PostgreSQL) database.
+func getOfflineDBname(dbname, configfile string, channel chan string, logger *log.Logger) {
+	cdb, err := readConfigString(configfile, "maintainance", "dbname", logger)
+	if err != nil {
+		logger.Println(err.Error())
+		channel <- ""
+		return
+	}
+	//choose config over "empty" value
+	if len(dbname) == 0 {
+		channel <- cdb
+	} else {
+		channel <- dbname
+	}
+}
+
 // Read the geoip server from the configuration file.
 func getGeoipServer(configfile string, channel chan string, logger *log.Logger) {
 	cstring, err := readConfigString(configfile, "geolocation", "server", logger)

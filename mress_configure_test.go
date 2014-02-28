@@ -533,6 +533,56 @@ func Test_getOfflineDBfilename_3(t *testing.T) {
 	}
 }
 
+// test determining database name
+func Test_getOfflineDBname_0(t *testing.T) {
+	testflag := "foobar"
+	config := "test2.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineDBname(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != testflag {
+		t.Error("read wrong database name")
+	}
+}
+
+func Test_getOfflineDBname_1(t *testing.T) {
+	testflag := ""
+	config := "test2.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineDBname(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "mress-data" {
+		t.Error("read wrong database name (" + cstring + ") from config")
+	}
+}
+
+func Test_getOfflineDBname_2(t *testing.T) {
+	testflag := "foobar"
+	config := "test2.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineDBname(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "foobar" {
+		t.Error("did not select flag over config value")
+	}
+}
+
+func Test_getOfflineDBname_3(t *testing.T) {
+	testflag := ""
+	config := "empty_test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getOfflineDBfilename(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "" {
+		t.Error("did not handle empty/missing database name")
+	}
+}
+
+// test the geoIP server
 func Test_getGeoipServer_0(t *testing.T) {
 	configfile := "test.ini"
 	testchan := make(chan string)
