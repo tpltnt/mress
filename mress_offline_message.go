@@ -24,7 +24,7 @@ func initOfflineMessageDatabase(config MressDbConfig) error {
 		return fmt.Errorf("empty backend string given")
 	}
 	if config.backend != "sqlite3" {
-		return fmt.Errorf("backend (type)/database not supported")
+		return fmt.Errorf("backend/database not supported")
 	}
 	if len(config.filename) == 0 {
 		return fmt.Errorf("empty filename given")
