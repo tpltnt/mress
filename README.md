@@ -59,6 +59,7 @@ version history
   * IPv4 lookup added
   * Postgresql backend for better performance (if needed)
   * text feedback on offline messaging
+  * simple introduction on first time seen in channel
 * v0.25
   * offline message db filename as parameter
   * configuration code in extra file
