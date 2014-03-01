@@ -154,11 +154,24 @@ func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) 
 // Retrieve and deliver previously stored message for user.
 func deliverOfflineMessage(dbconfig MressDbConfig, user string, con *irc.Connection) error {
 	// sanity checks
-	if dbconfig.backend != "sqlite3" {
+	if !((dbconfig.backend == "sqlite3") || (dbconfig.backend == "postgres")) {
 		return fmt.Errorf("backend not supported")
 	}
-	if len(dbconfig.filename) == 0 {
-		return fmt.Errorf("database filename is empty")
+	if dbconfig.backend == "sqlite3" {
+		if len(dbconfig.filename) == 0 {
+			return fmt.Errorf("database filename is empty")
+		}
+	}
+	if dbconfig.backend == "postgres" {
+		if len(dbconfig.dbname) == 0 {
+			return fmt.Errorf("empty database name given")
+		}
+		if len(dbconfig.user) == 0 {
+			return fmt.Errorf("empty database username given")
+		}
+		if len(dbconfig.password) == 0 {
+			return fmt.Errorf("empty database password given")
+		}
 	}
 	if len(user) == 0 {
 		return fmt.Errorf("user of zero-length")
@@ -177,13 +190,22 @@ func deliverOfflineMessage(dbconfig MressDbConfig, user string, con *irc.Connect
 	if dbconfig.backend == "sqlite3" {
 		db, err = sql.Open("sqlite3", dbconfig.filename)
 	}
+	if dbconfig.backend == "postgres" {
+		db, err = sql.Open("postgres", "host=localhost user="+dbconfig.user+" password="+dbconfig.password+" dbname="+dbconfig.dbname+" sslmode=disable")
+	}
 	if err != nil {
 		return fmt.Errorf("failed to open database file: " + err.Error())
 	}
 	defer db.Close()
 
 	// query db
-	rows, err := db.Query("SELECT source, content FROM messages WHERE target = ?", user)
+	var rows *sql.Rows = nil
+	if dbconfig.backend == "sqlite3" {
+		rows, err = db.Query("SELECT source, content FROM messages WHERE target = ?", user)
+	}
+	if dbconfig.backend == "postgres" {
+		rows, err = db.Query("SELECT source, content FROM messages WHERE target = $1", user)
+	}
 	if err != nil {
 		return fmt.Errorf("query failed: " + err.Error())
 	}
@@ -199,7 +221,12 @@ func deliverOfflineMessage(dbconfig MressDbConfig, user string, con *irc.Connect
 
 	// delete this message from db if needed
 	if (len(source) != 0) && (len(message) != 0) {
-		_, err = db.Exec("DELETE FROM messages WHERE target = ? AND source = ?", user, source)
+		if dbconfig.backend == "sqlite3" {
+			_, err = db.Exec("DELETE FROM messages WHERE target = ? AND source = ?", user, source)
+		}
+		if dbconfig.backend == "postgres" {
+			_, err = db.Exec("DELETE FROM messages WHERE target = $1 AND source = $2", user, source)
+		}
 		if err != nil {
 			return fmt.Errorf("executing DELETE failed: " + err.Error())
 		}
