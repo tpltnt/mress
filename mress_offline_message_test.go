@@ -279,7 +279,7 @@ func Test_saveOfflineMessage_7(t *testing.T) {
 	}
 }
 
-func Test_deliverOfflineMessage_0(t *testing.T) {
+func Test_deliverOfflineMessage_SL3_0(t *testing.T) {
 	// prepare db
 	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
 	err := initOfflineMessageDatabase(config)
@@ -295,6 +295,32 @@ func Test_deliverOfflineMessage_0(t *testing.T) {
 	}
 
 	os.Remove(config.filename)
+}
+
+func Test_deliverOfflineMessage_PG_0(t *testing.T) {
+	// prepare db
+	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages"}
+	logger := createLogger("")
+	dbuserchan := make(chan string)
+	go getMressDbUser("", "test2.ini", dbuserchan, logger)
+	dbpasswdchan := make(chan string)
+	go getMressDbPassword("", "test2.ini", dbpasswdchan, logger)
+	dbnamechan := make(chan string)
+	go getMressDbName("", "test2.ini", dbnamechan, logger)
+	config.password = <-dbpasswdchan
+	config.user = <-dbuserchan
+	config.dbname = <-dbnamechan
+	err := initOfflineMessageDatabase(config)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	con := &irc.Connection{}
+
+	err = deliverOfflineMessage(config, "testuser", con)
+	if err != nil {
+		t.Log("valid call failed")
+		t.Error(err.Error())
+	}
 }
 
 func Test_deliverOfflineMessage_1(t *testing.T) {
