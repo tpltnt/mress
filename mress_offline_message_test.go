@@ -22,9 +22,12 @@ func Test_initOfflineMessageDatabase_SL3_0(t *testing.T) {
 func Test_initOfflineMessageDatabase_PG_0(t *testing.T) {
 	config := MressDbConfig{backend: "postgres", filename: "testoffline.db", dbname: "mress-data", offlineMsgTable: "messages"}
 	logger := createLogger("")
+	dbuserchan := make(chan string)
+	go getMressDbUser("", "test2.ini", dbuserchan, logger)
 	dbpasswdchan := make(chan string)
 	go getMressDbPassword("", "test2.ini", dbpasswdchan, logger)
 	config.password = <-dbpasswdchan
+	config.user = <-dbuserchan
 	err := initOfflineMessageDatabase(config)
 	if err != nil {
 		t.Error(err.Error())
@@ -72,7 +75,7 @@ func Test_initOfflineMessageDatabase_SL3_4(t *testing.T) {
 }
 
 func Test_initOfflineMessageDatabase_PG_4(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", dbname: "mress-data", offlineMsgTable: ""}
+	config := MressDbConfig{backend: "postgres", filename: "testoffline.db", dbname: "mress-data", offlineMsgTable: ""}
 	err := initOfflineMessageDatabase(config)
 	if err == nil {
 		t.Error("did not catch missing/empty offline message table name")
@@ -84,6 +87,22 @@ func Test_initOfflineMessageDatabase_5(t *testing.T) {
 	err := initOfflineMessageDatabase(config)
 	if err == nil {
 		t.Error("did not catch missing/empty postgres database name")
+	}
+}
+
+func Test_initOfflineMessageDatabase_6(t *testing.T) {
+	config := MressDbConfig{backend: "postgres", filename: "testoffline.db", dbname: "mress-data", user: "", password: "supersecret", offlineMsgTable: ""}
+	err := initOfflineMessageDatabase(config)
+	if err == nil {
+		t.Error("did not catch empty postgres database user name")
+	}
+}
+
+func Test_initOfflineMessageDatabase_7(t *testing.T) {
+	config := MressDbConfig{backend: "postgres", filename: "testoffline.db", dbname: "mress-data", user: "", offlineMsgTable: ""}
+	err := initOfflineMessageDatabase(config)
+	if err == nil {
+		t.Error("did not catch empty postgres database user password")
 	}
 }
 
