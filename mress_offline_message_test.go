@@ -106,6 +106,14 @@ func Test_initOfflineMessageDatabase_7(t *testing.T) {
 	}
 }
 
+func Test_initOfflineMessageDatabase_8(t *testing.T) {
+	config := MressDbConfig{backend: "postgres", filename: "testoffline.db", dbname: "fwfhweflhuew73", user: "", offlineMsgTable: ""}
+	err := initOfflineMessageDatabase(config)
+	if err == nil {
+		t.Error("did not catch wrong postgres database name")
+	}
+}
+
 // valid transaction
 func Test_saveOfflineMessage_SL3_0(t *testing.T) {
 	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
@@ -126,7 +134,7 @@ func Test_saveOfflineMessage_SL3_0(t *testing.T) {
 }
 
 func Test_saveOfflineMessage_PG_0(t *testing.T) {
-	config := MressDbConfig{backend: "postgres", dbname: "mressdata", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "postgres", dbname: "mress-data", offlineMsgTable: "messages"}
 	logger := createLogger("")
 	dbuserchan := make(chan string)
 	go getMressDbUser("", "test2.ini", dbuserchan, logger)

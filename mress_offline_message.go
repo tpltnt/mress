@@ -56,11 +56,8 @@ func initOfflineMessageDatabase(config MressDbConfig) error {
 	if err != nil {
 		return fmt.Errorf("database connection failed: " + err.Error())
 	}
-	res, err := db.Exec(sql)
+	_, err = db.Exec(sql)
 	if err != nil {
-		fmt.Println(sql)
-		fmt.Println(db)
-		fmt.Println(res)
 		return fmt.Errorf("failed to create database table: " + err.Error())
 	}
 	return nil
@@ -137,7 +134,13 @@ func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) 
 	if err != nil {
 		return fmt.Errorf("beginning transaction failed: " + err.Error())
 	}
-	stmt, err := tx.Prepare("INSERT INTO messages (target, source, content) VALUES (?, ?, ?)")
+	var stmt *sql.Stmt = nil
+	if dbconfig.backend == "sqlite3" {
+		stmt, err = tx.Prepare("INSERT INTO messages (target, source, content) VALUES (?, ?, ?)")
+	}
+	if dbconfig.backend == "postgres" {
+		stmt, err = tx.Prepare("INSERT INTO messages (target, source, content) VALUES ($1, $2, $3)")
+	}
 	if err != nil {
 		log.Fatal(err)
 	}
