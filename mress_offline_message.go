@@ -296,8 +296,11 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, dbc
 	if err != nil {
 		logger.Println("offline message command failed")
 		logger.Println(err.Error())
+		irc.Privmsg(e.Nick, "Sorry "+e.Nick+", something went wrong and I couldn't store your message. :(\n")
+		return
 	}
 	logger.Println("offline message saved")
+	irc.Privmsg(e.Nick, "Yes "+e.Nick+", I will deliver your message as soon as possible.\n")
 }
 
 // Deliver a message from a database. To be used as a callback for JOIN.
@@ -353,8 +356,6 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbconfig MressDbCo
 		return
 	}
 
-	// TODO: handle self-join: if mress enters channel, deliver messages
-	// 353 hf_testbot2 @ #ircscribble :hf_testbot2 tzugh @herr_flupke\r\n
 	if e.Code == "353" {
 		// e.Nick is empty for 353
 		// strip "@" from op name
