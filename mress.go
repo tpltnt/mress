@@ -47,8 +47,17 @@ func main() {
 	// to disable TLS and/or use debugging should always
 	// be conscious decisions and are therefore not part
 	// of the config.
+	dbconfig := MressDbConfig{backend: "sqlite3", offlineMsgTable: "messages"}
 	offlinedbchan := make(chan string)
 	go getOfflineDBfilename(*offlineMsgDb, *configfile, offlinedbchan, logger)
+	dbnamechan := make(chan string)
+	go getMressDbName("", *configfile, dbnamechan, logger)
+	offltablechan := make(chan string)
+	go getOfflineTableName("", *configfile, offltablechan, logger)
+	dbuserchan := make(chan string)
+	go getMressDbUser("", *configfile, dbuserchan, logger)
+	dbpasswdchan := make(chan string)
+	go getMressDbPassword("", *configfile, dbpasswdchan, logger)
 	// create IRC connection
 	nick := <-nickchan
 	irccon := irc.IRC(nick, "mress")
@@ -92,21 +101,25 @@ func main() {
 		irccon.Join(channel)
 	})
 
-	offlmsgdb := <-offlinedbchan
+	dbconfig.filename = <-offlinedbchan
+	dbconfig.dbname = <-dbnamechan
+	dbconfig.offlineMsgTable = <-offltablechan
+	dbconfig.user = <-dbuserchan
+	dbconfig.password = <-dbpasswdchan
 	irccon.AddCallback("001", func(e *irc.Event) {
-		err := initOfflineMessageDatabase(offlmsgdb)
+		err := initOfflineMessageDatabase(dbconfig)
 		if err != nil {
 			logger.Println(err.Error())
 		}
 	})
 	irccon.AddCallback("PRIVMSG", func(e *irc.Event) {
-		offlineMessengerCommand(e, irccon, nick, offlmsgdb, logger)
+		offlineMessengerCommand(e, irccon, nick, dbconfig, logger)
 	})
 	irccon.AddCallback("JOIN", func(e *irc.Event) {
-		offlineMessengerDrone(e, irccon, offlmsgdb, nick, channel, logger)
+		offlineMessengerDrone(e, irccon, dbconfig, nick, channel, logger)
 	})
 	irccon.AddCallback("353", func(e *irc.Event) {
-		offlineMessengerDrone(e, irccon, offlmsgdb, nick, channel, logger)
+		offlineMessengerDrone(e, irccon, dbconfig, nick, channel, logger)
 	})
 
 	logger.Println("starting event loop")
