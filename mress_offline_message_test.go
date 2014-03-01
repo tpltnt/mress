@@ -328,7 +328,7 @@ func Test_deliverOfflineMessage_1(t *testing.T) {
 	con := &irc.Connection{}
 	err := deliverOfflineMessage(config, "test user", con)
 	if err == nil {
-		t.Log("username with spaces shouldn't be accepted")
+		t.Error("target username with spaces shouldn't be accepted")
 	}
 
 	os.Remove(config.filename)
@@ -344,7 +344,7 @@ func Test_deliverOfflineMessage_2(t *testing.T) {
 	os.Remove(config.filename)
 }
 
-func Test_deliverOfflineMessage_3(t *testing.T) {
+func Test_deliverOfflineMessage_SL3_3(t *testing.T) {
 	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages"}
 	con := &irc.Connection{}
 	err := deliverOfflineMessage(config, "testuser", con)
@@ -352,6 +352,24 @@ func Test_deliverOfflineMessage_3(t *testing.T) {
 		t.Log("empty sqlite3 database filename shouldn't be accepted")
 	}
 	os.Remove(config.filename)
+}
+
+func Test_deliverOfflineMessage_PG_3(t *testing.T) {
+	// prepare db
+	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages"}
+	logger := createLogger("")
+	dbuserchan := make(chan string)
+	go getMressDbUser("", "test2.ini", dbuserchan, logger)
+	dbpasswdchan := make(chan string)
+	go getMressDbPassword("", "test2.ini", dbpasswdchan, logger)
+	config.password = <-dbpasswdchan
+	config.user = <-dbuserchan
+	con := &irc.Connection{}
+
+	err := deliverOfflineMessage(config, "testuser", con)
+	if err == nil {
+		t.Error("empty database name shouldn't be accepted")
+	}
 }
 
 func Test_deliverOfflineMessage_4(t *testing.T) {
@@ -364,7 +382,7 @@ func Test_deliverOfflineMessage_4(t *testing.T) {
 }
 
 func Test_deliverOfflineMessage_5(t *testing.T) {
-	config := MressDbConfig{backend: "", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: ""}
 	con := &irc.Connection{}
 	err := deliverOfflineMessage(config, "testuser", con)
 	if err == nil {
@@ -374,7 +392,7 @@ func Test_deliverOfflineMessage_5(t *testing.T) {
 }
 
 func Test_deliverOfflineMessage_6(t *testing.T) {
-	config := MressDbConfig{backend: "jksdgfrf", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "jksdgfrf"}
 	con := &irc.Connection{}
 	err := deliverOfflineMessage(config, "testuser", con)
 	if err == nil {
