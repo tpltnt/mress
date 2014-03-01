@@ -28,6 +28,9 @@ func initOfflineMessageDatabase(config MressDbConfig) error {
 		if len(config.dbname) == 0 {
 			return fmt.Errorf("empty database name given")
 		}
+		if len(config.password) == 0 {
+			return fmt.Errorf("empty database password given")
+		}
 	}
 	if len(config.offlineMsgTable) == 0 {
 		return fmt.Errorf("no offline message table name given")

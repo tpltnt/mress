@@ -28,6 +28,7 @@ get mress up and running
 * install go-sqlite3: $go get github.com/mattn/go-sqlite3
 * install goini: $go get github.com/jurka/goini
 * run (optional) tests: $go test
+** the (hardcoded) test2.ini contains actual credentials, so please create your own
 * create executable: $go build mress.go
 * check usage: $./mress --help
 * run mress with flags or config of your choice

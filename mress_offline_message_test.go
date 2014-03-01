@@ -21,6 +21,10 @@ func Test_initOfflineMessageDatabase_SL3_0(t *testing.T) {
 
 func Test_initOfflineMessageDatabase_PG_0(t *testing.T) {
 	config := MressDbConfig{backend: "postgres", filename: "testoffline.db", dbname: "mress-data", offlineMsgTable: "messages"}
+	logger := createLogger("")
+	dbpasswdchan := make(chan string)
+	go getMressDbPassword("", "test2.ini", dbpasswdchan, logger)
+	config.password = <-dbpasswdchan
 	err := initOfflineMessageDatabase(config)
 	if err != nil {
 		t.Error(err.Error())
