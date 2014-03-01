@@ -8,11 +8,9 @@ import (
 )
 
 func Test_markAsSeen_0(t *testing.T) {
-	irce := irc.Event{}
-	irccon := irc.Connection{}
+	dbconfig := MressDbConfig{}
 	user := "testuser"
-	channel := "#testchannel"
-	err := runIntroduction(irce, irccon, user, channel)
+	err := markAsSeen(dbconfig, user)
 	if err != nil {
 		t.Error(err.Error())
 	}
