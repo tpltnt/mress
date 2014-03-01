@@ -66,11 +66,24 @@ func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) 
 	if len(dbconfig.backend) == 0 {
 		return fmt.Errorf("no backend given")
 	}
-	if dbconfig.backend != "sqlite3" {
+	if !((dbconfig.backend == "sqlite3") || (dbconfig.backend == "postgres")) {
 		return fmt.Errorf("backend not supportend")
 	}
-	if len(dbconfig.filename) == 0 {
-		return fmt.Errorf("empty database filename")
+	if dbconfig.backend == "sqlite3" {
+		if len(dbconfig.filename) == 0 {
+			return fmt.Errorf("empty database filename")
+		}
+	}
+	if dbconfig.backend == "postgres" {
+		if len(dbconfig.dbname) == 0 {
+			return fmt.Errorf("empty database name given")
+		}
+		if len(dbconfig.password) == 0 {
+			return fmt.Errorf("empty database password given")
+		}
+		if len(dbconfig.user) == 0 {
+			return fmt.Errorf("empty database username given")
+		}
 	}
 	if len(dbconfig.offlineMsgTable) == 0 {
 		return fmt.Errorf("no name for offline message table given")
@@ -98,16 +111,20 @@ func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) 
 	if dbconfig.backend == "sqlite3" {
 		db, err = sql.Open("sqlite3", dbconfig.filename)
 	}
+	if dbconfig.backend == "postgres" {
+		db, err = sql.Open("postgres", "host=localhost user="+dbconfig.user+" password="+dbconfig.password+" dbname="+dbconfig.dbname+" sslmode=disable")
+	}
 	if err != nil {
 		return fmt.Errorf("failed to open database file: " + err.Error())
 	}
 	defer db.Close()
-	sql := `CREATE TABLE IF NOT EXISTS messages (target TEXT, source TEXT, content TEXT);`
-	_, err = db.Exec(sql)
-	if err != nil {
-		return fmt.Errorf("failed to create database table: " + err.Error())
-	}
-
+	/*
+		sql := `CREATE TABLE IF NOT EXISTS messages (target TEXT, source TEXT, content TEXT);`
+		_, err = db.Exec(sql)
+		if err != nil {
+			return fmt.Errorf("failed to create database table: " + err.Error())
+		}
+	*/
 	// prepare transaction
 	tx, err := db.Begin()
 	if err != nil {

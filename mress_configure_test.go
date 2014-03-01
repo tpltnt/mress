@@ -695,7 +695,7 @@ func Test_getMressDbPassword_0(t *testing.T) {
 
 func Test_getMressDbPassword_1(t *testing.T) {
 	testflag := ""
-	config := "test2.ini"
+	config := "test.ini"
 	testchan := make(chan string)
 	logger := createLogger("")
 	go getMressDbPassword(testflag, config, testchan, logger)

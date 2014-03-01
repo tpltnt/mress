@@ -107,14 +107,41 @@ func Test_initOfflineMessageDatabase_7(t *testing.T) {
 }
 
 // valid transaction
-func Test_saveOfflineMessage_0(t *testing.T) {
+func Test_saveOfflineMessage_SL3_0(t *testing.T) {
 	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
-	err := saveOfflineMessage(config, "testsource", "testtarget", "testmessage")
+	err := initOfflineMessageDatabase(config)
 	if err != nil {
 		t.Error(err.Error())
 	}
+
+	err = saveOfflineMessage(config, "testsource", "testtarget", "testmessage")
+	if err != nil {
+		t.Error(err.Error())
+	}
+
 	err = os.Remove(config.filename)
 	if nil != err {
+		t.Error(err.Error())
+	}
+}
+
+func Test_saveOfflineMessage_PG_0(t *testing.T) {
+	config := MressDbConfig{backend: "postgres", dbname: "mressdata", offlineMsgTable: "messages"}
+	logger := createLogger("")
+	dbuserchan := make(chan string)
+	go getMressDbUser("", "test2.ini", dbuserchan, logger)
+	dbpasswdchan := make(chan string)
+	go getMressDbPassword("", "test2.ini", dbpasswdchan, logger)
+	config.password = <-dbpasswdchan
+	config.user = <-dbuserchan
+	err := initOfflineMessageDatabase(config)
+	if err != nil {
+		t.Log(config)
+		t.Error(err.Error())
+	}
+
+	err = saveOfflineMessage(config, "testsource", "testtarget", "testmessage")
+	if err != nil {
 		t.Error(err.Error())
 	}
 }
