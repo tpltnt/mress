@@ -243,11 +243,19 @@ func Test_saveOfflineMessage_5(t *testing.T) {
 }
 
 // empty db filename
-func Test_saveOfflineMessage_6(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages"}
+func Test_saveOfflineMessage_SL3_6(t *testing.T) {
+	config := MressDbConfig{backend: "sqlite3", offlineMsgTable: "messages"}
 	err := saveOfflineMessage(config, "test source", "testtarget", "testmessage")
 	if err == nil {
 		t.Error("empty database filename not detected")
+	}
+}
+
+func Test_saveOfflineMessage_PG_6(t *testing.T) {
+	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages"}
+	err := saveOfflineMessage(config, "test source", "testtarget", "testmessage")
+	if err != nil {
+		t.Error("empty database filename shouldn't matter: " + err.Error())
 	}
 }
 

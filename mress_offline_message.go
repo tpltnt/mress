@@ -122,13 +122,6 @@ func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) 
 		return fmt.Errorf("failed to open database file: " + err.Error())
 	}
 	defer db.Close()
-	/*
-		sql := `CREATE TABLE IF NOT EXISTS messages (target TEXT, source TEXT, content TEXT);`
-		_, err = db.Exec(sql)
-		if err != nil {
-			return fmt.Errorf("failed to create database table: " + err.Error())
-		}
-	*/
 	// prepare transaction
 	tx, err := db.Begin()
 	if err != nil {
