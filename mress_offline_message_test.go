@@ -253,9 +253,20 @@ func Test_saveOfflineMessage_SL3_6(t *testing.T) {
 
 func Test_saveOfflineMessage_PG_6(t *testing.T) {
 	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages"}
-	err := saveOfflineMessage(config, "test source", "testtarget", "testmessage")
+	logger := createLogger("")
+	dbuserchan := make(chan string)
+	go getMressDbUser("", "test2.ini", dbuserchan, logger)
+	dbpasswdchan := make(chan string)
+	go getMressDbPassword("", "test2.ini", dbpasswdchan, logger)
+	dbnamechan := make(chan string)
+	go getMressDbName("", "test2.ini", dbnamechan, logger)
+	config.password = <-dbpasswdchan
+	config.user = <-dbuserchan
+	config.dbname = <-dbnamechan
+	err := saveOfflineMessage(config, "testsource", "testtarget", "testmessage")
 	if err != nil {
-		t.Error("empty database filename shouldn't matter: " + err.Error())
+		t.Log(err.Error())
+		t.Error("empty database filename shouldn't matter")
 	}
 }
 
