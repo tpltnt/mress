@@ -46,7 +46,7 @@ resources
 * [RFC 2812: Internet Relay Chat: Client Protocol](https://tools.ietf.org/html/rfc2812)
 * [RFC 2813: Internet Relay Chat: Server Protocol](https://tools.ietf.org/html/rfc2813)
 * [go-sqlite3](https://github.com/mattn/go-sqlite3): a Go-binding for [sqlite](https://sqlite.org/)
-* [goini](https://github.com/jurka/goini): a [ini-style](https://en.wikipedia.org/wiki/INI_file) configfile parser ([documentation](http://godoc.org/github.com/jurka/goini)
+* [goini](https://github.com/jurka/goini): a [ini-style](https://en.wikipedia.org/wiki/INI_file) configfile parser ([documentation](http://godoc.org/github.com/jurka/goini))
 * [M'Ress](https://en.wikipedia.org/wiki/M%27Ress)
 
 TODO
