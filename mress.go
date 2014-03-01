@@ -47,7 +47,7 @@ func main() {
 	// to disable TLS and/or use debugging should always
 	// be conscious decisions and are therefore not part
 	// of the config.
-	dbconfig := MressDbConfig{backend: "sqlite3", offlineMsgTable: "messages"}
+	dbconfig := MressDbConfig{backend: "sqlite3"}
 	offlinedbchan := make(chan string)
 	go getOfflineDBfilename(*offlineMsgDb, *configfile, offlinedbchan, logger)
 	dbnamechan := make(chan string)
