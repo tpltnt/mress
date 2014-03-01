@@ -296,8 +296,11 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, dbc
 	if err != nil {
 		logger.Println("offline message command failed")
 		logger.Println(err.Error())
+		irc.Privmsg(e.Nick, "Sorry "+e.Nick+", something went wrong and I couldn't store your message. :(\n")
+		return
 	}
 	logger.Println("offline message saved")
+	irc.Privmsg(e.Nick, "Yes "+e.Nick+", I will deliver your message as soon as possible.\n")
 }
 
 // Deliver a message from a database. To be used as a callback for JOIN.
