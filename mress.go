@@ -47,7 +47,7 @@ func main() {
 	// to disable TLS and/or use debugging should always
 	// be conscious decisions and are therefore not part
 	// of the config.
-	dbconfig := MressDbConfig{backend: "sqlite3"}
+	dbconfig := MressDbConfig{}
 	offlinedbchan := make(chan string)
 	go getOfflineDBfilename(*offlineMsgDb, *configfile, offlinedbchan, logger)
 	dbnamechan := make(chan string)
@@ -106,6 +106,11 @@ func main() {
 	dbconfig.offlineMsgTable = <-offltablechan
 	dbconfig.user = <-dbuserchan
 	dbconfig.password = <-dbpasswdchan
+	if len(dbconfig.dbname) == 0 {
+		dbconfig.backend = "sqlite3"
+	} else {
+		dbconfig.backend = "postgres"
+	}
 	irccon.AddCallback("001", func(e *irc.Event) {
 		err := initOfflineMessageDatabase(dbconfig)
 		if err != nil {
