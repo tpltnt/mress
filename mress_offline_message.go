@@ -52,8 +52,15 @@ func initOfflineMessageDatabase(config MressDbConfig) error {
 	}
 	defer db.Close()
 	sql := "CREATE TABLE IF NOT EXISTS " + config.offlineMsgTable + " (target TEXT, source TEXT, content TEXT);"
-	_, err = db.Exec(sql)
+	err = db.Ping()
 	if err != nil {
+		return fmt.Errorf("database connection failed: " + err.Error())
+	}
+	res, err := db.Exec(sql)
+	if err != nil {
+		fmt.Println(sql)
+		fmt.Println(db)
+		fmt.Println(res)
 		return fmt.Errorf("failed to create database table: " + err.Error())
 	}
 	return nil
