@@ -1,7 +1,8 @@
 package main
 
 /* Introduce bot to first-time users.
- * Track nicks as already seen to avoid muliple introductions etc. */
+ * Track nicks as already seen to avoid muliple introductions etc.
+ */
 import (
 	"fmt"
 	"github.com/thoj/go-ircevent" // imported as "irc"
