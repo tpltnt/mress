@@ -311,11 +311,24 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbconfig MressDbCo
 	if irc == nil {
 		return
 	}
-	if dbconfig.backend != "sqlite3" {
+	if !((dbconfig.backend == "sqlite3") || (dbconfig.backend == "postgres")) {
 		return
 	}
-	if len(dbconfig.filename) == 0 {
-		return
+	if dbconfig.backend == "sqlite3" {
+		if len(dbconfig.filename) == 0 {
+			return
+		}
+	}
+	if dbconfig.backend == "postgres" {
+		if len(dbconfig.dbname) == 0 {
+			return
+		}
+		if len(dbconfig.user) == 0 {
+			return
+		}
+		if len(dbconfig.password) == 0 {
+			return
+		}
 	}
 	if len(dbconfig.offlineMsgTable) == 0 {
 		return
