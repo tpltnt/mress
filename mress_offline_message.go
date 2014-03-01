@@ -353,8 +353,6 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbconfig MressDbCo
 		return
 	}
 
-	// TODO: handle self-join: if mress enters channel, deliver messages
-	// 353 hf_testbot2 @ #ircscribble :hf_testbot2 tzugh @herr_flupke\r\n
 	if e.Code == "353" {
 		// e.Nick is empty for 353
 		// strip "@" from op name
