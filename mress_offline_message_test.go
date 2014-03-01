@@ -421,6 +421,76 @@ func Test_deliverOfflineMessage_8(t *testing.T) {
 	os.Remove(config.filename)
 }
 
+// no user
+func Test_deliverOfflineMessage_9(t *testing.T) {
+	// prepare db
+	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages"}
+	logger := createLogger("")
+	dbpasswdchan := make(chan string)
+	go getMressDbPassword("", "test2.ini", dbpasswdchan, logger)
+	dbnamechan := make(chan string)
+	go getMressDbName("", "test2.ini", dbnamechan, logger)
+	config.password = <-dbpasswdchan
+	config.dbname = <-dbnamechan
+	con := &irc.Connection{}
+
+	err := deliverOfflineMessage(config, "testuser", con)
+	if err == nil {
+		t.Error("empty database username not catched")
+	}
+}
+
+// invalid user
+func Test_deliverOfflineMessage_10(t *testing.T) {
+	// prepare db
+	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages"}
+	logger := createLogger("")
+	dbpasswdchan := make(chan string)
+	go getMressDbPassword("", "test2.ini", dbpasswdchan, logger)
+	dbnamechan := make(chan string)
+	go getMressDbName("", "test2.ini", dbnamechan, logger)
+	config.password = <-dbpasswdchan
+	config.user = "oirughteigh"
+	config.dbname = <-dbnamechan
+	err := initOfflineMessageDatabase(config)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	con := &irc.Connection{}
+
+	err = deliverOfflineMessage(config, "testuser", con)
+	if err == nil {
+		t.Error("invalid database username not rejected")
+	}
+}
+
+// no password
+func Test_deliverOfflineMessage_11(t *testing.T) {
+	// prepare db
+	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages"}
+	logger := createLogger("")
+	dbuserchan := make(chan string)
+	go getMressDbUser("", "test2.ini", dbuserchan, logger)
+	dbpasswdchan := make(chan string)
+	go getMressDbPassword("", "test2.ini", dbpasswdchan, logger)
+	dbnamechan := make(chan string)
+	go getMressDbName("", "test2.ini", dbnamechan, logger)
+	config.password = <-dbpasswdchan
+	config.user = <-dbuserchan
+	config.dbname = <-dbnamechan
+	err := initOfflineMessageDatabase(config)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	con := &irc.Connection{}
+
+	err = deliverOfflineMessage(config, "testuser", con)
+	if err != nil {
+		t.Log("valid call failed")
+		t.Error(err.Error())
+	}
+}
+
 // callbacks shouldn't explode
 func Test_offlineMessengerCommand_0(t *testing.T) {
 	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
