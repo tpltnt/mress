@@ -8,6 +8,15 @@ import (
 	"testing"
 )
 
+// test config datastructure for validity
+func Test_validateMressDbConfig_0(t *testing.T) {
+	config := MressDbConfig{}
+	err := validateMressDbConfig(config)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
 // test stdout destination
 // TODO acually check stdout
 func Test_create_Logger_1(t *testing.T) {
