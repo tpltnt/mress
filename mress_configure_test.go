@@ -9,8 +9,8 @@ import (
 )
 
 // test config datastructure for validity
-func Test_validateMressDbConfig_0(t *testing.T) {
-	config := MressDbConfig{}
+func Test_validateMressDbConfig_SL3_0(t *testing.T) {
+	config := MressDbConfig{backend: "sqlite3", filename: "configtest.db", offlineMsgTable: "messages"}
 	err := validateMressDbConfig(config)
 	if err != nil {
 		t.Error(err.Error())
