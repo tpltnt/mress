@@ -17,6 +17,22 @@ func Test_validateMressDbConfig_SL3_0(t *testing.T) {
 	}
 }
 
+func Test_validateMressDbConfig_1(t *testing.T) {
+	config := MressDbConfig{backend: "sqlite3", filename: "configtest.db", offlineMsgTable: ""}
+	err := validateMressDbConfig(config)
+	if err == nil {
+		t.Error("missing offline message table name should yield an error")
+	}
+}
+
+func Test_validateMressDbConfig_SL3_2(t *testing.T) {
+	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages"}
+	err := validateMressDbConfig(config)
+	if err == nil {
+		t.Error("missing filename should yield an error")
+	}
+}
+
 // test stdout destination
 // TODO acually check stdout
 func Test_create_Logger_1(t *testing.T) {
