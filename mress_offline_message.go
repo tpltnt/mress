@@ -194,24 +194,9 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, dbc
 	if len(user) == 0 {
 		return
 	}
-	if !((dbconfig.backend == "sqlite3") || (dbconfig.backend == "postgres")) {
+	err := validateMressDbConfig(dbconfig)
+	if err != nil {
 		return
-	}
-	if dbconfig.backend == "sqlite3" {
-		if len(dbconfig.filename) == 0 {
-			return
-		}
-	}
-	if dbconfig.backend == "postgres" {
-		if len(dbconfig.dbname) == 0 {
-			return
-		}
-		if len(dbconfig.user) == 0 {
-			return
-		}
-		if len(dbconfig.password) == 0 {
-			return
-		}
 	}
 	if logger == nil {
 		return
@@ -236,7 +221,7 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, dbc
 	target := strings.Fields(e.Message())[1]
 	target = strings.Trim(target, ":")
 	msgstart := strings.Index(e.Message(), ":") + 1
-	err := saveOfflineMessage(dbconfig, e.Nick, target, e.Message()[msgstart:])
+	err = saveOfflineMessage(dbconfig, e.Nick, target, e.Message()[msgstart:])
 	if err != nil {
 		logger.Println("offline message command failed")
 		logger.Println(err.Error())
