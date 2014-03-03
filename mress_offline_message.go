@@ -243,26 +243,8 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbconfig MressDbCo
 	if irc == nil {
 		return
 	}
-	if !((dbconfig.backend == "sqlite3") || (dbconfig.backend == "postgres")) {
-		return
-	}
-	if dbconfig.backend == "sqlite3" {
-		if len(dbconfig.filename) == 0 {
-			return
-		}
-	}
-	if dbconfig.backend == "postgres" {
-		if len(dbconfig.dbname) == 0 {
-			return
-		}
-		if len(dbconfig.user) == 0 {
-			return
-		}
-		if len(dbconfig.password) == 0 {
-			return
-		}
-	}
-	if len(dbconfig.offlineMsgTable) == 0 {
+	err := validateMressDbConfig(dbconfig)
+	if err != nil {
 		return
 	}
 	if len(user) == 0 {
@@ -300,7 +282,7 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbconfig MressDbCo
 		return
 	}
 	// handle others joining
-	err := deliverOfflineMessage(dbconfig, e.Nick, irc)
+	err = deliverOfflineMessage(dbconfig, e.Nick, irc)
 	if err != nil {
 		logger.Println("message delivery had problems")
 		logger.Println(err.Error())
