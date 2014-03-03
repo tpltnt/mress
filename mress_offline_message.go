@@ -13,32 +13,12 @@ import (
 // Inital setup of the database. Handle things as needed
 // to reduce false alarms.
 func initOfflineMessageDatabase(config MressDbConfig) error {
-	if len(config.backend) == 0 {
-		return fmt.Errorf("empty backend string given")
+	// sanity checks
+	err := validateMressDbConfig(config)
+	if err != nil {
+		return err
 	}
-	if !((config.backend == "sqlite3") || (config.backend == "postgres")) {
-		return fmt.Errorf("backend/database not supported")
-	}
-	if config.backend == "sqlite3" {
-		if len(config.filename) == 0 {
-			return fmt.Errorf("empty filename given")
-		}
-	}
-	if config.backend == "postgres" {
-		if len(config.dbname) == 0 {
-			return fmt.Errorf("empty database name given")
-		}
-		if len(config.password) == 0 {
-			return fmt.Errorf("empty database password given")
-		}
-		if len(config.user) == 0 {
-			return fmt.Errorf("empty database username given")
-		}
-	}
-	if len(config.offlineMsgTable) == 0 {
-		return fmt.Errorf("no offline message table name given")
-	}
-	var err error = nil
+	err = nil
 	//TODO: clean up ugly hack
 	db, _ := sql.Open("", "")
 	if config.backend == "sqlite3" {
