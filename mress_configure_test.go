@@ -18,7 +18,7 @@ func Test_validateMressDbConfig_SL3_0(t *testing.T) {
 }
 
 func Test_validateMressDbConfig_SL3_1(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "configtest.db", offlineMsgTable: ""}
+	config := MressDbConfig{backend: "sqlite3", filename: "configtest.db"}
 	err := validateMressDbConfig(config)
 	if err == nil {
 		t.Error("missing offline message table name should yield an error")
@@ -26,7 +26,7 @@ func Test_validateMressDbConfig_SL3_1(t *testing.T) {
 }
 
 func Test_validateMressDbConfig_PG_1(t *testing.T) {
-	config := MressDbConfig{backend: "postgres", dbname: "mress-data", user: "db-user", password: "supersecret", offlineMsgTable: ""}
+	config := MressDbConfig{backend: "postgres", dbname: "mress-data", user: "db-user", password: "supersecret"}
 	err := validateMressDbConfig(config)
 	if err == nil {
 		t.Error("missing offline message table name should yield an error")
@@ -36,10 +36,40 @@ func Test_validateMressDbConfig_PG_1(t *testing.T) {
 }
 
 func Test_validateMressDbConfig_SL3_2(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", offlineMsgTable: "messages"}
 	err := validateMressDbConfig(config)
 	if err == nil {
 		t.Error("missing filename should yield an error")
+	}
+}
+
+func Test_validateMressDbConfig_PG_3(t *testing.T) {
+	config := MressDbConfig{backend: "postgres", user: "db-user", password: "supersecret", offlineMsgTable: "messages"}
+	err := validateMressDbConfig(config)
+	if err == nil {
+		t.Error("missing database name should yield an error")
+	} else {
+		t.Log(err.Error())
+	}
+}
+
+func Test_validateMressDbConfig_PG_4(t *testing.T) {
+	config := MressDbConfig{backend: "postgres", dbname: "mress-data", password: "supersecret", offlineMsgTable: "messages"}
+	err := validateMressDbConfig(config)
+	if err == nil {
+		t.Error("missing database user should yield an error")
+	} else {
+		t.Log(err.Error())
+	}
+}
+
+func Test_validateMressDbConfig_PG_5(t *testing.T) {
+	config := MressDbConfig{backend: "postgres", dbname: "mress-data", user: "db-user", offlineMsgTable: "messages"}
+	err := validateMressDbConfig(config)
+	if err == nil {
+		t.Error("missing database password yield an error")
+	} else {
+		t.Log(err.Error())
 	}
 }
 
