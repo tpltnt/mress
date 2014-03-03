@@ -13,7 +13,8 @@ import (
 // Inital setup of the database. Handle things as needed
 // to reduce false alarms.
 func initOfflineMessageDatabase(config MressDbConfig) error {
-	err := initOfflineMessageDatabase(config)
+	// sanity checks
+	err := validateMressDbConfig(config)
 	if err != nil {
 		return err
 	}
@@ -46,7 +47,7 @@ func initOfflineMessageDatabase(config MressDbConfig) error {
 // is going to be logged (but not the message content)
 func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) error {
 	// sanity checks
-	err := initOfflineMessageDatabase(dbconfig)
+	err := validateMressDbConfig(dbconfig)
 	if err != nil {
 		return err
 	}
@@ -112,7 +113,7 @@ func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) 
 // Retrieve and deliver previously stored message for user.
 func deliverOfflineMessage(dbconfig MressDbConfig, user string, con *irc.Connection) error {
 	// sanity checks
-	err := initOfflineMessageDatabase(dbconfig)
+	err := validateMressDbConfig(dbconfig)
 	if err != nil {
 		return err
 	}
@@ -193,7 +194,7 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, dbc
 	if len(user) == 0 {
 		return
 	}
-	err := initOfflineMessageDatabase(dbconfig)
+	err := validateMressDbConfig(dbconfig)
 	if err != nil {
 		return
 	}
@@ -242,7 +243,7 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbconfig MressDbCo
 	if irc == nil {
 		return
 	}
-	err := initOfflineMessageDatabase(dbconfig)
+	err := validateMressDbConfig(dbconfig)
 	if err != nil {
 		return
 	}
