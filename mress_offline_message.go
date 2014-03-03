@@ -50,7 +50,6 @@ func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) 
 	if err != nil {
 		return err
 	}
-
 	if len(source) == 0 {
 		return fmt.Errorf("source of zero-length")
 	}
@@ -113,24 +112,9 @@ func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) 
 // Retrieve and deliver previously stored message for user.
 func deliverOfflineMessage(dbconfig MressDbConfig, user string, con *irc.Connection) error {
 	// sanity checks
-	if !((dbconfig.backend == "sqlite3") || (dbconfig.backend == "postgres")) {
-		return fmt.Errorf("backend not supported")
-	}
-	if dbconfig.backend == "sqlite3" {
-		if len(dbconfig.filename) == 0 {
-			return fmt.Errorf("database filename is empty")
-		}
-	}
-	if dbconfig.backend == "postgres" {
-		if len(dbconfig.dbname) == 0 {
-			return fmt.Errorf("empty database name given")
-		}
-		if len(dbconfig.user) == 0 {
-			return fmt.Errorf("empty database username given")
-		}
-		if len(dbconfig.password) == 0 {
-			return fmt.Errorf("empty database password given")
-		}
+	err := initOfflineMessageDatabase(config)
+	if err != nil {
+		return err
 	}
 	if len(user) == 0 {
 		return fmt.Errorf("user of zero-length")
@@ -209,24 +193,9 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, dbc
 	if len(user) == 0 {
 		return
 	}
-	if !((dbconfig.backend == "sqlite3") || (dbconfig.backend == "postgres")) {
+	err := initOfflineMessageDatabase(config)
+	if err != nil {
 		return
-	}
-	if dbconfig.backend == "sqlite3" {
-		if len(dbconfig.filename) == 0 {
-			return
-		}
-	}
-	if dbconfig.backend == "postgres" {
-		if len(dbconfig.dbname) == 0 {
-			return
-		}
-		if len(dbconfig.user) == 0 {
-			return
-		}
-		if len(dbconfig.password) == 0 {
-			return
-		}
 	}
 	if logger == nil {
 		return
@@ -273,28 +242,11 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbconfig MressDbCo
 	if irc == nil {
 		return
 	}
-	if !((dbconfig.backend == "sqlite3") || (dbconfig.backend == "postgres")) {
+	err := initOfflineMessageDatabase(config)
+	if err != nil {
 		return
 	}
-	if dbconfig.backend == "sqlite3" {
-		if len(dbconfig.filename) == 0 {
-			return
-		}
-	}
-	if dbconfig.backend == "postgres" {
-		if len(dbconfig.dbname) == 0 {
-			return
-		}
-		if len(dbconfig.user) == 0 {
-			return
-		}
-		if len(dbconfig.password) == 0 {
-			return
-		}
-	}
-	if len(dbconfig.offlineMsgTable) == 0 {
-		return
-	}
+
 	if len(user) == 0 {
 		return
 	}
