@@ -83,6 +83,16 @@ func Test_validateMressDbConfig_6(t *testing.T) {
 	}
 }
 
+func Test_validateMressDbConfig_PG_7(t *testing.T) {
+	config := MressDbConfig{backend: "lkdsfjidfofre", dbname: "mress-data", user: "db-user", offlineMsgTable: "messages"}
+	err := validateMressDbConfig(config)
+	if err == nil {
+		t.Error("invalid database backend should yield an error")
+	} else {
+		t.Log(err.Error())
+	}
+}
+
 // test stdout destination
 // TODO acually check stdout
 func Test_create_Logger_1(t *testing.T) {
