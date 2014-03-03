@@ -13,32 +13,11 @@ import (
 // Inital setup of the database. Handle things as needed
 // to reduce false alarms.
 func initOfflineMessageDatabase(config MressDbConfig) error {
-	if len(config.backend) == 0 {
-		return fmt.Errorf("empty backend string given")
+	err := initOfflineMessageDatabase(config)
+	if err != nil {
+		return err
 	}
-	if !((config.backend == "sqlite3") || (config.backend == "postgres")) {
-		return fmt.Errorf("backend/database not supported")
-	}
-	if config.backend == "sqlite3" {
-		if len(config.filename) == 0 {
-			return fmt.Errorf("empty filename given")
-		}
-	}
-	if config.backend == "postgres" {
-		if len(config.dbname) == 0 {
-			return fmt.Errorf("empty database name given")
-		}
-		if len(config.password) == 0 {
-			return fmt.Errorf("empty database password given")
-		}
-		if len(config.user) == 0 {
-			return fmt.Errorf("empty database username given")
-		}
-	}
-	if len(config.offlineMsgTable) == 0 {
-		return fmt.Errorf("no offline message table name given")
-	}
-	var err error = nil
+	err = nil
 	//TODO: clean up ugly hack
 	db, _ := sql.Open("", "")
 	if config.backend == "sqlite3" {
@@ -67,31 +46,11 @@ func initOfflineMessageDatabase(config MressDbConfig) error {
 // is going to be logged (but not the message content)
 func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) error {
 	// sanity checks
-	if len(dbconfig.backend) == 0 {
-		return fmt.Errorf("no backend given")
+	err := initOfflineMessageDatabase(config)
+	if err != nil {
+		return err
 	}
-	if !((dbconfig.backend == "sqlite3") || (dbconfig.backend == "postgres")) {
-		return fmt.Errorf("backend not supportend")
-	}
-	if dbconfig.backend == "sqlite3" {
-		if len(dbconfig.filename) == 0 {
-			return fmt.Errorf("empty database filename")
-		}
-	}
-	if dbconfig.backend == "postgres" {
-		if len(dbconfig.dbname) == 0 {
-			return fmt.Errorf("empty database name given")
-		}
-		if len(dbconfig.password) == 0 {
-			return fmt.Errorf("empty database password given")
-		}
-		if len(dbconfig.user) == 0 {
-			return fmt.Errorf("empty database username given")
-		}
-	}
-	if len(dbconfig.offlineMsgTable) == 0 {
-		return fmt.Errorf("no name for offline message table given")
-	}
+
 	if len(source) == 0 {
 		return fmt.Errorf("source of zero-length")
 	}
@@ -109,7 +68,7 @@ func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) 
 	}
 
 	// prepare db
-	var err error = nil
+	err = nil
 	// TODO fix ugly hack
 	db, _ := sql.Open("", "")
 	if dbconfig.backend == "sqlite3" {
