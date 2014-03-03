@@ -113,24 +113,9 @@ func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) 
 // Retrieve and deliver previously stored message for user.
 func deliverOfflineMessage(dbconfig MressDbConfig, user string, con *irc.Connection) error {
 	// sanity checks
-	if !((dbconfig.backend == "sqlite3") || (dbconfig.backend == "postgres")) {
-		return fmt.Errorf("backend not supported")
-	}
-	if dbconfig.backend == "sqlite3" {
-		if len(dbconfig.filename) == 0 {
-			return fmt.Errorf("database filename is empty")
-		}
-	}
-	if dbconfig.backend == "postgres" {
-		if len(dbconfig.dbname) == 0 {
-			return fmt.Errorf("empty database name given")
-		}
-		if len(dbconfig.user) == 0 {
-			return fmt.Errorf("empty database username given")
-		}
-		if len(dbconfig.password) == 0 {
-			return fmt.Errorf("empty database password given")
-		}
+	err := validateMressDbConfig(dbconfig)
+	if err != nil {
+		return err
 	}
 	if len(user) == 0 {
 		return fmt.Errorf("user of zero-length")
@@ -143,7 +128,7 @@ func deliverOfflineMessage(dbconfig MressDbConfig, user string, con *irc.Connect
 	}
 
 	// prepare db
-	var err error = nil
+	err = nil
 	// TODO fix ugly hack
 	db, _ := sql.Open("", "")
 	if dbconfig.backend == "sqlite3" {
