@@ -46,7 +46,7 @@ func initOfflineMessageDatabase(config MressDbConfig) error {
 // is going to be logged (but not the message content)
 func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) error {
 	// sanity checks
-	err := initOfflineMessageDatabase(config)
+	err := initOfflineMessageDatabase(dbconfig)
 	if err != nil {
 		return err
 	}
@@ -112,7 +112,7 @@ func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) 
 // Retrieve and deliver previously stored message for user.
 func deliverOfflineMessage(dbconfig MressDbConfig, user string, con *irc.Connection) error {
 	// sanity checks
-	err := initOfflineMessageDatabase(config)
+	err := initOfflineMessageDatabase(dbconfig)
 	if err != nil {
 		return err
 	}
@@ -127,7 +127,7 @@ func deliverOfflineMessage(dbconfig MressDbConfig, user string, con *irc.Connect
 	}
 
 	// prepare db
-	var err error = nil
+	err = nil
 	// TODO fix ugly hack
 	db, _ := sql.Open("", "")
 	if dbconfig.backend == "sqlite3" {
@@ -193,7 +193,7 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, dbc
 	if len(user) == 0 {
 		return
 	}
-	err := initOfflineMessageDatabase(config)
+	err := initOfflineMessageDatabase(dbconfig)
 	if err != nil {
 		return
 	}
@@ -220,7 +220,7 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, dbc
 	target := strings.Fields(e.Message())[1]
 	target = strings.Trim(target, ":")
 	msgstart := strings.Index(e.Message(), ":") + 1
-	err := saveOfflineMessage(dbconfig, e.Nick, target, e.Message()[msgstart:])
+	err = saveOfflineMessage(dbconfig, e.Nick, target, e.Message()[msgstart:])
 	if err != nil {
 		logger.Println("offline message command failed")
 		logger.Println(err.Error())
@@ -242,7 +242,7 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbconfig MressDbCo
 	if irc == nil {
 		return
 	}
-	err := initOfflineMessageDatabase(config)
+	err := initOfflineMessageDatabase(dbconfig)
 	if err != nil {
 		return
 	}
@@ -282,7 +282,7 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbconfig MressDbCo
 		return
 	}
 	// handle others joining
-	err := deliverOfflineMessage(dbconfig, e.Nick, irc)
+	err = deliverOfflineMessage(dbconfig, e.Nick, irc)
 	if err != nil {
 		logger.Println("message delivery had problems")
 		logger.Println(err.Error())

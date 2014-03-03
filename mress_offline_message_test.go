@@ -8,7 +8,7 @@ import (
 
 // test db initialization
 func Test_initOfflineMessageDatabase_SL3_0(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", dbname: "mress-data", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
 	err := initOfflineMessageDatabase(config)
 	if err != nil {
 		t.Error(err.Error())
@@ -20,7 +20,7 @@ func Test_initOfflineMessageDatabase_SL3_0(t *testing.T) {
 }
 
 func Test_initOfflineMessageDatabase_PG_0(t *testing.T) {
-	config := MressDbConfig{backend: "postgres", filename: "testoffline.db", dbname: "mress-data", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "postgres", dbname: "mress-data", offlineMsgTable: "messages"}
 	logger := createLogger("")
 	dbuserchan := make(chan string)
 	go getMressDbUser("", "test2.ini", dbuserchan, logger)
