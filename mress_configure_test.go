@@ -67,7 +67,17 @@ func Test_validateMressDbConfig_PG_5(t *testing.T) {
 	config := MressDbConfig{backend: "postgres", dbname: "mress-data", user: "db-user", offlineMsgTable: "messages"}
 	err := validateMressDbConfig(config)
 	if err == nil {
-		t.Error("missing database password yield an error")
+		t.Error("missing database password should yield an error")
+	} else {
+		t.Log(err.Error())
+	}
+}
+
+func Test_validateMressDbConfig_6(t *testing.T) {
+	config := MressDbConfig{dbname: "mress-data", user: "db-user", offlineMsgTable: "messages"}
+	err := validateMressDbConfig(config)
+	if err == nil {
+		t.Error("missing database backend should yield an error")
 	} else {
 		t.Log(err.Error())
 	}
