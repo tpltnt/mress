@@ -55,7 +55,7 @@ TODO
 
 version history
 ---------------
-* v0.3
+* v0.26
   * IPv4 lookup added
   * Postgresql backend for better performance (if needed)
   * text feedback on offline messaging
