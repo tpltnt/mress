@@ -13,32 +13,12 @@ import (
 // Inital setup of the database. Handle things as needed
 // to reduce false alarms.
 func initOfflineMessageDatabase(config MressDbConfig) error {
-	if len(config.backend) == 0 {
-		return fmt.Errorf("empty backend string given")
+	// sanity checks
+	err := validateMressDbConfig(config)
+	if err != nil {
+		return err
 	}
-	if !((config.backend == "sqlite3") || (config.backend == "postgres")) {
-		return fmt.Errorf("backend/database not supported")
-	}
-	if config.backend == "sqlite3" {
-		if len(config.filename) == 0 {
-			return fmt.Errorf("empty filename given")
-		}
-	}
-	if config.backend == "postgres" {
-		if len(config.dbname) == 0 {
-			return fmt.Errorf("empty database name given")
-		}
-		if len(config.password) == 0 {
-			return fmt.Errorf("empty database password given")
-		}
-		if len(config.user) == 0 {
-			return fmt.Errorf("empty database username given")
-		}
-	}
-	if len(config.offlineMsgTable) == 0 {
-		return fmt.Errorf("no offline message table name given")
-	}
-	var err error = nil
+	err = nil
 	//TODO: clean up ugly hack
 	db, _ := sql.Open("", "")
 	if config.backend == "sqlite3" {
@@ -67,30 +47,9 @@ func initOfflineMessageDatabase(config MressDbConfig) error {
 // is going to be logged (but not the message content)
 func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) error {
 	// sanity checks
-	if len(dbconfig.backend) == 0 {
-		return fmt.Errorf("no backend given")
-	}
-	if !((dbconfig.backend == "sqlite3") || (dbconfig.backend == "postgres")) {
-		return fmt.Errorf("backend not supportend")
-	}
-	if dbconfig.backend == "sqlite3" {
-		if len(dbconfig.filename) == 0 {
-			return fmt.Errorf("empty database filename")
-		}
-	}
-	if dbconfig.backend == "postgres" {
-		if len(dbconfig.dbname) == 0 {
-			return fmt.Errorf("empty database name given")
-		}
-		if len(dbconfig.password) == 0 {
-			return fmt.Errorf("empty database password given")
-		}
-		if len(dbconfig.user) == 0 {
-			return fmt.Errorf("empty database username given")
-		}
-	}
-	if len(dbconfig.offlineMsgTable) == 0 {
-		return fmt.Errorf("no name for offline message table given")
+	err := validateMressDbConfig(dbconfig)
+	if err != nil {
+		return err
 	}
 	if len(source) == 0 {
 		return fmt.Errorf("source of zero-length")
@@ -109,7 +68,7 @@ func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) 
 	}
 
 	// prepare db
-	var err error = nil
+	err = nil
 	// TODO fix ugly hack
 	db, _ := sql.Open("", "")
 	if dbconfig.backend == "sqlite3" {
@@ -154,24 +113,9 @@ func saveOfflineMessage(dbconfig MressDbConfig, source, target, message string) 
 // Retrieve and deliver previously stored message for user.
 func deliverOfflineMessage(dbconfig MressDbConfig, user string, con *irc.Connection) error {
 	// sanity checks
-	if !((dbconfig.backend == "sqlite3") || (dbconfig.backend == "postgres")) {
-		return fmt.Errorf("backend not supported")
-	}
-	if dbconfig.backend == "sqlite3" {
-		if len(dbconfig.filename) == 0 {
-			return fmt.Errorf("database filename is empty")
-		}
-	}
-	if dbconfig.backend == "postgres" {
-		if len(dbconfig.dbname) == 0 {
-			return fmt.Errorf("empty database name given")
-		}
-		if len(dbconfig.user) == 0 {
-			return fmt.Errorf("empty database username given")
-		}
-		if len(dbconfig.password) == 0 {
-			return fmt.Errorf("empty database password given")
-		}
+	err := validateMressDbConfig(dbconfig)
+	if err != nil {
+		return err
 	}
 	if len(user) == 0 {
 		return fmt.Errorf("user of zero-length")
@@ -184,7 +128,7 @@ func deliverOfflineMessage(dbconfig MressDbConfig, user string, con *irc.Connect
 	}
 
 	// prepare db
-	var err error = nil
+	err = nil
 	// TODO fix ugly hack
 	db, _ := sql.Open("", "")
 	if dbconfig.backend == "sqlite3" {
@@ -250,24 +194,9 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, dbc
 	if len(user) == 0 {
 		return
 	}
-	if !((dbconfig.backend == "sqlite3") || (dbconfig.backend == "postgres")) {
+	err := validateMressDbConfig(dbconfig)
+	if err != nil {
 		return
-	}
-	if dbconfig.backend == "sqlite3" {
-		if len(dbconfig.filename) == 0 {
-			return
-		}
-	}
-	if dbconfig.backend == "postgres" {
-		if len(dbconfig.dbname) == 0 {
-			return
-		}
-		if len(dbconfig.user) == 0 {
-			return
-		}
-		if len(dbconfig.password) == 0 {
-			return
-		}
 	}
 	if logger == nil {
 		return
@@ -292,7 +221,7 @@ func offlineMessengerCommand(e *irc.Event, irc *irc.Connection, user string, dbc
 	target := strings.Fields(e.Message())[1]
 	target = strings.Trim(target, ":")
 	msgstart := strings.Index(e.Message(), ":") + 1
-	err := saveOfflineMessage(dbconfig, e.Nick, target, e.Message()[msgstart:])
+	err = saveOfflineMessage(dbconfig, e.Nick, target, e.Message()[msgstart:])
 	if err != nil {
 		logger.Println("offline message command failed")
 		logger.Println(err.Error())
@@ -314,28 +243,11 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbconfig MressDbCo
 	if irc == nil {
 		return
 	}
-	if !((dbconfig.backend == "sqlite3") || (dbconfig.backend == "postgres")) {
+	err := validateMressDbConfig(dbconfig)
+	if err != nil {
 		return
 	}
-	if dbconfig.backend == "sqlite3" {
-		if len(dbconfig.filename) == 0 {
-			return
-		}
-	}
-	if dbconfig.backend == "postgres" {
-		if len(dbconfig.dbname) == 0 {
-			return
-		}
-		if len(dbconfig.user) == 0 {
-			return
-		}
-		if len(dbconfig.password) == 0 {
-			return
-		}
-	}
-	if len(dbconfig.offlineMsgTable) == 0 {
-		return
-	}
+
 	if len(user) == 0 {
 		return
 	}
@@ -371,7 +283,7 @@ func offlineMessengerDrone(e *irc.Event, irc *irc.Connection, dbconfig MressDbCo
 		return
 	}
 	// handle others joining
-	err := deliverOfflineMessage(dbconfig, e.Nick, irc)
+	err = deliverOfflineMessage(dbconfig, e.Nick, irc)
 	if err != nil {
 		logger.Println("message delivery had problems")
 		logger.Println(err.Error())

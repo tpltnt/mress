@@ -20,6 +20,37 @@ type MressDbConfig struct {
 	offlineMsgTable string // generic, defaults to "messages"
 }
 
+// Check the database configuration structure for internal consistency.
+func validateMressDbConfig(config MressDbConfig) error {
+	if len(config.backend) == 0 {
+		return fmt.Errorf("empty backend string given")
+	}
+	if !((config.backend == "sqlite3") || (config.backend == "postgres")) {
+		return fmt.Errorf("backend/database not supported")
+	}
+	if config.backend == "sqlite3" {
+		if len(config.filename) == 0 {
+			return fmt.Errorf("empty filename given")
+		}
+	}
+	if config.backend == "postgres" {
+		if len(config.dbname) == 0 {
+			return fmt.Errorf("empty database name given")
+		}
+		if len(config.password) == 0 {
+			return fmt.Errorf("empty database password given")
+		}
+		if len(config.user) == 0 {
+			return fmt.Errorf("empty database username given")
+		}
+	}
+	if len(config.offlineMsgTable) == 0 {
+		return fmt.Errorf("no offline message table name given")
+	}
+
+	return nil
+}
+
 // Create a Logger which logs to the given destination
 // Valid destinations are files (+path), stdout and stderr
 func createLogger(destination string) *log.Logger {

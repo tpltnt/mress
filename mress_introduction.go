@@ -1,10 +1,8 @@
 package main
 
 /* Introduce bot to first-time users.
- * Track nicks as already seen to avoid muliple introductions etc.
- */
+ * Track nicks as already seen to avoid muliple introductions etc. */
 import (
-	"fmt"
 	"github.com/thoj/go-ircevent" // imported as "irc"
 	"strings"
 	"time"
@@ -16,6 +14,7 @@ func runIntroduction(e *irc.Event, irc *irc.Connection, user, channel string) {
 	if 0 == strings.Index(e.Message(), "?OTR") {
 		return
 	}
+
 	irc.Privmsg(e.Nick, "Hi "+e.Nick+"\n")
 	time.Sleep(1 * time.Second)
 	irc.Privmsg(e.Nick, "I am "+user+", the bot for this channel.\n")
