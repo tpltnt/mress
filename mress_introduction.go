@@ -30,6 +30,25 @@ func runIntroduction(e *irc.Event, irc *irc.Connection, user, channel string) {
 
 // Mark a nick as seen (and log to a database).
 func markAsSeen(dbconfig MressDbConfig, user string) error {
+	err := validateMressDbConfig(dbconfig)
+	if err != nil {
+		return err
+	}
+
+	err = nil
+	//TODO: clean up ugly hack
+	db, _ := sql.Open("", "")
+	if config.backend == "sqlite3" {
+		db, err = sql.Open("sqlite3", config.filename)
+	}
+	if config.backend == "postgres" {
+		db, err = sql.Open("postgres", "host=localhost user=mress-bot password="+config.password+" dbname="+config.dbname+" sslmode=disable")
+	}
+	if err != nil {
+		return fmt.Errorf("failed to open database: " + err.Error())
+	}
+	defer db.Close()
+
 	return fmt.Errorf("not implemented yet")
 	return nil
 }
