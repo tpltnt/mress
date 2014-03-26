@@ -3,6 +3,10 @@ package main
 /* Introduce bot to first-time users.
  * Track nicks as already seen to avoid muliple introductions etc. */
 import (
+	"database/sql"
+	"fmt"
+	_ "github.com/lib/pq"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/thoj/go-ircevent" // imported as "irc"
 	"strings"
 	"time"
@@ -38,11 +42,11 @@ func markAsSeen(dbconfig MressDbConfig, user string) error {
 	err = nil
 	//TODO: clean up ugly hack
 	db, _ := sql.Open("", "")
-	if config.backend == "sqlite3" {
-		db, err = sql.Open("sqlite3", config.filename)
+	if dbconfig.backend == "sqlite3" {
+		db, err = sql.Open("sqlite3", dbconfig.filename)
 	}
-	if config.backend == "postgres" {
-		db, err = sql.Open("postgres", "host=localhost user=mress-bot password="+config.password+" dbname="+config.dbname+" sslmode=disable")
+	if dbconfig.backend == "postgres" {
+		db, err = sql.Open("postgres", "host=localhost user=mress-bot password="+dbconfig.password+" dbname="+dbconfig.dbname+" sslmode=disable")
 	}
 	if err != nil {
 		return fmt.Errorf("failed to open database: " + err.Error())
