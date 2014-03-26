@@ -58,6 +58,8 @@ func main() {
 	go getMressDbUser("", *configfile, dbuserchan, logger)
 	dbpasswdchan := make(chan string)
 	go getMressDbPassword("", *configfile, dbpasswdchan, logger)
+	introtablechan := make(chan string)
+	go getMressIntroductionTableName("", *configfile, introtablechan, logger)
 	// create IRC connection
 	nick := <-nickchan
 	irccon := irc.IRC(nick, "mress")
@@ -106,6 +108,7 @@ func main() {
 	dbconfig.offlineMsgTable = <-offltablechan
 	dbconfig.user = <-dbuserchan
 	dbconfig.password = <-dbpasswdchan
+	dbconfig.introductionTable = <-introtablechan
 	if len(dbconfig.dbname) == 0 {
 		dbconfig.backend = "sqlite3"
 	} else {
