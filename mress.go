@@ -119,6 +119,10 @@ func main() {
 		if err != nil {
 			logger.Println(err.Error())
 		}
+		err = initIntroductionTrackingDatabase(dbconfig)
+		if err != nil {
+			logger.Println(err.Error())
+		}
 	})
 	irccon.AddCallback("PRIVMSG", func(e *irc.Event) {
 		offlineMessengerCommand(e, irccon, nick, dbconfig, logger)

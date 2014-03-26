@@ -56,3 +56,35 @@ func markAsSeen(dbconfig MressDbConfig, user string) error {
 	return fmt.Errorf("not implemented yet")
 	return nil
 }
+
+// initialize database
+func initIntroductionTrackingDatabase(dbconfig MressDbConfig) error {
+	err := validateMressDbConfig(dbconfig)
+	if err != nil {
+		return err
+	}
+	err = nil
+	//TODO: clean up ugly hack
+	db, _ := sql.Open("", "")
+	if dbconfig.backend == "sqlite3" {
+		db, err = sql.Open("sqlite3", dbconfig.filename)
+	}
+	if dbconfig.backend == "postgres" {
+		db, err = sql.Open("postgres", "host=localhost user=mress-bot password="+dbconfig.password+" dbname="+dbconfig.dbname+" sslmode=disable")
+	}
+	if err != nil {
+		return fmt.Errorf("failed to open database: " + err.Error())
+	}
+	defer db.Close()
+
+	sql := "CREATE TABLE IF NOT EXISTS " + dbconfig.introductionTable + " (nickname TEXT);"
+	err = db.Ping()
+	if err != nil {
+		return fmt.Errorf("database connection failed: " + err.Error())
+	}
+	_, err = db.Exec(sql)
+	if err != nil {
+		return fmt.Errorf("failed to create database table: " + err.Error())
+	}
+	return nil
+}
