@@ -10,7 +10,17 @@ import (
 func Test_markAsSeen_0(t *testing.T) {
 	dbconfig := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	user := "testuser"
-	err := markAsSeen(dbconfig, user)
+	logger := createLogger("")
+	err := initIntroductionTrackingDatabase(dbconfig)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	err = markAsSeen(dbconfig, user, logger)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	err = os.Remove(dbconfig.filename)
 	if err != nil {
 		t.Error(err.Error())
 	}
