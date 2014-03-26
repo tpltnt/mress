@@ -848,3 +848,52 @@ func Test_getGeoipPort_0(t *testing.T) {
 		t.Error("wrong geoip server port read")
 	}
 }
+
+// test determining introduction tracking table name
+func Test_getMressIntroductionTableName_0(t *testing.T) {
+	testflag := "introflagtable"
+	config := "test2.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getMressIntroductionTableName(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != testflag {
+		t.Error("read wrong introduction table name")
+	}
+}
+
+func Test_getMressIntroductionTableName_1(t *testing.T) {
+	testflag := ""
+	config := "test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getMressIntroductionTableName(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "introtable" {
+		t.Error("read wrong introduction table name (" + cstring + ") from config")
+	}
+}
+
+func Test_getMressIntroductionTableName_2(t *testing.T) {
+	testflag := "introflagtable"
+	config := "test2.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getMressIntroductionTableName(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "introflagtable" {
+		t.Error("did not select flag over config value, selected \"" + cstring + "\"")
+	}
+}
+
+func Test_getMressIntroductionTableName_3(t *testing.T) {
+	testflag := ""
+	config := "empty_test.ini"
+	testchan := make(chan string)
+	logger := createLogger("")
+	go getMressIntroductionTableName(testflag, config, testchan, logger)
+	cstring := <-testchan
+	if cstring != "" {
+		t.Error("did not handle empty/missing introduction table entry")
+	}
+}

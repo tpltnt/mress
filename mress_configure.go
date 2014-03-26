@@ -325,6 +325,22 @@ func getGeoipPort(configfile string, channel chan int, logger *log.Logger) {
 	channel <- cint
 }
 
+// Read the name of the table that tracks introductions
+func getMressIntroductionTableName(introtablenameflag, configfile string, channel chan string, logger *log.Logger) {
+	cintrotable, err := readConfigString(configfile, "introduction", "table", logger)
+	if err != nil {
+		logger.Println(err.Error())
+		channel <- ""
+		return
+	}
+	//choose config over "empty" value
+	if len(introtablenameflag) == 0 {
+		channel <- cintrotable
+	} else {
+		channel <- introtablenameflag
+	}
+}
+
 // Read string from config file
 func readConfigString(filename, section, key string, logger *log.Logger) (string, error) {
 	if logger == nil {
