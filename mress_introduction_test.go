@@ -8,7 +8,7 @@ import (
 )
 
 func Test_markAsSeen_0(t *testing.T) {
-	dbconfig := MressDbConfig{}
+	dbconfig := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	user := "testuser"
 	err := markAsSeen(dbconfig, user)
 	if err != nil {
