@@ -91,6 +91,74 @@ func markAsSeen(dbconfig MressDbConfig, user string, logger *log.Logger) error {
 	return nil
 }
 
+// Check if a nickname has been seen before. This also returns false in case
+// of any errors.
+func hasBeenSeen(dbconfig MressDbConfig, user string, logger *log.Logger) bool {
+	if logger == nil {
+		return false
+	}
+	err := validateMressDbConfig(dbconfig)
+	if err != nil {
+		logger.Println("hasBeenSeen()")
+		logger.Println("invalid database configuration structure found")
+		logger.Println(dbconfig)
+		return false
+	}
+	if len(user) == 0 {
+		logger.Println("hasBeenSeen()")
+		logger.Println("given username is empty")
+		return false
+	}
+
+	err = nil
+	//TODO: clean up ugly hack
+	db, _ := sql.Open("", "")
+	if dbconfig.backend == "sqlite3" {
+		db, err = sql.Open("sqlite3", dbconfig.filename)
+	}
+	if dbconfig.backend == "postgres" {
+		db, err = sql.Open("postgres", "host=localhost user=mress-bot password="+dbconfig.password+" dbname="+dbconfig.dbname+" sslmode=disable")
+	}
+	if err != nil {
+		logger.Println("hasBeenSeen()")
+		logger.Println("failed to open database: " + err.Error())
+		return false
+	}
+	defer db.Close()
+
+	var founduser string
+	if dbconfig.backend == "sqlite3" {
+		err = db.QueryRow("SELECT username FROM "+dbconfig.introductionTable+" WHERE nickname=?", user).Scan(&founduser)
+	}
+	if dbconfig.backend == "postgres" {
+		err = db.QueryRow("SELECT username FROM "+dbconfig.introductionTable+" WHERE nickname=$?", user).Scan(&founduser)
+	}
+	if err != nil {
+		logger.Println("hasBeenSeen()")
+		logger.Println("query the nickname failed")
+		logger.Println(err)
+	}
+	switch {
+	case err == sql.ErrNoRows:
+		return false
+	case err != nil:
+		logger.Println("hasBeenSeen()")
+		logger.Println("query the nickname failed")
+		logger.Println(err)
+		return false
+	default:
+		if len(founduser) == 0 {
+			// should never happen
+			logger.Println("hasBeenSeen()")
+			logger.Println("found nickname empty")
+			return false
+		} else {
+			return true
+		}
+	}
+	return false
+}
+
 // initialize database
 func initIntroductionTrackingDatabase(dbconfig MressDbConfig) error {
 	err := validateMressDbConfig(dbconfig)
