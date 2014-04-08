@@ -88,9 +88,8 @@ func Test_hasBeenSeen_0(t *testing.T) {
 	if seen != true {
 		t.Error("explicitly marked user not recognized as seen")
 	}
-	/*
-		err = os.Remove(dbconfig.filename)
-		if err != nil {
-			t.Error(err.Error())
-		}*/
+	err = os.Remove(dbconfig.filename)
+	if err != nil {
+		t.Error(err.Error())
+	}
 }
