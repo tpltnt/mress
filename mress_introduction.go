@@ -128,10 +128,10 @@ func hasBeenSeen(dbconfig MressDbConfig, user string, logger *log.Logger) bool {
 
 	var founduser string
 	if dbconfig.backend == "sqlite3" {
-		err = db.QueryRow("SELECT username FROM "+dbconfig.introductionTable+" WHERE nickname=?", user).Scan(&founduser)
+		err = db.QueryRow("SELECT * FROM "+dbconfig.introductionTable+" WHERE nickname=?", user).Scan(&founduser)
 	}
 	if dbconfig.backend == "postgres" {
-		err = db.QueryRow("SELECT username FROM "+dbconfig.introductionTable+" WHERE nickname=$?", user).Scan(&founduser)
+		err = db.QueryRow("SELECT * FROM "+dbconfig.introductionTable+" WHERE nickname=$?", user).Scan(&founduser)
 	}
 	if err != nil {
 		logger.Println("hasBeenSeen()")
