@@ -71,7 +71,7 @@ func Test_initIntroductionTrackingDatabase_PG_1(t *testing.T) {
 }
 
 func Test_hasBeenSeen_0(t *testing.T) {
-	dbconfig := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
+	dbconfig := MressDbConfig{backend: "sqlite3", filename: "testseen.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	user := "testuser"
 	logger := createLogger("stdout")
 	err := initIntroductionTrackingDatabase(dbconfig)
