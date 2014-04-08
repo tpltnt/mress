@@ -8,7 +8,7 @@ import (
 
 // test db initialization
 func Test_initOfflineMessageDatabase_SL3_0(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err != nil {
 		t.Error(err.Error())
@@ -20,7 +20,7 @@ func Test_initOfflineMessageDatabase_SL3_0(t *testing.T) {
 }
 
 func Test_initOfflineMessageDatabase_PG_0(t *testing.T) {
-	config := MressDbConfig{backend: "postgres", dbname: "mress-data", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "postgres", dbname: "mress-data", offlineMsgTable: "messages", introductionTable: "intro"}
 	logger := createLogger("")
 	dbuserchan := make(chan string)
 	go getMressDbUser("", "test2.ini", dbuserchan, logger)
@@ -35,7 +35,7 @@ func Test_initOfflineMessageDatabase_PG_0(t *testing.T) {
 }
 
 func Test_initOfflineMessageDatabase_SL3_1(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err == nil {
 		t.Error("empty filename did not yield error")
@@ -43,7 +43,7 @@ func Test_initOfflineMessageDatabase_SL3_1(t *testing.T) {
 }
 
 func Test_initOfflineMessageDatabase_PG_1(t *testing.T) {
-	config := MressDbConfig{backend: "postgres", dbname: "mress-data", user: "iuwefhf", password: "oidhfri", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "postgres", dbname: "mress-data", user: "iuwefhf", password: "oidhfri", offlineMsgTable: "messages", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err != nil {
 		t.Error("empty sqlite3 filename did yield error despite using Postgres backend: " + err.Error())
@@ -51,7 +51,7 @@ func Test_initOfflineMessageDatabase_PG_1(t *testing.T) {
 }
 
 func Test_initOfflineMessageDatabase_2(t *testing.T) {
-	config := MressDbConfig{backend: "", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err == nil {
 		t.Error("did not catch missing/empty backend")
@@ -59,7 +59,7 @@ func Test_initOfflineMessageDatabase_2(t *testing.T) {
 }
 
 func Test_initOfflineMessageDatabase_3(t *testing.T) {
-	config := MressDbConfig{backend: "kjsdgfjds", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "kjsdgfjds", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err == nil {
 		t.Error("did not catch invalid backend")
@@ -67,7 +67,7 @@ func Test_initOfflineMessageDatabase_3(t *testing.T) {
 }
 
 func Test_initOfflineMessageDatabase_SL3_4(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: ""}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err == nil {
 		t.Error("did not catch missing/empty offline message table name")
@@ -75,7 +75,7 @@ func Test_initOfflineMessageDatabase_SL3_4(t *testing.T) {
 }
 
 func Test_initOfflineMessageDatabase_PG_4(t *testing.T) {
-	config := MressDbConfig{backend: "postgres", dbname: "mress-data", offlineMsgTable: ""}
+	config := MressDbConfig{backend: "postgres", dbname: "mress-data", offlineMsgTable: "", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err == nil {
 		t.Error("did not catch missing/empty offline message table name")
@@ -83,7 +83,7 @@ func Test_initOfflineMessageDatabase_PG_4(t *testing.T) {
 }
 
 func Test_initOfflineMessageDatabase_5(t *testing.T) {
-	config := MressDbConfig{backend: "postgres", user: "safrg", password: "supersecret", offlineMsgTable: ""}
+	config := MressDbConfig{backend: "postgres", user: "safrg", password: "supersecret", offlineMsgTable: "", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err == nil {
 		t.Error("did not catch missing/empty postgres database name")
@@ -94,7 +94,7 @@ func Test_initOfflineMessageDatabase_5(t *testing.T) {
 }
 
 func Test_initOfflineMessageDatabase_6(t *testing.T) {
-	config := MressDbConfig{backend: "postgres", dbname: "mress-data", user: "", password: "supersecret", offlineMsgTable: ""}
+	config := MressDbConfig{backend: "postgres", dbname: "mress-data", user: "", password: "supersecret", offlineMsgTable: "", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err == nil {
 		t.Error("did not catch empty postgres database user name")
@@ -102,7 +102,7 @@ func Test_initOfflineMessageDatabase_6(t *testing.T) {
 }
 
 func Test_initOfflineMessageDatabase_7(t *testing.T) {
-	config := MressDbConfig{backend: "postgres", dbname: "mress-data", user: "", offlineMsgTable: ""}
+	config := MressDbConfig{backend: "postgres", dbname: "mress-data", user: "", offlineMsgTable: "", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err == nil {
 		t.Error("did not catch empty postgres database user password")
@@ -110,7 +110,7 @@ func Test_initOfflineMessageDatabase_7(t *testing.T) {
 }
 
 func Test_initOfflineMessageDatabase_8(t *testing.T) {
-	config := MressDbConfig{backend: "postgres", dbname: "fwfhweflhuew73", user: "", offlineMsgTable: ""}
+	config := MressDbConfig{backend: "postgres", dbname: "fwfhweflhuew73", user: "", offlineMsgTable: "", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err == nil {
 		t.Error("did not catch wrong postgres database name")
@@ -119,7 +119,7 @@ func Test_initOfflineMessageDatabase_8(t *testing.T) {
 
 // valid transaction
 func Test_saveOfflineMessage_SL3_0(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err != nil {
 		t.Error(err.Error())
@@ -137,7 +137,7 @@ func Test_saveOfflineMessage_SL3_0(t *testing.T) {
 }
 
 func Test_saveOfflineMessage_PG_0(t *testing.T) {
-	config := MressDbConfig{backend: "postgres", dbname: "mress-data", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "postgres", dbname: "mress-data", offlineMsgTable: "messages", introductionTable: "intro"}
 	logger := createLogger("")
 	dbuserchan := make(chan string)
 	go getMressDbUser("", "test2.ini", dbuserchan, logger)
@@ -159,7 +159,7 @@ func Test_saveOfflineMessage_PG_0(t *testing.T) {
 
 // empty target
 func Test_saveOfflineMessage_1(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err != nil {
 		t.Error(err.Error())
@@ -176,7 +176,7 @@ func Test_saveOfflineMessage_1(t *testing.T) {
 
 // target with space
 func Test_saveOfflineMessage_2(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err != nil {
 		t.Error(err.Error())
@@ -193,7 +193,7 @@ func Test_saveOfflineMessage_2(t *testing.T) {
 
 // emtpy message
 func Test_saveOfflineMessage_3(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err != nil {
 		t.Error(err.Error())
@@ -210,7 +210,7 @@ func Test_saveOfflineMessage_3(t *testing.T) {
 
 // empty source
 func Test_saveOfflineMessage_4(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err != nil {
 		t.Error(err.Error())
@@ -227,7 +227,7 @@ func Test_saveOfflineMessage_4(t *testing.T) {
 
 // source with space
 func Test_saveOfflineMessage_5(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err != nil {
 		t.Error(err.Error())
@@ -244,7 +244,7 @@ func Test_saveOfflineMessage_5(t *testing.T) {
 
 // empty db filename
 func Test_saveOfflineMessage_SL3_6(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", offlineMsgTable: "messages", introductionTable: "intro"}
 	err := saveOfflineMessage(config, "test source", "testtarget", "testmessage")
 	if err == nil {
 		t.Error("empty database filename not detected")
@@ -252,7 +252,7 @@ func Test_saveOfflineMessage_SL3_6(t *testing.T) {
 }
 
 func Test_saveOfflineMessage_PG_6(t *testing.T) {
-	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages", introductionTable: "intro"}
 	logger := createLogger("")
 	dbuserchan := make(chan string)
 	go getMressDbUser("", "test2.ini", dbuserchan, logger)
@@ -272,7 +272,7 @@ func Test_saveOfflineMessage_PG_6(t *testing.T) {
 
 // empty offline msg table
 func Test_saveOfflineMessage_7(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: ""}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "", introductionTable: "intro"}
 	err := saveOfflineMessage(config, "test source", "testtarget", "testmessage")
 	if err == nil {
 		t.Error("empty offline message table name not detected")
@@ -281,7 +281,7 @@ func Test_saveOfflineMessage_7(t *testing.T) {
 
 func Test_deliverOfflineMessage_SL3_0(t *testing.T) {
 	// prepare db
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	err := initOfflineMessageDatabase(config)
 	if err != nil {
 		t.Error(err.Error())
@@ -299,7 +299,7 @@ func Test_deliverOfflineMessage_SL3_0(t *testing.T) {
 
 func Test_deliverOfflineMessage_PG_0(t *testing.T) {
 	// prepare db
-	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages", introductionTable: "intro"}
 	logger := createLogger("")
 	dbuserchan := make(chan string)
 	go getMressDbUser("", "test2.ini", dbuserchan, logger)
@@ -324,7 +324,7 @@ func Test_deliverOfflineMessage_PG_0(t *testing.T) {
 }
 
 func Test_deliverOfflineMessage_1(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	con := &irc.Connection{}
 	err := deliverOfflineMessage(config, "test user", con)
 	if err == nil {
@@ -335,7 +335,7 @@ func Test_deliverOfflineMessage_1(t *testing.T) {
 }
 
 func Test_deliverOfflineMessage_2(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	con := &irc.Connection{}
 	err := deliverOfflineMessage(config, "", con)
 	if err == nil {
@@ -345,7 +345,7 @@ func Test_deliverOfflineMessage_2(t *testing.T) {
 }
 
 func Test_deliverOfflineMessage_SL3_3(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages", introductionTable: "intro"}
 	con := &irc.Connection{}
 	err := deliverOfflineMessage(config, "testuser", con)
 	if err == nil {
@@ -356,7 +356,7 @@ func Test_deliverOfflineMessage_SL3_3(t *testing.T) {
 
 func Test_deliverOfflineMessage_PG_3(t *testing.T) {
 	// prepare db
-	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages", introductionTable: "intro"}
 	logger := createLogger("")
 	dbuserchan := make(chan string)
 	go getMressDbUser("", "test2.ini", dbuserchan, logger)
@@ -373,7 +373,7 @@ func Test_deliverOfflineMessage_PG_3(t *testing.T) {
 }
 
 func Test_deliverOfflineMessage_4(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	err := deliverOfflineMessage(config, "testuser", nil)
 	if err == nil {
 		t.Log("nil connection pointer shouldn't be accepted")
@@ -402,7 +402,7 @@ func Test_deliverOfflineMessage_6(t *testing.T) {
 }
 
 func Test_deliverOfflineMessage_7(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages", introductionTable: "intro"}
 	con := &irc.Connection{}
 	err := deliverOfflineMessage(config, "testuser", con)
 	if err == nil {
@@ -412,7 +412,7 @@ func Test_deliverOfflineMessage_7(t *testing.T) {
 }
 
 func Test_deliverOfflineMessage_8(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: ""}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "", introductionTable: "intro"}
 	con := &irc.Connection{}
 	err := deliverOfflineMessage(config, "testuser", con)
 	if err == nil {
@@ -424,7 +424,7 @@ func Test_deliverOfflineMessage_8(t *testing.T) {
 // no user
 func Test_deliverOfflineMessage_9(t *testing.T) {
 	// prepare db
-	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages", introductionTable: "intro"}
 	logger := createLogger("")
 	dbpasswdchan := make(chan string)
 	go getMressDbPassword("", "test2.ini", dbpasswdchan, logger)
@@ -443,7 +443,7 @@ func Test_deliverOfflineMessage_9(t *testing.T) {
 // invalid user
 func Test_deliverOfflineMessage_10(t *testing.T) {
 	// prepare db
-	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages", introductionTable: "intro"}
 	logger := createLogger("")
 	dbpasswdchan := make(chan string)
 	go getMressDbPassword("", "test2.ini", dbpasswdchan, logger)
@@ -467,7 +467,7 @@ func Test_deliverOfflineMessage_10(t *testing.T) {
 // no password
 func Test_deliverOfflineMessage_11(t *testing.T) {
 	// prepare db
-	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "postgres", offlineMsgTable: "messages", introductionTable: "intro"}
 	logger := createLogger("")
 	dbuserchan := make(chan string)
 	go getMressDbUser("", "test2.ini", dbuserchan, logger)
@@ -493,7 +493,7 @@ func Test_deliverOfflineMessage_11(t *testing.T) {
 
 // callbacks shouldn't explode
 func Test_offlineMessengerCommand_0(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
@@ -503,7 +503,7 @@ func Test_offlineMessengerCommand_0(t *testing.T) {
 }
 
 func Test_offlineMessengerCommand_1(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	con := &irc.Connection{}
 	logger := createLogger("")
 	offlineMessengerCommand(nil, con, "testuser", config, logger)
@@ -511,7 +511,7 @@ func Test_offlineMessengerCommand_1(t *testing.T) {
 }
 
 func Test_offlineMessengerCommand_2(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	logger := createLogger("")
@@ -520,7 +520,7 @@ func Test_offlineMessengerCommand_2(t *testing.T) {
 }
 
 func Test_offlineMessengerCommand_3(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
@@ -530,7 +530,7 @@ func Test_offlineMessengerCommand_3(t *testing.T) {
 }
 
 func Test_offlineMessengerCommand_4(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
@@ -540,7 +540,7 @@ func Test_offlineMessengerCommand_4(t *testing.T) {
 }
 
 func Test_offlineMessengerCommand_5(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
@@ -549,7 +549,7 @@ func Test_offlineMessengerCommand_5(t *testing.T) {
 }
 
 func Test_offlineMessengerCommand_6(t *testing.T) {
-	config := MressDbConfig{backend: "", filename: "testoffline.db", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "", filename: "testoffline.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
@@ -557,7 +557,7 @@ func Test_offlineMessengerCommand_6(t *testing.T) {
 }
 
 func Test_offlineMessengerCommand_7(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages"}
+	config := MressDbConfig{backend: "sqlite3", filename: "", offlineMsgTable: "messages", introductionTable: "intro"}
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}
@@ -565,7 +565,7 @@ func Test_offlineMessengerCommand_7(t *testing.T) {
 }
 
 func Test_offlineMessengerCommand_8(t *testing.T) {
-	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.sb", offlineMsgTable: ""}
+	config := MressDbConfig{backend: "sqlite3", filename: "testoffline.sb", offlineMsgTable: "", introductionTable: "intro"}
 	args := []string{"bla bla foo bar baz"}
 	event := &irc.Event{Arguments: args}
 	con := &irc.Connection{}

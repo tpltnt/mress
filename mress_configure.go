@@ -12,12 +12,13 @@ import (
 // Store the (SQL) data in one config struct.
 // TODO: check for SQL injection vectors
 type MressDbConfig struct {
-	backend         string // either "sqlite3" or "postgresql"
-	filename        string // for sqlite3 only
-	user            string // for postgres
-	password        string // for postgres
-	dbname          string // for postgres
-	offlineMsgTable string // generic, defaults to "messages"
+	backend           string // either "sqlite3" or "postgresql"
+	filename          string // for sqlite3 only
+	user              string // for postgres
+	password          string // for postgres
+	dbname            string // for postgres
+	offlineMsgTable   string // generic, defaults to "messages"
+	introductionTable string // track nicknames who already received introductions
 }
 
 // Check the database configuration structure for internal consistency.
@@ -28,11 +29,13 @@ func validateMressDbConfig(config MressDbConfig) error {
 	if !((config.backend == "sqlite3") || (config.backend == "postgres")) {
 		return fmt.Errorf("backend/database not supported")
 	}
+
 	if config.backend == "sqlite3" {
 		if len(config.filename) == 0 {
 			return fmt.Errorf("empty filename given")
 		}
 	}
+
 	if config.backend == "postgres" {
 		if len(config.dbname) == 0 {
 			return fmt.Errorf("empty database name given")
@@ -46,6 +49,10 @@ func validateMressDbConfig(config MressDbConfig) error {
 	}
 	if len(config.offlineMsgTable) == 0 {
 		return fmt.Errorf("no offline message table name given")
+	}
+
+	if len(config.introductionTable) == 0 {
+		return fmt.Errorf("no introduction tracking table name given")
 	}
 
 	return nil
@@ -316,6 +323,22 @@ func getGeoipPort(configfile string, channel chan int, logger *log.Logger) {
 		return
 	}
 	channel <- cint
+}
+
+// Read the name of the table that tracks introductions
+func getMressIntroductionTableName(introtablenameflag, configfile string, channel chan string, logger *log.Logger) {
+	cintrotable, err := readConfigString(configfile, "introduction", "table", logger)
+	if err != nil {
+		logger.Println(err.Error())
+		channel <- ""
+		return
+	}
+	//choose config over "empty" value
+	if len(introtablenameflag) == 0 {
+		channel <- cintrotable
+	} else {
+		channel <- introtablenameflag
+	}
 }
 
 // Read string from config file
