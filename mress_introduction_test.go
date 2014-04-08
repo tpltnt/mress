@@ -93,3 +93,28 @@ func Test_hasBeenSeen_0(t *testing.T) {
 		t.Error(err.Error())
 	}
 }
+
+func Test_hasBeenSeen_1(t *testing.T) {
+	dbconfig := MressDbConfig{backend: "sqlite3", filename: "testseen.db", offlineMsgTable: "messages", introductionTable: "intro"}
+	user := "testuser"
+	logger := createLogger("")
+	err := initIntroductionTrackingDatabase(dbconfig)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	err = markAsSeen(dbconfig, user, logger)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	nonuser := "foobar"
+	seen := hasBeenSeen(dbconfig, nonuser, logger)
+	if seen == true {
+		t.Error("query for not-seen user retuned wrong result")
+	}
+	err = os.Remove(dbconfig.filename)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
