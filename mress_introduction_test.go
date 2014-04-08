@@ -73,7 +73,7 @@ func Test_initIntroductionTrackingDatabase_PG_1(t *testing.T) {
 func Test_hasBeenSeen_0(t *testing.T) {
 	dbconfig := MressDbConfig{backend: "sqlite3", filename: "testseen.db", offlineMsgTable: "messages", introductionTable: "intro"}
 	user := "testuser"
-	logger := createLogger("stdout")
+	logger := createLogger("")
 	err := initIntroductionTrackingDatabase(dbconfig)
 	if err != nil {
 		t.Error(err.Error())
@@ -85,7 +85,7 @@ func Test_hasBeenSeen_0(t *testing.T) {
 	}
 
 	seen := hasBeenSeen(dbconfig, user, logger)
-	if seen != true {
+	if seen == false {
 		t.Error("explicitly marked user not recognized as seen")
 	}
 	err = os.Remove(dbconfig.filename)
